@@ -1,6 +1,8 @@
 import { TimestampEntity } from "src/timestamp.entity"
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { PlatformType } from "./platform-type.enum";
+import { Record } from "src/review/record.entity";
+import { Review } from "src/review/review.entity";
 
 @Entity()
 export class User extends TimestampEntity {
@@ -18,4 +20,10 @@ export class User extends TimestampEntity {
 
     @Column()
     nickname: string;
+
+    @OneToMany(() => Record, (record) => record.writer)
+    public records: Record[];
+
+    @OneToMany(() => Review, (review) => review.writer)
+    public reviews: Review[];
 }

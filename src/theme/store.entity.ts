@@ -1,5 +1,6 @@
 import { TimestampEntity } from "src/timestamp.entity"
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Theme } from "./theme.entity";
 
 @Entity()
 export class Store extends TimestampEntity {
@@ -17,4 +18,10 @@ export class Store extends TimestampEntity {
 
     @Column()
     address: string;
+
+    @Column()
+    homepageUrl: string;
+
+    @OneToMany(() => Theme, (theme) => theme.store)
+    public themes: Theme[];
 }
