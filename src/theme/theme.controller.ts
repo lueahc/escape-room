@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ThemeService } from './theme.service';
 
 @Controller('theme')
@@ -8,7 +8,10 @@ export class ThemeController {
     ) { }
 
     @Get()
-    getAllThemes() {
-        return this.themeService.getAllThemes();
+    getAllThemes(@Query('location') location: string) {
+        if (!location) {
+            return this.themeService.getAllThemes();
+        }
+        return this.themeService.getThemesByLocation(location);
     }
 }
