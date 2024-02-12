@@ -18,8 +18,8 @@ export class User extends TimestampEntity {
     @Column()
     password: string;
 
-    // @Column()
-    // nickname: string;
+    @Column()
+    nickname: string;
 
     @OneToMany(() => Record, (record) => record.writer)
     public records: Record[];
