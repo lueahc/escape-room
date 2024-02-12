@@ -9,8 +9,8 @@ export class User extends TimestampEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    type: PlatformType;
+    // @Column()
+    // type: PlatformType;
 
     @Column()
     email: string;
@@ -18,8 +18,8 @@ export class User extends TimestampEntity {
     @Column()
     password: string;
 
-    @Column()
-    nickname: string;
+    // @Column()
+    // nickname: string;
 
     @OneToMany(() => Record, (record) => record.writer)
     public records: Record[];
