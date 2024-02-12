@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Theme } from './theme.entity';
 import { Repository } from 'typeorm';
+import { LocationEnum } from './location.enum';
 
 @Injectable()
 export class ThemeService {
@@ -29,7 +30,7 @@ export class ThemeService {
         });
     }
 
-    async getThemesByLocation(location: string) {
+    async getThemesByLocation(location: LocationEnum) {
         return await this.themeRepository.find({
             select: {
                 id: true,
@@ -49,6 +50,52 @@ export class ThemeService {
                 store: {
                     location
                 }
+            }
+        })
+    }
+
+    async getThemeById(id: number) {
+        return await this.themeRepository.findOne({
+            select: {
+                id: true,
+                name: true,
+                plot: true,
+                image: true,
+                price: true,
+                time: true,
+                store: {
+                    id: true,
+                    name: true,
+                    phoneNo: true,
+                    address: true,
+                    homepageUrl: true
+                },
+                records: {
+                    id: true,
+                    isSuccess: true,
+                    playDate: true,
+                    headCount: true,
+                    hintCount: true,
+                    leftPlayTime: true,
+                    reviews: {
+                        id: true,
+                        writer: {
+                            nickname: true
+                        },
+                        rate: true
+                    }
+                }
+            },
+            relations: {
+                store: true,
+                records: {
+                    reviews: {
+                        writer: true
+                    }
+                }
+            },
+            where: {
+                id
             }
         })
     }
