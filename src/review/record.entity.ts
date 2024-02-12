@@ -16,7 +16,7 @@ export class Record extends TimestampEntity {
     public theme: Theme;
 
     @Column()
-    successFlag: number;
+    isSuccess: boolean;
 
     @Column()
     playDate: Date;
