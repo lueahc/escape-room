@@ -15,11 +15,10 @@ export class UserService {
     async signUp(signUpRequestDto: SignUpRequestDto) {
         const { email, password } = signUpRequestDto;
 
-        const user = new User();
-        user.email = email;
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(password, salt);
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user.password = hashedPassword;
+        const user = this.userRepository.create({ email, password: hashedPassword });
 
         return await this.userRepository.save(user);
     }
