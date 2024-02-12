@@ -1,6 +1,7 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { SignUpRequestDto } from './dto/signUp.request.dto';
+import { SignInRequestDto } from './dto/signIn.request.dto';
 
 @Controller('user')
 export class UserController {
@@ -14,5 +15,8 @@ export class UserController {
         return this.userService.signUp(signUpRequestDto);
     }
 
-
+    @Post('/signIn')
+    signIn(@Body() signInRequestDto: SignInRequestDto) {
+        return this.userService.signIn(signInRequestDto);
+    }
 }
