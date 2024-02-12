@@ -28,4 +28,28 @@ export class ThemeService {
             },
         });
     }
+
+    async getThemesByLocation(location: string) {
+        return await this.themeRepository.find({
+            select: {
+                id: true,
+                name: true,
+                image: true,
+                price: true,
+                time: true,
+                store: {
+                    id: true,
+                    name: true
+                }
+            },
+            relations: {
+                store: true
+            },
+            where: {
+                store: {
+                    location
+                }
+            }
+        })
+    }
 }
