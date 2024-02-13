@@ -4,9 +4,14 @@ import { ReviewService } from './review.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Review } from './review.entity';
 import { Record } from './record.entity';
+import { AuthModule } from 'src/auth/auth.module';
+import { ThemeModule } from 'src/theme/theme.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Record, Review])],
+  imports: [
+    TypeOrmModule.forFeature([Record, Review]),
+    AuthModule,
+    ThemeModule],
   controllers: [ReviewController],
   providers: [ReviewService]
 })
