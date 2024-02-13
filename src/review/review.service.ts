@@ -17,29 +17,29 @@ export class ReviewService {
         private readonly themeService: ThemeService,
     ) { }
 
-    @Transactional()
-    async createRecord(user, createRecordRequestDto: CreateRecordRequestDto) {
-        const { themeId, isSuccess, playDate, headCount, hintCount, leftPlayTime, image } = createRecordRequestDto;
-        const theme = await this.themeService.getThemeById(themeId);
-        if (!theme) {
-            throw new NotFoundException(
-                '테마가 존재하지 않습니다.',
-                'NON_EXISTING_THEME'
-            );
-        }
+    // @Transactional()
+    // async createRecord(user, createRecordRequestDto: CreateRecordRequestDto) {
+    //     const { themeId, isSuccess, playDate, headCount, hintCount, leftPlayTime, image } = createRecordRequestDto;
+    //     const theme = await this.themeService.getThemeById(themeId);
+    //     if (!theme) {
+    //         throw new NotFoundException(
+    //             '테마가 존재하지 않습니다.',
+    //             'NON_EXISTING_THEME'
+    //         );
+    //     }
 
-        const record = this.recordRepository.create({
-            writer: user,
-            theme,
-            isSuccess,
-            playDate,
-            headCount,
-            hintCount,
-            leftPlayTime,
-            image
-        });
-        await this.recordRepository.save(record);
+    //     const record = this.recordRepository.create({
+    //         writer: user,
+    //         theme,
+    //         isSuccess,
+    //         playDate,
+    //         headCount,
+    //         hintCount,
+    //         leftPlayTime,
+    //         image
+    //     });
+    //     await this.recordRepository.save(record);
 
 
-    }
+    // }
 }

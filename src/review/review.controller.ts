@@ -9,9 +9,9 @@ export class ReviewController {
         private reviewService: ReviewService
     ) { }
 
-    @Post()
-    @UseGuards(JwtAuthGuard)
-    createRecord(@Request() req, createRecordRequestDto: CreateRecordRequestDto) {
-        return this.reviewService.createRecord(req.user, createRecordRequestDto);
-    }
+    // @Post()
+    // @UseGuards(JwtAuthGuard)
+    // createRecord(@Request() req, createRecordRequestDto: CreateRecordRequestDto) {
+    //     return this.reviewService.createRecord(req.user, createRecordRequestDto);
+    // }
 }

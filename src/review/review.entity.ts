@@ -1,6 +1,6 @@
 import { TimestampEntity } from "src/timestamp.entity"
 import { User } from "src/user/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, IsNull, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Record } from "./record.entity";
 
 @Entity()
@@ -14,30 +14,30 @@ export class Review extends TimestampEntity {
     @ManyToOne(() => Record, (record) => record.reviews)
     public record: Record;
 
-    @Column()
+    @Column({ nullable: true })
     content: string;
 
-    @Column()
+    @Column({ nullable: true })
     rate: number;
 
-    @Column()
+    @Column({ nullable: true })
     difficulty: number;
 
-    @Column()
+    @Column({ nullable: true })
     horror: number;
 
-    @Column()
+    @Column({ nullable: true })
     activity: number;
 
-    @Column()
+    @Column({ nullable: true })
     dramatic: number;
 
-    @Column()
+    @Column({ nullable: true })
     story: number;
 
-    @Column()
+    @Column({ nullable: true })
     problem: number;
 
-    @Column()
+    @Column({ nullable: true })
     interior: number;
 }
