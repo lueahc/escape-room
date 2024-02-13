@@ -6,11 +6,10 @@ import { Review } from './review.entity';
 import { Record } from './record.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { ThemeModule } from 'src/theme/theme.module';
-import { Tag } from './tag.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Record, Review, Tag]),
+    TypeOrmModule.forFeature([Record, Review]),
     AuthModule,
     ThemeModule],
   controllers: [ReviewController],
