@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty } from "class-validator";
+import { IsNotEmpty } from "class-validator";
 
 export class CreateRecordRequestDto {
     @IsNotEmpty()
@@ -17,5 +17,21 @@ export class CreateRecordRequestDto {
 
     image: string;
 
-    //public reviews: Review[];
+    content: string;
+
+    rate: number;
+
+    difficulty: number;
+
+    horror: number;
+
+    activity: number;
+
+    dramatic: number;
+
+    story: number;
+
+    problem: number;
+
+    interior: number;
 }

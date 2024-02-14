@@ -31,7 +31,7 @@ export class Record extends TimestampEntity {
     @Column()
     leftPlayTime: number;
 
-    @Column()
+    @Column({ nullable: true })
     image: string;
 
     @OneToMany(() => Review, (review) => review.record)
