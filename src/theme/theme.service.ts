@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Theme } from './theme.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { LocationEnum } from './location.enum';
 
 @Injectable()
@@ -50,6 +50,28 @@ export class ThemeService {
                 store: {
                     location
                 }
+            }
+        })
+    }
+
+    async getThemesByKeyword(keyword: string) {
+        return await this.themeRepository.find({
+            select: {
+                id: true,
+                name: true,
+                image: true,
+                price: true,
+                time: true,
+                store: {
+                    id: true,
+                    name: true
+                }
+            },
+            relations: {
+                store: true
+            },
+            where: {
+                name: Like(`%${keyword}%`)
             }
         })
     }

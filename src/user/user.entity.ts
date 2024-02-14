@@ -3,6 +3,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { PlatformType } from "./platform-type.enum";
 import { Record } from "src/review/record.entity";
 import { Review } from "src/review/review.entity";
+import { Tag } from "src/review/tag.entity";
 
 @Entity()
 export class User extends TimestampEntity {
@@ -26,4 +27,7 @@ export class User extends TimestampEntity {
 
     @OneToMany(() => Review, (review) => review.writer)
     public reviews: Review[];
+
+    @OneToMany(() => Tag, (tag) => tag.user)
+    public tags: Tag[];
 }

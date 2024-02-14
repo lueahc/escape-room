@@ -8,6 +8,11 @@ export class ThemeController {
         private themeService: ThemeService
     ) { }
 
+    @Get('/search')
+    searchThemes(@Query('keyword') keyword: string) {
+        return this.themeService.getThemesByKeyword(keyword);
+    }
+
     @Get()
     getAllThemes(@Query('location') location: LocationEnum) {
         if (!location) {
