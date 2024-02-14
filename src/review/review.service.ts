@@ -1,11 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './review.entity';
-import { Repository } from 'typeorm';
+import { Repository, UpdateDescription } from 'typeorm';
 import { Record } from './record.entity';
 import { Transactional } from 'typeorm-transactional';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
 import { ThemeService } from 'src/theme/theme.service';
+import { User } from 'src/user/user.entity';
+import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
 
 @Injectable()
 export class ReviewService {
@@ -18,7 +20,7 @@ export class ReviewService {
     ) { }
 
     @Transactional()
-    async createRecord(user, createRecordRequestDto: CreateRecordRequestDto) {
+    async createRecord(user: User, createRecordRequestDto: CreateRecordRequestDto) {
         const { themeId, isSuccess, playDate, headCount, hintCount, leftPlayTime, image,
             content, rate, difficulty, horror, activity, dramatic, story, problem, interior } = createRecordRequestDto;
         const theme = await this.themeService.getThemeById(themeId);
@@ -59,6 +61,18 @@ export class ReviewService {
         return {
             record,
             review
+        }
+    }
+
+    async updateRecord(userId: number, updateRecordRequestDto: UpdateRecordRequestDto) {
+        const { themeId, isSuccess, playDate, headCount, hintCount, leftPlayTime, image } = updateRecordRequestDto;
+
+        const theme = await this.themeService.getThemeById(themeId);
+        if (!theme) {
+            throw new NotFoundException(
+                '테마가 존재하지 않습니다.',
+                'NON_EXISTING_THEME'
+            );
         }
     }
 }
