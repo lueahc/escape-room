@@ -21,8 +21,8 @@ export class ThemeController {
         return this.themeService.getThemesByLocation(location);
     }
 
-    @Get('/:id')
-    getThemeInfo(@Param('id', ParseIntPipe) id: number) {
-        return this.themeService.getThemeById(id);
+    @Get('/:themeId')
+    getThemeInfo(@Param('themeId', ParseIntPipe) themeId: number) {
+        return this.themeService.getThemeById(themeId);
     }
 }
