@@ -32,6 +32,16 @@ export class UserService {
         });
     }
 
+    async isSameUser(userId: number, targetId: number): Promise<boolean> {
+        const user = await this.findOneById(userId);
+        const targetUser = await this.findOneById(targetId);
+
+        if (user === targetUser) {
+            return true;
+        }
+        return false;
+    }
+
     async signUp(signUpRequestDto: SignUpRequestDto) {
         const { email, password } = signUpRequestDto;
 

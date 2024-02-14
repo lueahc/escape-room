@@ -17,6 +17,7 @@ export class ReviewController {
     createRecord(
         @Request() req,
         @Body() createRecordRequestDto: CreateRecordRequestDto) {
+
         const user = req.user;
         return this.reviewService.createRecord(user, createRecordRequestDto);
     }
@@ -24,9 +25,11 @@ export class ReviewController {
     @Patch('/record/:recordId')
     @UseGuards(JwtAuthGuard)
     updateRecord(
-        @Param('recordIid', ParseIntPipe) recordId: number,
-        @User() userId: number,
+        @Param('recordId', ParseIntPipe) recordId: number,
+        @Request() req,
         @Body() updateRecordRequestDto: UpdateRecordRequestDto) {
-        return this.reviewService.updateRecord(userId, updateRecordRequestDto);
+
+        const user = req.user;
+        return this.reviewService.updateRecord(recordId, user, updateRecordRequestDto);
     }
 }
