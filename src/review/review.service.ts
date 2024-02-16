@@ -158,4 +158,24 @@ export class ReviewService {
 
         return {}
     }
+
+    async deleteReview(reviewId: number, user: User) {
+        const review = await this.getReviewById(reviewId);
+        if (!review) {
+            throw new NotFoundException(
+                '리뷰가 존재하지 않습니다.',
+                'NON_EXISTING_REVIEW'
+            )
+        }
+
+        const reviewWriter = review.writer;
+        if (user.id !== reviewWriter.id) {
+            return new UnauthorizedException(
+                '리뷰를 등록한 사용자가 아닙니다.',
+                'USER_WRITER_DISCORDANCE'
+            )
+        }
+
+        await this.reviewRepository.softDelete({ id: reviewId });
+    }
 }
