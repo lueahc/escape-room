@@ -4,6 +4,7 @@ import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
 import { User } from 'src/user/user.decorator';
 import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
+import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
 
 @Controller('review')
 export class ReviewController {
@@ -31,5 +32,16 @@ export class ReviewController {
 
         const user = req.user;
         return this.reviewService.updateRecord(recordId, user, updateRecordRequestDto);
+    }
+
+    @Patch('/:id')
+    @UseGuards(JwtAuthGuard)
+    updateReview(
+        @Param('id', ParseIntPipe) id: number,
+        @Request() req,
+        @Body() updateReviewRequestDto: UpdateReviewRequestDto) {
+
+        const user = req.user;
+        return this.reviewService.updateReview(id, user, updateReviewRequestDto);
     }
 }

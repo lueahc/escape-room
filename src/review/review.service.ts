@@ -8,6 +8,7 @@ import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
 import { ThemeService } from 'src/theme/theme.service';
 import { User } from 'src/user/user.entity';
 import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
+import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
 
 @Injectable()
 export class ReviewService {
@@ -21,6 +22,17 @@ export class ReviewService {
 
     async getRecordById(id: number) {
         return await this.recordRepository.findOne({
+            relations: {
+                writer: true
+            },
+            where: {
+                id
+            }
+        });
+    }
+
+    async getReviewById(id: number) {
+        return await this.reviewRepository.findOne({
             relations: {
                 writer: true
             },
@@ -109,6 +121,40 @@ export class ReviewService {
         record.image = image;
 
         await this.recordRepository.save(record);
+
+        return {}
+    }
+
+    async updateReview(reviewId: number, user: User, updateReviewRequestDto: UpdateReviewRequestDto) {
+        const { content, rate, difficulty, horror, activity, dramatic, story, problem, interior } = updateReviewRequestDto;
+
+        const review = await this.getReviewById(reviewId);
+        if (!review) {
+            throw new NotFoundException(
+                '리뷰가 존재하지 않습니다.',
+                'NON_EXISTING_REVIEW'
+            )
+        }
+
+        const reviewWriter = review.writer;
+        if (user.id !== reviewWriter.id) {
+            return new UnauthorizedException(
+                '리뷰를 등록한 사용자가 아닙니다.',
+                'USER_WRITER_DISCORDANCE'
+            )
+        }
+
+        review.content = content;
+        review.rate = rate;
+        review.difficulty = difficulty;
+        review.horror = horror;
+        review.activity = activity;
+        review.dramatic = dramatic;
+        review.story = story;
+        review.problem = problem;
+        review.interior = interior;
+
+        await this.reviewRepository.save(review);
 
         return {}
     }
