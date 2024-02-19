@@ -29,8 +29,7 @@ export class RecordService {
 
     @Transactional()
     async createRecord(user: User, createRecordRequestDto: CreateRecordRequestDto) {
-        const { themeId, isSuccess, playDate, headCount, hintCount, leftPlayTime, image,
-            content, rate, difficulty, horror, activity, dramatic, story, problem, interior } = createRecordRequestDto;
+        const { themeId, isSuccess, playDate, headCount, hintCount, leftPlayTime, image } = createRecordRequestDto;
 
         const theme = await this.themeService.getThemeById(themeId);
         if (!theme) {
