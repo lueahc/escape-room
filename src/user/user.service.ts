@@ -108,6 +108,6 @@ export class UserService {
         user.nickname = nickname;
         await this.userRepository.save(user);
 
-        return user;
+        return {}
     }
 }
