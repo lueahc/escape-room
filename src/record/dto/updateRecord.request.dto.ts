@@ -1,3 +1,5 @@
+import { IsNotEmpty } from "class-validator";
+
 export class UpdateRecordRequestDto {
     themeId: number;
 
@@ -5,11 +7,14 @@ export class UpdateRecordRequestDto {
 
     playDate: Date;
 
+    @IsNotEmpty()
     headCount: number;
 
     hintCount: number;
 
-    leftPlayTime: number;
+    playTime: number;
 
     image: string;
+
+    party: number[];
 }

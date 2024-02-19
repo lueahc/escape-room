@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Theme } from './theme.entity';
 import { Like, Repository } from 'typeorm';
-import { LocationEnum } from './location.enum';
+import { LocationEnum } from '../store/location.enum';
 
 @Injectable()
 export class ThemeService {
@@ -98,7 +98,7 @@ export class ThemeService {
                     playDate: true,
                     headCount: true,
                     hintCount: true,
-                    leftPlayTime: true,
+                    playTime: true,
                     reviews: {
                         id: true,
                         writer: {
