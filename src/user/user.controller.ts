@@ -1,7 +1,10 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Patch, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { SignUpRequestDto } from './dto/signUp.request.dto';
 import { SignInRequestDto } from './dto/signIn.request.dto';
+import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
+import { UpdateInfoRequestDto } from './dto/updateInfo.request.dto';
+import { User } from './user.decorator';
 
 @Controller('user')
 export class UserController {
@@ -18,5 +21,13 @@ export class UserController {
     @Post('/signIn')
     signIn(@Body() signInRequestDto: SignInRequestDto) {
         return this.userService.signIn(signInRequestDto);
+    }
+
+    @Patch('/info')
+    @UseGuards(JwtAuthGuard)
+    updateInfo(
+        @User('id') userId: number,
+        @Body() updateInfoRequestDto: UpdateInfoRequestDto) {
+        return this.userService.updateInfo(userId, updateInfoRequestDto);
     }
 }
