@@ -17,18 +17,26 @@ export class UserService {
         private readonly authService: AuthService,
     ) { }
 
-    async findOneById(userId: number) {
+    async findOneById(id: number) {
         return await this.userRepository.findOne({
             where: {
-                id: userId,
+                id
             },
         });
     }
 
-    async findOneByEmail(userEmail: string) {
+    async findOneByEmail(email: string) {
         return await this.userRepository.findOne({
             where: {
-                email: userEmail,
+                email
+            },
+        });
+    }
+
+    async findOneByNickname(nickname: string) {
+        return await this.userRepository.findOne({
+            where: {
+                nickname
             },
         });
     }
@@ -41,6 +49,14 @@ export class UserService {
             throw new ConflictException(
                 '이미 존재하는 이메일입니다.',
                 'EXISTING_EMAIL'
+            );
+        }
+
+        const existNickname = await this.findOneByNickname(nickname);
+        if (existNickname) {
+            throw new ConflictException(
+                '이미 존재하는 닉네임입니다.',
+                'EXISTING_NICKNAME'
             );
         }
 
@@ -57,7 +73,6 @@ export class UserService {
         const { email, password } = signInRequestDto;
 
         const user = await this.findOneByEmail(email);
-
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -66,7 +81,6 @@ export class UserService {
         }
 
         const isMatched = await bcrypt.compare(password, user.password);
-
         if (!isMatched) {
             throw new BadRequestException(
                 '비밀번호가 일치하지 않습니다.',
@@ -93,9 +107,27 @@ export class UserService {
             );
         }
 
-        const { nickname } = updateInfoRequestDto;
+        const { password, nickname } = updateInfoRequestDto;
 
-        user.nickname = nickname;
+        if (password) {
+            const salt = await bcrypt.genSalt();
+            const hashedPassword = await bcrypt.hash(password, salt);
+
+            user.password = hashedPassword;
+        }
+
+        if (nickname) {
+            const existNickname = await this.findOneByNickname(nickname);
+            if (existNickname) {
+                throw new ConflictException(
+                    '이미 존재하는 닉네임입니다.',
+                    'EXISTING_NICKNAME'
+                );
+            }
+
+            user.nickname = nickname;
+        }
+
         await this.userRepository.save(user);
 
         return {}

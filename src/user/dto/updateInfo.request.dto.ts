@@ -1,6 +1,7 @@
 import { IsNotEmpty } from "class-validator";
 
 export class UpdateInfoRequestDto {
-    @IsNotEmpty()
+    password: string;
+
     nickname: string;
 }

@@ -8,5 +8,6 @@ export class SignUpRequestDto {
     @IsNotEmpty()
     password: string;
 
+    @IsNotEmpty()
     nickname: string;
 }
