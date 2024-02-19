@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { RecordService } from './record.service';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
@@ -10,6 +10,11 @@ export class RecordController {
     constructor(
         private recordService: RecordService
     ) { }
+
+    @Get()
+    test() {
+        return this.recordService.test();
+    }
 
     @Post()
     @HttpCode(201)

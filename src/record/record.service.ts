@@ -20,6 +20,14 @@ export class RecordService {
         private readonly themeService: ThemeService,
     ) { }
 
+    async test() {
+        return await this.recordRepository.find({
+            relations: {
+                reviews: true
+            },
+        });
+    }
+
     async getRecordById(id: number) {
         return await this.recordRepository.findOne({
             relations: {
