@@ -7,13 +7,17 @@ export class CreateRecordRequestDto {
     @IsNotEmpty()
     isSuccess: boolean;
 
+    @IsNotEmpty()
     playDate: Date;
 
+    @IsNotEmpty()
     headCount: number;
 
     hintCount: number;
 
-    leftPlayTime: number;
+    playTime: number;
 
     image: string;
+
+    party: number[];
 }

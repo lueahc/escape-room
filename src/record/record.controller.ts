@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Param, ParseIntPipe, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { RecordService } from './record.service';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';

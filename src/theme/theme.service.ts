@@ -98,7 +98,7 @@ export class ThemeService {
                     playDate: true,
                     headCount: true,
                     hintCount: true,
-                    leftPlayTime: true,
+                    playTime: true,
                     reviews: {
                         id: true,
                         writer: {

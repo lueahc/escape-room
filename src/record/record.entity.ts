@@ -25,11 +25,11 @@ export class Record extends TimestampEntity {
     @Column()
     headCount: number;
 
-    @Column()
+    @Column({ nullable: true })
     hintCount: number;
 
-    @Column()
-    leftPlayTime: number;
+    @Column({ nullable: true })
+    playTime: number;
 
     @Column({ nullable: true })
     image: string;
