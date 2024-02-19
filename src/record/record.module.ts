@@ -4,12 +4,13 @@ import { RecordService } from './record.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Record } from 'src/record/record.entity';
 import { Tag } from 'src/record/tag.entity';
-import { AuthModule } from 'src/auth/auth.module';
 import { ThemeModule } from 'src/theme/theme.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Record, Tag]),
+    UserModule,
     ThemeModule],
   controllers: [RecordController],
   providers: [RecordService],

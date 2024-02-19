@@ -3,6 +3,7 @@ import { RecordService } from './record.service';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
 import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
+import { User } from 'src/user/user.decorator';
 
 @Controller('record')
 export class RecordController {
@@ -14,21 +15,19 @@ export class RecordController {
     @HttpCode(201)
     @UseGuards(JwtAuthGuard)
     createRecord(
-        @Request() req,
+        @User('id') userId: number,
         @Body() createRecordRequestDto: CreateRecordRequestDto) {
 
-        const user = req.user;
-        return this.recordService.createRecord(user, createRecordRequestDto);
+        return this.recordService.createRecord(userId, createRecordRequestDto);
     }
 
     @Patch('/:recordId')
     @UseGuards(JwtAuthGuard)
     updateRecord(
+        @User('id') userId: number,
         @Param('recordId', ParseIntPipe) recordId: number,
-        @Request() req,
         @Body() updateRecordRequestDto: UpdateRecordRequestDto) {
 
-        const user = req.user;
-        return this.recordService.updateRecord(recordId, user, updateRecordRequestDto);
+        return this.recordService.updateRecord(userId, recordId, updateRecordRequestDto);
     }
 }

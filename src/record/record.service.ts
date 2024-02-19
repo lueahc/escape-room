@@ -7,12 +7,14 @@ import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
 import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
 import { User } from 'src/user/user.entity';
 import { ThemeService } from 'src/theme/theme.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class RecordService {
     constructor(
         @InjectRepository(Record)
         private readonly recordRepository: Repository<Record>,
+        private readonly userService: UserService,
         private readonly themeService: ThemeService,
     ) { }
 
@@ -28,8 +30,16 @@ export class RecordService {
     }
 
     @Transactional()
-    async createRecord(user: User, createRecordRequestDto: CreateRecordRequestDto) {
+    async createRecord(userId: number, createRecordRequestDto: CreateRecordRequestDto) {
         const { themeId, isSuccess, playDate, headCount, hintCount, leftPlayTime, image } = createRecordRequestDto;
+
+        const user = await this.userService.findOneById(userId);
+        if (!user) {
+            throw new NotFoundException(
+                '사용자가 존재하지 않습니다.',
+                'NON_EXISTING_USER'
+            );
+        }
 
         const theme = await this.themeService.getThemeById(themeId);
         if (!theme) {
@@ -54,7 +64,7 @@ export class RecordService {
         return record;
     }
 
-    async updateRecord(recordId: number, user: User, updateRecordRequestDto: UpdateRecordRequestDto) {
+    async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto) {
         const { themeId, isSuccess, playDate, headCount, hintCount, leftPlayTime, image } = updateRecordRequestDto;
 
         const record = await this.getRecordById(recordId);
@@ -65,8 +75,16 @@ export class RecordService {
             )
         }
 
+        const user = await this.userService.findOneById(userId);
+        if (!user) {
+            throw new NotFoundException(
+                '사용자가 존재하지 않습니다.',
+                'NON_EXISTING_USER'
+            );
+        }
+
         const recordWriter = record.writer;
-        if (user.id !== recordWriter.id) {
+        if (userId !== recordWriter.id) {
             return new UnauthorizedException(
                 '기록을 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
@@ -88,7 +106,6 @@ export class RecordService {
         record.hintCount = hintCount;
         record.leftPlayTime = leftPlayTime;
         record.image = image;
-
         await this.recordRepository.save(record);
 
         return record;
