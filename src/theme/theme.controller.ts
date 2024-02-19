@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ThemeService } from './theme.service';
-import { LocationEnum } from './location.enum';
+import { LocationEnum } from '../store/location.enum';
 
 @Controller('theme')
 export class ThemeController {

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './review.entity';
 import { Repository, UpdateDescription } from 'typeorm';
-import { Record } from './record.entity';
+import { Record } from '../record/record.entity';
 import { Transactional } from 'typeorm-transactional';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
 import { ThemeService } from 'src/theme/theme.service';
