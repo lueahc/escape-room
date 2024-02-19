@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { SignInRequestDto } from './dto/signIn.request.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { SignUpResponseDto } from './dto/signUp.response.dto';
+import { UpdateInfoRequestDto } from './dto/updateInfo.request.dto';
 
 @Injectable()
 export class UserService {
@@ -43,7 +44,7 @@ export class UserService {
     }
 
     async signUp(signUpRequestDto: SignUpRequestDto) {
-        const { email, password } = signUpRequestDto;
+        const { email, password, nickname } = signUpRequestDto;
 
         const existUser = await this.findOneByEmail(email);
         if (existUser) {
@@ -56,7 +57,7 @@ export class UserService {
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const user = this.userRepository.create({ email, password: hashedPassword });
+        const user = this.userRepository.create({ email, password: hashedPassword, nickname });
         const createdUser = await this.userRepository.save(user);
 
         return new SignUpResponseDto(createdUser);
@@ -88,7 +89,25 @@ export class UserService {
         });
 
         return {
+            nickname: user.nickname,
             accessToken,
         };
+    }
+
+    async updateInfo(userId: number, updateInfoRequestDto: UpdateInfoRequestDto) {
+        const user = await this.findOneById(userId);
+        if (!user) {
+            throw new NotFoundException(
+                '사용자가 존재하지 않습니다.',
+                'NON_EXISTING_USER'
+            );
+        }
+
+        const { nickname } = updateInfoRequestDto;
+
+        user.nickname = nickname;
+        await this.userRepository.save(user);
+
+        return {}
     }
 }

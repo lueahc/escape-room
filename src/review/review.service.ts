@@ -82,7 +82,7 @@ export class ReviewService {
         });
         await this.reviewRepository.save(review);
 
-        return {}
+        return record;
     }
 
     async updateRecord(recordId: number, user: User, updateRecordRequestDto: UpdateRecordRequestDto) {
@@ -122,7 +122,7 @@ export class ReviewService {
 
         await this.recordRepository.save(record);
 
-        return {}
+        return record;
     }
 
     async updateReview(reviewId: number, user: User, updateReviewRequestDto: UpdateReviewRequestDto) {
@@ -156,7 +156,7 @@ export class ReviewService {
 
         await this.reviewRepository.save(review);
 
-        return {}
+        return review;
     }
 
     async deleteReview(reviewId: number, user: User) {
@@ -177,5 +177,13 @@ export class ReviewService {
         }
 
         await this.reviewRepository.softDelete({ id: reviewId });
+    }
+
+    async show() {
+        return await this.recordRepository.find({
+            relations: {
+                reviews: true
+            },
+        });
     }
 }

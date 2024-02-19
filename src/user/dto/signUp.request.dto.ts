@@ -7,4 +7,6 @@ export class SignUpRequestDto {
 
     @IsNotEmpty()
     password: string;
+
+    nickname: string;
 }
