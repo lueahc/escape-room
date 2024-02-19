@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, HttpCode, Param, ParseIntPipe, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
@@ -46,6 +46,7 @@ export class ReviewController {
     }
 
     @Delete('/:id')
+    @HttpCode(204)
     @UseGuards(JwtAuthGuard)
     deleteReview(
         @Param('id', ParseIntPipe) id: number,
@@ -53,5 +54,10 @@ export class ReviewController {
 
         const user = req.user;
         return this.reviewService.deleteReview(id, user)
+    }
+
+    @Get()
+    show() {
+        return this.reviewService.show();
     }
 }
