@@ -5,9 +5,11 @@ import { UserModule } from './user/user.module';
 import { ReviewModule } from './review/review.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtPassportModule } from './jwt/jwt.passport.module';
+import { StoreModule } from './store/store.module';
+import { RecordModule } from './record/record.module';
 
 @Module({
-  imports: [DatabaseModule, ThemeModule, UserModule, ReviewModule, AuthModule, JwtPassportModule],
+  imports: [DatabaseModule, ThemeModule, UserModule, ReviewModule, AuthModule, JwtPassportModule, StoreModule, RecordModule],
   controllers: [],
   providers: [],
 })
