@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Po
 import { ReviewService } from './review.service';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
-import { User } from 'src/user/user.decorator';
 import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
 import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
 

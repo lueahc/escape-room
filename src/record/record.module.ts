@@ -8,6 +8,7 @@ import { Tag } from 'src/record/tag.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Record, Tag])],
   controllers: [RecordController],
-  providers: [RecordService]
+  providers: [RecordService],
+  exports: [RecordService],
 })
 export class RecordModule { }
