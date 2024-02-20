@@ -8,7 +8,7 @@ export class Tag extends TimestampEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, (user) => user.tags)
+    @ManyToOne(() => User, (user) => user.tags, { eager: true })
     public user: User;
 
     @ManyToOne(() => Record, (record) => record.tags)

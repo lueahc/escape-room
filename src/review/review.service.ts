@@ -1,9 +1,12 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './review.entity';
 import { Repository } from 'typeorm';
 import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
 import { UserService } from 'src/user/user.service';
+import { CreateReviewRequestDto } from './dto/createReview.request.dto';
+import { RecordService } from 'src/record/record.service';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class ReviewService {
@@ -11,6 +14,7 @@ export class ReviewService {
         @InjectRepository(Review)
         private readonly reviewRepository: Repository<Review>,
         private readonly userService: UserService,
+        private readonly recordService: RecordService,
     ) { }
 
     async getReviewById(id: number) {
@@ -22,6 +26,54 @@ export class ReviewService {
                 id
             }
         });
+    }
+
+    async createReview(userId: number, createReviewRequestDto: CreateReviewRequestDto) {
+        const { recordId, content, rate, activity, story, dramatic, volume, problem, difficulty, horror, interior } = createReviewRequestDto;
+
+        const record = await this.recordService.getRecordById(recordId);
+        if (!record) {
+            throw new NotFoundException(
+                '기록이 존재하지 않습니다.',
+                'NON_EXISTING_RECORD'
+            )
+        }
+
+        const user = await this.userService.findOneById(userId);
+        if (!user) {
+            throw new NotFoundException(
+                '사용자가 존재하지 않습니다.',
+                'NON_EXISTING_USER'
+            );
+        }
+
+        const recordWriterId = record.writer.id;
+        const tags = await this.recordService.getTagsByRecordId(recordId);
+        const taggedUsers = tags && tags.map((tag) => tag.user.id);
+        const ifTagged = taggedUsers && taggedUsers.includes(userId);
+        if ((!ifTagged && userId !== recordWriterId) || !ifTagged) {
+            throw new ForbiddenException(
+                '리뷰를 등록할 수 있는 사용자가 아닙니다.',
+                'USER_FORBIDDEN')
+        }
+
+        const review = this.reviewRepository.create({
+            writer: user,
+            record,
+            content,
+            rate,
+            activity,
+            story,
+            dramatic,
+            volume,
+            problem,
+            difficulty,
+            horror,
+            interior
+        });
+        await this.reviewRepository.save(review);
+
+        return review;
     }
 
     async updateReview(userId: number, reviewId: number, updateReviewRequestDto: UpdateReviewRequestDto) {
@@ -45,7 +97,7 @@ export class ReviewService {
 
         const reviewWriter = review.writer;
         if (userId !== reviewWriter.id) {
-            return new UnauthorizedException(
+            return new ForbiddenException(
                 '리뷰를 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
             )
@@ -85,7 +137,7 @@ export class ReviewService {
 
         const reviewWriter = review.writer;
         if (userId !== reviewWriter.id) {
-            return new UnauthorizedException(
+            return new ForbiddenException(
                 '리뷰를 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
             )

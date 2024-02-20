@@ -22,7 +22,6 @@ export class RecordController {
     createRecord(
         @User('id') userId: number,
         @Body() createRecordRequestDto: CreateRecordRequestDto) {
-
         return this.recordService.createRecord(userId, createRecordRequestDto);
     }
 
@@ -32,7 +31,6 @@ export class RecordController {
         @User('id') userId: number,
         @Param('recordId', ParseIntPipe) recordId: number,
         @Body() updateRecordRequestDto: UpdateRecordRequestDto) {
-
         return this.recordService.updateRecord(userId, recordId, updateRecordRequestDto);
     }
 }

@@ -1,14 +1,24 @@
-import { Body, Controller, Delete, HttpCode, Param, ParseIntPipe, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
 import { User } from 'src/user/user.decorator';
+import { CreateReviewRequestDto } from './dto/createReview.request.dto';
 
 @Controller('review')
 export class ReviewController {
     constructor(
         private reviewService: ReviewService
     ) { }
+
+    @Post()
+    @HttpCode(201)
+    @UseGuards(JwtAuthGuard)
+    createReview(
+        @User('id') userId: number,
+        @Body() createReviewRequestDto: CreateReviewRequestDto) {
+        return this.reviewService.createReview(userId, createReviewRequestDto);
+    }
 
     @Patch('/:reviewId')
     @UseGuards(JwtAuthGuard)

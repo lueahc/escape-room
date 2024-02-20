@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Record } from './record.entity';
 import { Repository } from 'typeorm';
@@ -37,6 +37,21 @@ export class RecordService {
                 id
             }
         });
+    }
+
+    async getTagsByRecordId(recordId: number) {
+        return await this.tagRepository.find({
+            select: {
+                user: {
+                    id: true
+                }
+            },
+            where: {
+                record: {
+                    id: recordId
+                }
+            }
+        })
     }
 
     @Transactional()
@@ -122,7 +137,7 @@ export class RecordService {
 
         const recordWriter = record.writer;
         if (userId !== recordWriter.id) {
-            return new UnauthorizedException(
+            return new ForbiddenException(
                 '기록을 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
             )
