@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { SignUpRequestDto } from './dto/signUp.request.dto';
 import { SignInRequestDto } from './dto/signIn.request.dto';
@@ -29,5 +29,11 @@ export class UserController {
         @User('id') userId: number,
         @Body() updateInfoRequestDto: UpdateInfoRequestDto) {
         return this.userService.updateInfo(userId, updateInfoRequestDto);
+    }
+
+    @Get('/search')
+    @UseGuards(JwtAuthGuard)
+    searchUser(@Query('nickname') nickname: string) {
+        return this.userService.searchUser(nickname);
     }
 }
