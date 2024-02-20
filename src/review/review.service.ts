@@ -6,7 +6,6 @@ import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
 import { UserService } from 'src/user/user.service';
 import { CreateReviewRequestDto } from './dto/createReview.request.dto';
 import { RecordService } from 'src/record/record.service';
-import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class ReviewService {

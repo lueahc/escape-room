@@ -1,6 +1,6 @@
 import { TimestampEntity } from "src/timestamp.entity"
 import { User } from "src/user/user.entity";
-import { Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Record } from "./record.entity";
 
 @Entity()
@@ -13,4 +13,7 @@ export class Tag extends TimestampEntity {
 
     @ManyToOne(() => Record, (record) => record.tags)
     public record: Record;
+
+    @Column({ default: true })
+    visibility: boolean;
 }

@@ -115,9 +115,8 @@ export class RecordService {
         return record;
     }
 
-    @Transactional()
     async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto) {
-        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, note, party } = updateRecordRequestDto;
+        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, note } = updateRecordRequestDto;
 
         const record = await this.getRecordById(recordId);
         if (!record) {
