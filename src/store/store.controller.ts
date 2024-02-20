@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { StoreService } from './store.service';
 
 @Controller('store')
@@ -7,5 +7,8 @@ export class StoreController {
         private storeService: StoreService
     ) { }
 
-
+    @Get('/search')
+    searchStores(@Query('keyword') keyword: string) {
+        return this.storeService.getStoresByKeyword(keyword);
+    }
 }
