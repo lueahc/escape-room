@@ -12,16 +12,25 @@ export class Theme extends TimestampEntity {
     name: string;
 
     @Column()
+    image: string;
+
+    @Column()
     plot: string;
 
     @Column()
-    image: string;
+    genre: string;
+
+    @Column()
+    time: number;
+
+    @Column()
+    level: number;
 
     @Column()
     price: number;
 
     @Column()
-    time: number;
+    note: string;
 
     @ManyToOne(() => Store, (store) => store.themes)
     public store: Store;

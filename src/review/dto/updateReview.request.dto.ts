@@ -3,17 +3,19 @@ export class UpdateReviewRequestDto {
 
     rate: number;
 
-    difficulty: number;
-
-    horror: number;
-
     activity: number;
-
-    dramatic: number;
 
     story: number;
 
+    dramatic: number;
+
+    volume: number;
+
     problem: number;
+
+    difficulty: number;
+
+    horror: number;
 
     interior: number;
 }

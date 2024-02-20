@@ -5,10 +5,10 @@ export class CreateRecordRequestDto {
     themeId: number;
 
     @IsNotEmpty()
-    isSuccess: boolean;
+    playDate: Date;
 
     @IsNotEmpty()
-    playDate: Date;
+    isSuccess: boolean;
 
     @IsNotEmpty()
     headCount: number;
@@ -18,6 +18,8 @@ export class CreateRecordRequestDto {
     playTime: number;
 
     image: string;
+
+    note: string;
 
     party: number[];
 }

@@ -25,7 +25,7 @@ export class ReviewService {
     }
 
     async updateReview(userId: number, reviewId: number, updateReviewRequestDto: UpdateReviewRequestDto) {
-        const { content, rate, difficulty, horror, activity, dramatic, story, problem, interior } = updateReviewRequestDto;
+        const { content, rate, activity, story, dramatic, volume, problem, difficulty, horror, interior } = updateReviewRequestDto;
 
         const review = await this.getReviewById(reviewId);
         if (!review) {
@@ -53,12 +53,13 @@ export class ReviewService {
 
         review.content = content;
         review.rate = rate;
+        review.activity = activity;
+        review.story = story;
+        review.dramatic = dramatic;
+        review.volume = volume;
+        review.problem = problem;
         review.difficulty = difficulty;
         review.horror = horror;
-        review.activity = activity;
-        review.dramatic = dramatic;
-        review.story = story;
-        review.problem = problem;
         review.interior = interior;
         await this.reviewRepository.save(review);
 

@@ -21,22 +21,25 @@ export class Review extends TimestampEntity {
     rate: number;
 
     @Column({ nullable: true })
-    difficulty: number;
-
-    @Column({ nullable: true })
-    horror: number;
-
-    @Column({ nullable: true })
     activity: number;
-
-    @Column({ nullable: true })
-    dramatic: number;
 
     @Column({ nullable: true })
     story: number;
 
     @Column({ nullable: true })
+    dramatic: number;
+
+    @Column({ nullable: true })
+    volume: number;
+
+    @Column({ nullable: true })
     problem: number;
+
+    @Column({ nullable: true })
+    difficulty: number;
+
+    @Column({ nullable: true })
+    horror: number;
 
     @Column({ nullable: true })
     interior: number;

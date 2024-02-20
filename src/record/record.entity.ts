@@ -17,10 +17,10 @@ export class Record extends TimestampEntity {
     public theme: Theme;
 
     @Column()
-    isSuccess: boolean;
+    playDate: Date;
 
     @Column()
-    playDate: Date;
+    isSuccess: boolean;
 
     @Column()
     headCount: number;
@@ -33,6 +33,9 @@ export class Record extends TimestampEntity {
 
     @Column({ nullable: true })
     image: string;
+
+    @Column({ nullable: true })
+    note: string;
 
     @OneToMany(() => Review, (review) => review.record)
     public reviews: Review[];

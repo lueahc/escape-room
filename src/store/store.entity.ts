@@ -12,13 +12,13 @@ export class Store extends TimestampEntity {
     name: string;
 
     @Column()
-    phoneNo: string;
-
-    @Column()
     location: LocationEnum;
 
     @Column()
     address: string;
+
+    @Column()
+    phoneNo: string;
 
     @Column()
     homepageUrl: string;

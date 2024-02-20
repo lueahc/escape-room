@@ -13,17 +13,6 @@ export class ThemeService {
 
     async getAllThemes() {
         return await this.themeRepository.find({
-            select: {
-                id: true,
-                name: true,
-                image: true,
-                price: true,
-                time: true,
-                store: {
-                    id: true,
-                    name: true
-                }
-            },
             relations: {
                 store: true
             },
@@ -32,17 +21,6 @@ export class ThemeService {
 
     async getThemesByLocation(location: LocationEnum) {
         return await this.themeRepository.find({
-            select: {
-                id: true,
-                name: true,
-                image: true,
-                price: true,
-                time: true,
-                store: {
-                    id: true,
-                    name: true
-                }
-            },
             relations: {
                 store: true
             },
@@ -56,17 +34,6 @@ export class ThemeService {
 
     async getThemesByKeyword(keyword: string) {
         return await this.themeRepository.find({
-            select: {
-                id: true,
-                name: true,
-                image: true,
-                price: true,
-                time: true,
-                store: {
-                    id: true,
-                    name: true
-                }
-            },
             relations: {
                 store: true
             },
@@ -78,36 +45,25 @@ export class ThemeService {
 
     async getThemeById(id: number) {
         return await this.themeRepository.findOne({
-            select: {
-                id: true,
-                name: true,
-                plot: true,
-                image: true,
-                price: true,
-                time: true,
-                store: {
-                    id: true,
-                    name: true,
-                    phoneNo: true,
-                    address: true,
-                    homepageUrl: true
-                },
-                records: {
-                    id: true,
-                    isSuccess: true,
-                    playDate: true,
-                    headCount: true,
-                    hintCount: true,
-                    playTime: true,
-                    reviews: {
-                        id: true,
-                        writer: {
-                            nickname: true
-                        },
-                        rate: true
-                    }
-                }
-            },
+            // select: {
+            //     id: true,
+            //     name: true,
+            //     store: {
+            //         id: true,
+            //         name: true,
+            //     },
+            //     records: {
+            //         id: true,
+            //         playDate: true,
+            //         reviews: {
+            //             id: true,
+            //             writer: {
+            //                 nickname: true
+            //             },
+            //             rate: true
+            //         }
+            //     }
+            // },
             relations: {
                 store: true,
                 records: {

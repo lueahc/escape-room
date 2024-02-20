@@ -3,9 +3,9 @@ import { IsNotEmpty } from "class-validator";
 export class UpdateRecordRequestDto {
     themeId: number;
 
-    isSuccess: boolean;
-
     playDate: Date;
+
+    isSuccess: boolean;
 
     @IsNotEmpty()
     headCount: number;
@@ -15,6 +15,8 @@ export class UpdateRecordRequestDto {
     playTime: number;
 
     image: string;
+
+    note: string;
 
     party: number[];
 }

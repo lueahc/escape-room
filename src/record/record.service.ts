@@ -41,7 +41,7 @@ export class RecordService {
 
     @Transactional()
     async createRecord(userId: number, createRecordRequestDto: CreateRecordRequestDto) {
-        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, party } = createRecordRequestDto;
+        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, note, party } = createRecordRequestDto;
 
         const user = await this.userService.findOneById(userId);
         if (!user) {
@@ -67,7 +67,8 @@ export class RecordService {
             headCount,
             hintCount,
             playTime,
-            image
+            image,
+            note
         });
         await this.recordRepository.save(record);
 
@@ -101,7 +102,7 @@ export class RecordService {
 
     @Transactional()
     async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto) {
-        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, party } = updateRecordRequestDto;
+        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, note, party } = updateRecordRequestDto;
 
         const record = await this.getRecordById(recordId);
         if (!record) {
@@ -142,6 +143,7 @@ export class RecordService {
         record.hintCount = hintCount;
         record.playTime = playTime;
         record.image = image;
+        record.note = note;
         await this.recordRepository.save(record);
 
         return record;
