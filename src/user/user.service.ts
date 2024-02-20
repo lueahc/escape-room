@@ -41,6 +41,20 @@ export class UserService {
         });
     }
 
+    async searchUser(nickname: string) {
+        const user = await this.findOneByNickname(nickname);
+        if (!user) {
+            throw new NotFoundException(
+                '사용자가 존재하지 않습니다.',
+                'NON_EXISTING_USER'
+            );
+        }
+
+        return {
+            userId: user.id
+        }
+    }
+
     async signUp(signUpRequestDto: SignUpRequestDto) {
         const { email, password, nickname } = signUpRequestDto;
 
