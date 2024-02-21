@@ -33,4 +33,12 @@ export class RecordController {
         @Body() updateRecordRequestDto: UpdateRecordRequestDto) {
         return this.recordService.updateRecord(userId, recordId, updateRecordRequestDto);
     }
+
+    @Patch('/:recordId/visibility')
+    @UseGuards(JwtAuthGuard)
+    changeRecordVisibility(
+        @User('id') userId: number,
+        @Param('recordId', ParseIntPipe) recordId: number) {
+        return this.recordService.changeRecordVisibility(userId, recordId);
+    }
 }
