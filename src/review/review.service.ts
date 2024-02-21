@@ -27,6 +27,13 @@ export class ReviewService {
         });
     }
 
+    async hasReviews(recordId: number) {
+        return await this.reviewRepository
+            .createQueryBuilder('review')
+            .where('review.record_id = :recordId', { recordId })
+            .getCount();
+    }
+
     async createReview(userId: number, createReviewRequestDto: CreateReviewRequestDto) {
         const { recordId, content, rate, activity, story, dramatic, volume, problem, difficulty, horror, interior } = createReviewRequestDto;
 
