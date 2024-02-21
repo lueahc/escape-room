@@ -238,4 +238,34 @@ export class RecordService {
 
         return {}
     }
+
+    async deleteRecord(userId: number, recordId: number) {
+        const record = await this.getRecordById(recordId);
+        if (!record) {
+            throw new NotFoundException(
+                '기록이 존재하지 않습니다.',
+                'NON_EXISTING_RECORD'
+            )
+        }
+
+        const user = await this.userService.findOneById(userId);
+        if (!user) {
+            throw new NotFoundException(
+                '사용자가 존재하지 않습니다.',
+                'NON_EXISTING_USER'
+            );
+        }
+
+        const recordWriter = record.writer;
+        if (userId !== recordWriter.id) {
+            return new ForbiddenException(
+                '기록을 등록한 사용자가 아닙니다.',
+                'USER_WRITER_DISCORDANCE'
+            )
+        }
+
+        // 리뷰 0개 확인
+
+        await this.recordRepository.softDelete({ id: recordId });
+    }
 }
