@@ -6,7 +6,6 @@ import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
 import { UserService } from 'src/user/user.service';
 import { CreateReviewRequestDto } from './dto/createReview.request.dto';
 import { RecordService } from 'src/record/record.service';
-import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class ReviewService {
@@ -47,11 +46,9 @@ export class ReviewService {
             );
         }
 
-        const recordWriterId = record.writer.id;
-        const tags = await this.recordService.getTagsByRecordId(recordId);
-        const taggedUsers = tags && tags.map((tag) => tag.user.id);
-        const ifTagged = taggedUsers && taggedUsers.includes(userId);
-        if ((!ifTagged && userId !== recordWriterId) || !ifTagged) {
+        const isWriter = userId === record.writer.id;
+        const isTagged = await this.recordService.isUserTagged(userId, recordId);
+        if (!isWriter && !isTagged) {
             throw new ForbiddenException(
                 '리뷰를 등록할 수 있는 사용자가 아닙니다.',
                 'USER_FORBIDDEN')

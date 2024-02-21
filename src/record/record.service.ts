@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Record } from './record.entity';
 import { Repository } from 'typeorm';
@@ -52,6 +52,35 @@ export class RecordService {
                 }
             }
         })
+    }
+
+    async getOneTag(userId: number, recordId: number) {
+        return await this.tagRepository.findOne({
+            relations: {
+                user: true,
+                record: true
+            },
+            where: {
+                user: {
+                    id: userId
+                },
+                record: {
+                    id: recordId
+                }
+            }
+        })
+    }
+
+    async isUserTagged(userId: number, recordId: number) {
+        const tags = await this.getTagsByRecordId(recordId);
+        const taggedUsers = tags.map((tag) => tag.user.id);
+
+        return taggedUsers.includes(userId);
+    }
+
+    changeVisibility(element) {
+        if (element.visibility) element.visibility = false;
+        else element.visibility = true;
     }
 
     @Transactional()
@@ -115,9 +144,8 @@ export class RecordService {
         return record;
     }
 
-    @Transactional()
     async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto) {
-        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, note, party } = updateRecordRequestDto;
+        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, note } = updateRecordRequestDto;
 
         const record = await this.getRecordById(recordId);
         if (!record) {
@@ -162,5 +190,52 @@ export class RecordService {
         await this.recordRepository.save(record);
 
         return record;
+    }
+
+    async changeRecordVisibility(userId: number, recordId: number) {
+        const record = await this.getRecordById(recordId);
+        if (!record) {
+            throw new NotFoundException(
+                '기록이 존재하지 않습니다.',
+                'NON_EXISTING_RECORD'
+            )
+        }
+
+        const user = await this.userService.findOneById(userId);
+        if (!user) {
+            throw new NotFoundException(
+                '사용자가 존재하지 않습니다.',
+                'NON_EXISTING_USER'
+            );
+        }
+
+        const isWriter = userId === record.writer.id;
+        const isTagged = await this.isUserTagged(userId, recordId);
+        if (!isWriter && !isTagged) {
+            throw new ForbiddenException(
+                '공개 여부를 변경할 수 있는 사용자가 아닙니다.',
+                'USER_FORBIDDEN')
+        }
+
+        // 본인
+        if (isWriter) {
+            this.changeVisibility(record);
+            await this.recordRepository.save(record);
+        }
+
+        // 일행
+        if (isTagged) {
+            const tag = await this.getOneTag(userId, recordId);
+            if (!tag) {
+                throw new InternalServerErrorException(
+                    '해당 기록에 태그된 사용자가 아닙니다.',
+                    'USER_FORBIDDEN')
+            }
+
+            this.changeVisibility(tag);
+            await this.tagRepository.save(tag);
+        }
+
+        return {}
     }
 }
