@@ -211,7 +211,7 @@ export class RecordService {
 
         const isWriter = userId === record.writer.id;
         const isTagged = await this.isUserTagged(userId, recordId);
-        if ((!isWriter && !isTagged)) {
+        if (!isWriter && !isTagged) {
             throw new ForbiddenException(
                 '공개 여부를 변경할 수 있는 사용자가 아닙니다.',
                 'USER_FORBIDDEN')
