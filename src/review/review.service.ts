@@ -28,10 +28,16 @@ export class ReviewService {
     }
 
     async hasReviews(recordId: number) {
-        return await this.reviewRepository
+        const reviewCount = await this.reviewRepository
             .createQueryBuilder('review')
             .where('review.record_id = :recordId', { recordId })
             .getCount();
+        if (reviewCount === 0) return false;
+        else return true;
+    }
+
+    async countVisibleReviews(recordId: number) {
+
     }
 
     async createReview(userId: number, createReviewRequestDto: CreateReviewRequestDto) {
