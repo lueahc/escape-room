@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, HttpCode, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
