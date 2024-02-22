@@ -36,8 +36,27 @@ export class ReviewService {
         else return true;
     }
 
-    async countVisibleReviews(recordId: number) {
-
+    async countVisibleReviewsOfTheme(themeId: number) {
+        const rawQuery =
+            `select sum(cnt) from (select count(*) as cnt
+                                from record
+                                    right join review r on record.id = r.record_id
+                                where record.theme_id = ?
+                                    and record.writer_id = r.writer_id
+                                    and record.visibility in (select visibility
+                                                                from record
+                                                                where record.visibility = true)
+            union
+                                select count(*) as cnt
+                                from record
+                                    right join review r on record.id = r.record_id
+                                    right join tag t on record.id = t.record_id
+                                where record.theme_id = ?
+                                    and record.writer_id != r.writer_id
+                                    and t.visibility in (select visibility
+                                                            from tag
+                                                            where tag.visibility = true)) ha`;
+        return this.reviewRepository.query(rawQuery, [themeId, themeId]);
     }
 
     async createReview(userId: number, createReviewRequestDto: CreateReviewRequestDto) {
