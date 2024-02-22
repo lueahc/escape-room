@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Record } from './record.entity';
 import { Repository } from 'typeorm';
@@ -8,6 +8,7 @@ import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
 import { ThemeService } from 'src/theme/theme.service';
 import { UserService } from 'src/user/user.service';
 import { Tag } from './tag.entity';
+import { ReviewService } from 'src/review/review.service';
 
 @Injectable()
 export class RecordService {
@@ -18,6 +19,8 @@ export class RecordService {
         private readonly tagRepository: Repository<Tag>,
         private readonly userService: UserService,
         private readonly themeService: ThemeService,
+        @Inject(forwardRef(() => ReviewService))
+        private readonly reviewService: ReviewService
     ) { }
 
     async test() {
@@ -165,7 +168,7 @@ export class RecordService {
 
         const recordWriter = record.writer;
         if (userId !== recordWriter.id) {
-            return new ForbiddenException(
+            throw new ForbiddenException(
                 '기록을 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
             )
@@ -237,5 +240,41 @@ export class RecordService {
         }
 
         return {}
+    }
+
+    async deleteRecord(userId: number, recordId: number) {
+        const record = await this.getRecordById(recordId);
+        if (!record) {
+            throw new NotFoundException(
+                '기록이 존재하지 않습니다.',
+                'NON_EXISTING_RECORD'
+            )
+        }
+
+        const user = await this.userService.findOneById(userId);
+        if (!user) {
+            throw new NotFoundException(
+                '사용자가 존재하지 않습니다.',
+                'NON_EXISTING_USER'
+            );
+        }
+
+        const recordWriter = record.writer;
+        if (userId !== recordWriter.id) {
+            throw new ForbiddenException(
+                '기록을 등록한 사용자가 아닙니다.',
+                'USER_WRITER_DISCORDANCE'
+            )
+        }
+
+        const hasReviews = await this.reviewService.hasReviews(recordId);
+        if (hasReviews) {
+            throw new BadRequestException(
+                '기록에 리뷰가 존재합니다.',
+                'REVIEWS_EXISTING_IN_RECORD'
+            )
+        } else {
+            await this.recordRepository.softDelete({ id: recordId });
+        }
     }
 }

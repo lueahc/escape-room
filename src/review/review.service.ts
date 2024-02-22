@@ -27,6 +27,19 @@ export class ReviewService {
         });
     }
 
+    async hasReviews(recordId: number) {
+        const reviewCount = await this.reviewRepository
+            .createQueryBuilder('review')
+            .where('review.record_id = :recordId', { recordId })
+            .getCount();
+        if (reviewCount === 0) return false;
+        else return true;
+    }
+
+    async countVisibleReviews(recordId: number) {
+
+    }
+
     async createReview(userId: number, createReviewRequestDto: CreateReviewRequestDto) {
         const { recordId, content, rate, activity, story, dramatic, volume, problem, difficulty, horror, interior } = createReviewRequestDto;
 
@@ -94,7 +107,7 @@ export class ReviewService {
 
         const reviewWriter = review.writer;
         if (userId !== reviewWriter.id) {
-            return new ForbiddenException(
+            throw new ForbiddenException(
                 '리뷰를 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
             )
@@ -134,7 +147,7 @@ export class ReviewService {
 
         const reviewWriter = review.writer;
         if (userId !== reviewWriter.id) {
-            return new ForbiddenException(
+            throw new ForbiddenException(
                 '리뷰를 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
             )

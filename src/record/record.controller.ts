@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { RecordService } from './record.service';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
@@ -40,5 +40,14 @@ export class RecordController {
         @User('id') userId: number,
         @Param('recordId', ParseIntPipe) recordId: number) {
         return this.recordService.changeRecordVisibility(userId, recordId);
+    }
+
+    @Delete('/:recordId')
+    @HttpCode(204)
+    @UseGuards(JwtAuthGuard)
+    deleteRecord(
+        @User('id') userId: number,
+        @Param('recordId', ParseIntPipe) recordId: number) {
+        return this.recordService.deleteRecord(userId, recordId);
     }
 }

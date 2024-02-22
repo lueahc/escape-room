@@ -23,18 +23,11 @@ export class StoreService {
     }
 
     async getAllStores() {
-        return await this.storeRepository.find({
-            // relations: {
-            //     themes: true
-            // },
-        });
+        return await this.storeRepository.find();
     }
 
     async getStoresByLocation(location: LocationEnum) {
         return await this.storeRepository.find({
-            // relations: {
-            //     themes: true
-            // },
             where: {
                 location
             }
