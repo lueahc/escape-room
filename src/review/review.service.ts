@@ -107,7 +107,7 @@ export class ReviewService {
 
         const reviewWriter = review.writer;
         if (userId !== reviewWriter.id) {
-            return new ForbiddenException(
+            throw new ForbiddenException(
                 '리뷰를 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
             )
@@ -147,7 +147,7 @@ export class ReviewService {
 
         const reviewWriter = review.writer;
         if (userId !== reviewWriter.id) {
-            return new ForbiddenException(
+            throw new ForbiddenException(
                 '리뷰를 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
             )
