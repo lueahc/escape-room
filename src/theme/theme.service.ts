@@ -11,6 +11,22 @@ export class ThemeService {
         private readonly themeRepository: Repository<Theme>,
     ) { }
 
+    async getThemeById(id: number) {
+        return await this.themeRepository.findOne({
+            relations: {
+                store: true,
+                records: {
+                    reviews: {
+                        writer: true
+                    }
+                }
+            },
+            where: {
+                id
+            }
+        })
+    }
+
     async getAllThemes() {
         return await this.themeRepository.find({
             relations: {
@@ -43,7 +59,7 @@ export class ThemeService {
         })
     }
 
-    async getThemeById(id: number) {
+    async getOneTheme(id: number) {
         return await this.themeRepository.findOne({
             // select: {
             //     id: true,

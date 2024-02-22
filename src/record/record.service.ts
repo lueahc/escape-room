@@ -86,6 +86,18 @@ export class RecordService {
         else element.visibility = true;
     }
 
+    async getLogs(userId: number) {
+        const rawQuery =
+            `select record.id, record.play_date, store.name, theme.name, record.is_success
+            from record, store, theme
+            where record.theme_id = theme.id and theme.store_id = store.id and record.writer_id = ? and record.visibility = true
+            union
+            select record.id, record.play_date, store.name, theme.name, record.is_success
+            from record, store, theme, tag
+            where tag.record_id = record.id and record.theme_id = theme.id and theme.store_id = store.id and tag.user_id = ? and tag.visibility = true`;
+        return await this.recordRepository.query(rawQuery, [userId, userId]);
+    }
+
     @Transactional()
     async createRecord(userId: number, createRecordRequestDto: CreateRecordRequestDto) {
         const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, note, party } = createRecordRequestDto;
