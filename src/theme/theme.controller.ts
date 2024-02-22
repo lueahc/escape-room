@@ -23,6 +23,6 @@ export class ThemeController {
 
     @Get('/:themeId')
     getThemeInfo(@Param('themeId', ParseIntPipe) themeId: number) {
-        return this.themeService.getThemeById(themeId);
+        return this.themeService.getOneTheme(themeId);
     }
 }

@@ -16,6 +16,12 @@ export class RecordController {
         return this.recordService.test();
     }
 
+    @Get('/log')
+    @UseGuards(JwtAuthGuard)
+    getLogs(@User('id') userId: number) {
+        return this.recordService.getLogs(userId);
+    }
+
     @Post()
     @HttpCode(201)
     @UseGuards(JwtAuthGuard)

@@ -56,7 +56,7 @@ export class ReviewService {
                                     and t.visibility in (select visibility
                                                             from tag
                                                             where tag.visibility = true)) ha`;
-        return this.reviewRepository.query(rawQuery, [themeId, themeId]);
+        return await this.reviewRepository.query(rawQuery, [themeId, themeId]);
     }
 
     async createReview(userId: number, createReviewRequestDto: CreateReviewRequestDto) {
