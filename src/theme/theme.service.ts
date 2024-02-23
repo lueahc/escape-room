@@ -27,6 +27,19 @@ export class ThemeService {
         })
     }
 
+    async getThemeListByStoreId(storeId: number) {
+        const themes = await this.themeRepository.find({
+            where: {
+                store: {
+                    id: storeId
+                }
+            }
+        })
+        const themeList = themes.map((theme) => theme.id);
+
+        return themeList;
+    }
+
     async getAllThemes() {
         return await this.themeRepository.find({
             relations: {
