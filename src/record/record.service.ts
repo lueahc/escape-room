@@ -155,7 +155,6 @@ export class RecordService {
         const logs = await this.recordRepository.query(rawQuery, [userId, userId]);
 
         const mapLogs = logs.map((log) => {
-            console.log(log)
             return new GetLogsResponseDto(log);
         });
 

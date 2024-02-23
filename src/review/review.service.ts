@@ -7,6 +7,7 @@ import { UserService } from 'src/user/user.service';
 import { CreateReviewRequestDto } from './dto/createReview.request.dto';
 import { RecordService } from 'src/record/record.service';
 import { ThemeService } from 'src/theme/theme.service';
+import { GetVisibleReviewsResponseDto } from './dto/getVisibleReviews.response.dto';
 
 @Injectable()
 export class ReviewService {
@@ -75,6 +76,39 @@ export class ReviewService {
         }
 
         return reviewCount;
+    }
+
+    async getVisibleReviews() {
+        const rawQuery =
+            `select r.id, u.nickname, r.content, r.rate, r.activity, r.story, r.dramatic, r.volume, r.problem, r.difficulty, r.horror, r.interior, t2.name as theme_name, s.name as store_name, record.play_date, record.is_success, record.head_count, record.hint_count, record.play_time
+            from review r
+           left join record on record.id = r.record_id
+           right join user u on u.id = r.writer_id
+           right join theme t2 on record.theme_id = t2.id
+           right join store s on t2.store_id = s.id
+           where record.writer_id = r.writer_id and record.visibility in (select visibility
+                                                                           from record
+                                                                           where record.visibility = true)
+           union
+           select r.id, u.nickname, r.content, r.rate, r.activity, r.story, r.dramatic, r.volume, r.problem, r.difficulty, r.horror, r.interior, t2.name as theme_name, s.name as store_name, record.play_date, record.is_success, record.head_count, record.hint_count, record.play_time
+            from review r
+           left join record on record.id = r.record_id
+           right join user u on u.id = r.writer_id
+           right join tag t on record.id = t.record_id
+           right join theme t2 on record.theme_id = t2.id
+           right join store s on t2.store_id = s.id
+           where record.writer_id != r.writer_id and t.visibility in (select visibility
+                                                                       from tag
+                                                                       where tag.visibility = true)
+           order by id desc`;
+        const reviews = await this.reviewRepository.query(rawQuery);
+
+        const mapReviews = reviews.map((review) => {
+            console.log(review)
+            return new GetVisibleReviewsResponseDto(review);
+        });
+
+        return mapReviews;
     }
 
     async createReview(userId: number, createReviewRequestDto: CreateReviewRequestDto) {
