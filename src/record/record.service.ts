@@ -151,7 +151,8 @@ export class RecordService {
             union
             select record.id, record.play_date, store.name as store_name, theme.name as theme_name, record.is_success
             from record, store, theme, tag
-            where tag.record_id = record.id and record.theme_id = theme.id and theme.store_id = store.id and tag.user_id = ? and tag.visibility = true`;
+            where tag.record_id = record.id and record.theme_id = theme.id and theme.store_id = store.id and tag.user_id = ? and tag.visibility = true
+            order by play_date desc`;
         const logs = await this.recordRepository.query(rawQuery, [userId, userId]);
 
         const mapLogs = logs.map((log) => {
