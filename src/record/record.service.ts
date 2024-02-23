@@ -9,6 +9,7 @@ import { ThemeService } from 'src/theme/theme.service';
 import { UserService } from 'src/user/user.service';
 import { Tag } from './tag.entity';
 import { ReviewService } from 'src/review/review.service';
+import { GetLogsResponseDto } from './dto/getLogs.response.dto';
 
 @Injectable()
 export class RecordService {
@@ -88,14 +89,21 @@ export class RecordService {
 
     async getLogs(userId: number) {
         const rawQuery =
-            `select record.id, record.play_date, store.name, theme.name, record.is_success
+            `select record.id, record.play_date, store.name as store_name, theme.name as theme_name, record.is_success
             from record, store, theme
             where record.theme_id = theme.id and theme.store_id = store.id and record.writer_id = ? and record.visibility = true
             union
-            select record.id, record.play_date, store.name, theme.name, record.is_success
+            select record.id, record.play_date, store.name as store_name, theme.name as theme_name, record.is_success
             from record, store, theme, tag
             where tag.record_id = record.id and record.theme_id = theme.id and theme.store_id = store.id and tag.user_id = ? and tag.visibility = true`;
-        return await this.recordRepository.query(rawQuery, [userId, userId]);
+        const logs = await this.recordRepository.query(rawQuery, [userId, userId]);
+
+        const mapLogs = logs.map((log) => {
+            console.log(log)
+            return new GetLogsResponseDto(log);
+        });
+
+        return mapLogs;
     }
 
     @Transactional()
