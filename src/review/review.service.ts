@@ -6,6 +6,7 @@ import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
 import { UserService } from 'src/user/user.service';
 import { CreateReviewRequestDto } from './dto/createReview.request.dto';
 import { RecordService } from 'src/record/record.service';
+import { ThemeService } from 'src/theme/theme.service';
 
 @Injectable()
 export class ReviewService {
@@ -14,6 +15,7 @@ export class ReviewService {
         private readonly reviewRepository: Repository<Review>,
         private readonly userService: UserService,
         private readonly recordService: RecordService,
+        private readonly themeService: ThemeService
     ) { }
 
     async getReviewById(id: number) {
@@ -38,7 +40,7 @@ export class ReviewService {
 
     async countVisibleReviewsOfTheme(themeId: number) {
         const rawQuery =
-            `select sum(cnt) from (select count(*) as cnt
+            `select count(*) from (select r.id
                                 from record
                                     right join review r on record.id = r.record_id
                                 where record.theme_id = ?
@@ -47,7 +49,7 @@ export class ReviewService {
                                                                 from record
                                                                 where record.visibility = true)
             union
-                                select count(*) as cnt
+                                select r.id
                                 from record
                                     right join review r on record.id = r.record_id
                                     right join tag t on record.id = t.record_id
@@ -56,7 +58,23 @@ export class ReviewService {
                                     and t.visibility in (select visibility
                                                             from tag
                                                             where tag.visibility = true)) ha`;
-        return await this.reviewRepository.query(rawQuery, [themeId, themeId]);
+
+        const result = await this.reviewRepository.query(rawQuery, [themeId, themeId]);
+        const reviewCount = parseInt(result[0]['count(*)'], 10);
+
+        return reviewCount;
+    }
+
+    async countReviewsOfStore(storeId: number) {
+        let reviewCount = 0;
+        const themeList = await this.themeService.getThemeListByStoreId(storeId);
+
+        for (const themeId of themeList) {
+            const reviewNumber = await this.countVisibleReviewsOfTheme(themeId);
+            reviewCount += reviewNumber;
+        }
+
+        return reviewCount;
     }
 
     async createReview(userId: number, createReviewRequestDto: CreateReviewRequestDto) {
