@@ -34,6 +34,17 @@ export class RecordService {
 
     async getRecordById(id: number) {
         return await this.recordRepository.findOne({
+            relations: {
+                writer: true
+            },
+            where: {
+                id
+            }
+        });
+    }
+
+    async getRecordInfo(id: number) {
+        return await this.recordRepository.findOne({
             select: {
                 id: true,
                 writer: {
@@ -152,7 +163,7 @@ export class RecordService {
     }
 
     async getRecordAndReviews(recordId: number) {
-        const record = await this.getRecordById(recordId);
+        const record = await this.getRecordInfo(recordId);
         if (!record) {
             throw new NotFoundException(
                 '기록이 존재하지 않습니다.',
