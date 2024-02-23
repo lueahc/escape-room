@@ -34,8 +34,53 @@ export class RecordService {
 
     async getRecordById(id: number) {
         return await this.recordRepository.findOne({
+            select: {
+                id: true,
+                writer: {
+                    id: true,
+                    nickname: true,
+                },
+                theme: {
+                    id: true,
+                    name: true,
+                    store: {
+                        id: true,
+                        name: true
+                    }
+                },
+                playDate: true,
+                isSuccess: true,
+                headCount: true,
+                hintCount: true,
+                playTime: true,
+                image: true,
+                note: true,
+                reviews: {
+                    id: true,
+                    writer: {
+                        id: true,
+                        nickname: true
+                    },
+                    content: true,
+                    rate: true,
+                    activity: true,
+                    story: true,
+                    dramatic: true,
+                    volume: true,
+                    problem: true,
+                    difficulty: true,
+                    horror: true,
+                    interior: true,
+                }
+            },
             relations: {
-                writer: true
+                writer: true,
+                theme: {
+                    store: true
+                },
+                reviews: {
+                    writer: true
+                }
             },
             where: {
                 id
@@ -104,6 +149,18 @@ export class RecordService {
         });
 
         return mapLogs;
+    }
+
+    async getRecordAndReviews(recordId: number) {
+        const record = await this.getRecordById(recordId);
+        if (!record) {
+            throw new NotFoundException(
+                '기록이 존재하지 않습니다.',
+                'NON_EXISTING_RECORD'
+            )
+        }
+
+        return record;
     }
 
     @Transactional()
