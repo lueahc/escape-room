@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException, forwardRef } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Record } from './record.entity';
 import { Repository } from 'typeorm';
@@ -23,14 +23,6 @@ export class RecordService {
         @Inject(forwardRef(() => ReviewService))
         private readonly reviewService: ReviewService
     ) { }
-
-    async test() {
-        return await this.recordRepository.find({
-            relations: {
-                reviews: true
-            },
-        });
-    }
 
     async getRecordById(id: number) {
         return await this.recordRepository.findOne({
@@ -99,21 +91,6 @@ export class RecordService {
         });
     }
 
-    async getTagsByRecordId(recordId: number) {
-        return await this.tagRepository.find({
-            select: {
-                user: {
-                    id: true
-                }
-            },
-            where: {
-                record: {
-                    id: recordId
-                }
-            }
-        })
-    }
-
     async getOneTag(userId: number, recordId: number) {
         return await this.tagRepository.findOne({
             relations: {
@@ -131,29 +108,25 @@ export class RecordService {
         })
     }
 
-    async isUserTagged(userId: number, recordId: number) {
-        const tags = await this.getTagsByRecordId(recordId);
-        const taggedUsers = tags.map((tag) => tag.user.id);
-
-        return taggedUsers.includes(userId);
-    }
-
     changeVisibility(element) {
         if (element.visibility) element.visibility = false;
         else element.visibility = true;
     }
 
     async getLogs(userId: number) {
-        const rawQuery =
-            `select record.id, record.play_date, store.name as store_name, theme.name as theme_name, record.is_success
-            from record, store, theme
-            where record.theme_id = theme.id and theme.store_id = store.id and record.writer_id = ? and record.visibility = true
-            union
-            select record.id, record.play_date, store.name as store_name, theme.name as theme_name, record.is_success
-            from record, store, theme, tag
-            where tag.record_id = record.id and record.theme_id = theme.id and theme.store_id = store.id and tag.user_id = ? and tag.visibility = true
-            order by play_date desc`;
-        const logs = await this.recordRepository.query(rawQuery, [userId, userId]);
+        const logs = await this.recordRepository.createQueryBuilder('r')
+            .leftJoin('theme', 't', 'r.theme_id = t.id')
+            .leftJoin('store', 's', 't.store_id = s.id')
+            .leftJoin('tag', 't2', 't2.record_id = r.id')
+            .addSelect('r.id', 'id')
+            .addSelect('r.playDate', 'play_date')
+            .addSelect('s.name', 'store_name')
+            .addSelect('t.name', 'theme_name')
+            .addSelect('r.isSuccess', 'is_success')
+            .where('r.writer_id = :userId and t2.isWriter = true and t2.visibility = true', { userId })
+            .orWhere('t2.user_id = :userId and t2.isWriter = false and t2.visibility = true', { userId })
+            .orderBy('play_date', 'DESC')
+            .getRawMany();
 
         const mapLogs = logs.map((log) => {
             return new GetLogsResponseDto(log);
@@ -207,6 +180,13 @@ export class RecordService {
         });
         await this.recordRepository.save(record);
 
+        const tag = this.tagRepository.create({
+            user,
+            record,
+            isWriter: true
+        });
+        await this.tagRepository.save(tag);
+
         if (party) {
             if (headCount < party.length) {
                 throw new BadRequestException(
@@ -226,7 +206,8 @@ export class RecordService {
 
                 const tag = this.tagRepository.create({
                     user: member,
-                    record
+                    record,
+                    isWriter: false
                 });
                 await this.tagRepository.save(tag);
             }
@@ -300,32 +281,15 @@ export class RecordService {
             );
         }
 
-        const isWriter = userId === record.writer.id;
-        const isTagged = await this.isUserTagged(userId, recordId);
-        if (!isWriter && !isTagged) {
+        const tag = await this.getOneTag(userId, recordId);
+        if (!tag) {
             throw new ForbiddenException(
-                '공개 여부를 변경할 수 있는 사용자가 아닙니다.',
+                '해당 기록에 태그된 사용자가 아닙니다.',
                 'USER_FORBIDDEN')
         }
 
-        // 본인
-        if (isWriter) {
-            this.changeVisibility(record);
-            await this.recordRepository.save(record);
-        }
-
-        // 일행
-        if (isTagged) {
-            const tag = await this.getOneTag(userId, recordId);
-            if (!tag) {
-                throw new InternalServerErrorException(
-                    '해당 기록에 태그된 사용자가 아닙니다.',
-                    'USER_FORBIDDEN')
-            }
-
-            this.changeVisibility(tag);
-            await this.tagRepository.save(tag);
-        }
+        this.changeVisibility(tag);
+        await this.tagRepository.save(tag);
 
         return {}
     }

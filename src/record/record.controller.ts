@@ -11,11 +11,6 @@ export class RecordController {
         private recordService: RecordService
     ) { }
 
-    @Get()
-    test() {
-        return this.recordService.test();
-    }
-
     @Get('/log')
     @UseGuards(JwtAuthGuard)
     getLogs(@User('id') userId: number) {

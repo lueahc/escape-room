@@ -42,7 +42,4 @@ export class Record extends TimestampEntity {
 
     @OneToMany(() => Tag, (tag) => tag.record)
     public tags: Tag[];
-
-    @Column({ default: true })
-    visibility: boolean;
 }
