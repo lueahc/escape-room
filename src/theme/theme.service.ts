@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Theme } from './theme.entity';
 import { Like, Repository } from 'typeorm';
 import { LocationEnum } from '../store/location.enum';
-import { GetAllThemesResponseDto } from './dto/getAllThemes.response.dto';
+import { GetThemesListResponseDto } from './dto/getThemesList.response.dto';
 import { ReviewService } from 'src/review/review.service';
 
 @Injectable()
@@ -35,14 +35,11 @@ export class ThemeService {
             relations: {
                 store: true
             },
-            order: {
-                id: 'DESC'
-            }
         });
 
         const mapthemes = await Promise.all(themes.map(async (theme) => {
             const reviewCount = await this.reviewService.countVisibleReviewsOfTheme(theme.id);
-            return new GetAllThemesResponseDto({ theme, reviewCount });
+            return new GetThemesListResponseDto({ theme, reviewCount });
         }));
 
         return mapthemes;
@@ -57,19 +54,53 @@ export class ThemeService {
                 store: {
                     location
                 }
-            }
-        })
+            },
+        });
+
+        const mapthemes = await Promise.all(themes.map(async (theme) => {
+            const reviewCount = await this.reviewService.countVisibleReviewsOfTheme(theme.id);
+            return new GetThemesListResponseDto({ theme, reviewCount });
+        }));
+
+        return mapthemes;
     }
 
     async getThemesByKeyword(keyword: string) {
-        return await this.themeRepository.find({
+        const themes = await this.themeRepository.find({
             relations: {
                 store: true
             },
             where: {
                 name: Like(`%${keyword}%`)
             }
-        })
+        });
+
+        const mapthemes = await Promise.all(themes.map(async (theme) => {
+            const reviewCount = await this.reviewService.countVisibleReviewsOfTheme(theme.id);
+            return new GetThemesListResponseDto({ theme, reviewCount });
+        }));
+
+        return mapthemes;
+    }
+
+    async getThemesByStoreId(storeId: number) {
+        const themes = await this.themeRepository.find({
+            relations: {
+                store: true
+            },
+            where: {
+                store: {
+                    id: storeId
+                }
+            },
+        });
+
+        const mapthemes = await Promise.all(themes.map(async (theme) => {
+            const reviewCount = await this.reviewService.countVisibleReviewsOfTheme(theme.id);
+            return new GetThemesListResponseDto({ theme, reviewCount });
+        }));
+
+        return mapthemes;
     }
 
     async getOneTheme(id: number) {

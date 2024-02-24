@@ -23,6 +23,6 @@ export class StoreController {
 
     @Get('/:storeId')
     getStoreInfo(@Param('storeId', ParseIntPipe) storeId: number) {
-        return this.storeService.getStoreById(storeId);
+        return this.storeService.getOneStore(storeId);
     }
 }

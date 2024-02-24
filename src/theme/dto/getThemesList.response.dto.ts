@@ -10,7 +10,7 @@ import { LocationEnum } from "src/store/location.enum";
 //     }
 // }
 
-export class GetAllThemesResponseDto {
+export class GetThemesListResponseDto {
     id: number;
     storeName: string;
     storeLocation: LocationEnum;

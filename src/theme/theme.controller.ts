@@ -19,13 +19,11 @@ export class ThemeController {
         if (!location) {
             return this.themeService.getAllThemes();
         }
-        const result = this.themeService.getThemesByLocation(location);
-        return result
+        return this.themeService.getThemesByLocation(location);
     }
 
     @Get('/:themeId')
     getThemeInfo(@Param('themeId', ParseIntPipe) themeId: number) {
-        const result = this.themeService.getOneTheme(themeId);
-        return result
+        return this.themeService.getOneTheme(themeId);
     }
 }
