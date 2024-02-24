@@ -16,4 +16,7 @@ export class Tag extends TimestampEntity {
 
     @Column({ default: true })
     visibility: boolean;
+
+    @Column()
+    isWriter: boolean;
 }

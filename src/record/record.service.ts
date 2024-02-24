@@ -144,16 +144,30 @@ export class RecordService {
     }
 
     async getLogs(userId: number) {
-        const rawQuery =
-            `select record.id, record.play_date, store.name as store_name, theme.name as theme_name, record.is_success
-            from record, store, theme
-            where record.theme_id = theme.id and theme.store_id = store.id and record.writer_id = ? and record.visibility = true
-            union
-            select record.id, record.play_date, store.name as store_name, theme.name as theme_name, record.is_success
-            from record, store, theme, tag
-            where tag.record_id = record.id and record.theme_id = theme.id and theme.store_id = store.id and tag.user_id = ? and tag.visibility = true
-            order by play_date desc`;
-        const logs = await this.recordRepository.query(rawQuery, [userId, userId]);
+        // const rawQuery =
+        //     `select record.id, record.play_date, store.name as store_name, theme.name as theme_name, record.is_success
+        //     from record, store, theme
+        //     where record.theme_id = theme.id and theme.store_id = store.id and record.writer_id = ? and record.visibility = true
+        //     union
+        //     select record.id, record.play_date, store.name as store_name, theme.name as theme_name, record.is_success
+        //     from record, store, theme, tag
+        //     where tag.record_id = record.id and record.theme_id = theme.id and theme.store_id = store.id and tag.user_id = ? and tag.visibility = true
+        //     order by play_date desc`;
+        // const logs = await this.recordRepository.query(rawQuery, [userId, userId]);
+
+        const logs = await this.recordRepository.createQueryBuilder('r')
+            .leftJoin('theme', 't', 'r.theme_id = t.id')
+            .leftJoin('store', 's', 't.store_id = s.id')
+            .leftJoin('tag', 't2', 't2.record_id = r.id')
+            .addSelect('r.id', 'id')
+            .addSelect('r.playDate', 'play_date')
+            .addSelect('s.name', 'store_name')
+            .addSelect('t.name', 'theme_name')
+            .addSelect('r.isSuccess', 'is_success')
+            .where('r.writer_id = :userId and t2.isWriter = true and t2.visibility = true', { userId })
+            .orWhere('t2.user_id = :userId and t2.isWriter = false and t2.visibility = true', { userId })
+            .orderBy('play_date', 'DESC')
+            .getRawMany();
 
         const mapLogs = logs.map((log) => {
             return new GetLogsResponseDto(log);
