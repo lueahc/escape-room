@@ -116,7 +116,7 @@ export class ThemeService {
         const themeReviewCount = await this.reviewService.countVisibleReviewsOfTheme(id);
         const storeReviewCount = await this.reviewService.countVisibleReviewsOfStore(theme.store.id);
         const reviews = await this.reviewService.getVisibleReviewsOfTheme(id);
-        console.log(reviews)
+
         return new GetOneThemeResponseDto({ theme, themeReviewCount, storeReviewCount, reviews });
     }
 }
