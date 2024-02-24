@@ -63,32 +63,20 @@ export class ReviewService {
     }
 
     async getVisibleReviews() {
-        const rawQuery =
-            `select r.id, u.nickname, r.content, r.rate, r.activity, r.story, r.dramatic, r.volume, r.problem, r.difficulty, r.horror, r.interior, t2.name as theme_name, s.name as store_name, record.play_date, record.is_success, record.head_count, record.hint_count, record.play_time
-            from review r
-           left join record on record.id = r.record_id
-           right join user u on u.id = r.writer_id
-           right join theme t2 on record.theme_id = t2.id
-           right join store s on t2.store_id = s.id
-           where record.writer_id = r.writer_id and record.visibility in (select visibility
-                                                                           from record
-                                                                           where record.visibility = true)
-           union
-           select r.id, u.nickname, r.content, r.rate, r.activity, r.story, r.dramatic, r.volume, r.problem, r.difficulty, r.horror, r.interior, t2.name as theme_name, s.name as store_name, record.play_date, record.is_success, record.head_count, record.hint_count, record.play_time
-            from review r
-           left join record on record.id = r.record_id
-           right join user u on u.id = r.writer_id
-           right join tag t on record.id = t.record_id
-           right join theme t2 on record.theme_id = t2.id
-           right join store s on t2.store_id = s.id
-           where record.writer_id != r.writer_id and t.visibility in (select visibility
-                                                                       from tag
-                                                                       where tag.visibility = true)
-           order by id desc`;
-        const reviews = await this.reviewRepository.query(rawQuery);
+        const reviews = await this.reviewRepository.createQueryBuilder('r')
+            .leftJoinAndSelect('record', 'r2', 'r.record_id = r2.id')
+            .leftJoinAndSelect('user', 'u', 'u.id = r.writer_id')
+            .leftJoin('theme', 't', 'r2.theme_id = t.id')
+            .leftJoin('store', 's', 't.store_id = s.id')
+            .leftJoinAndSelect('tag', 't2', 't2.record_id = r.record_id and r.writer_id = t2.user_id')
+            .addSelect('u.nickname', 'nickname')
+            .addSelect('s.name', 'store_name')
+            .addSelect('t.name', 'theme_name')
+            .where('t2.visibility = true')
+            .orderBy('play_date', 'DESC')
+            .getRawMany();
 
         const mapReviews = reviews.map((review) => {
-            console.log(review)
             return new GetVisibleReviewsResponseDto(review);
         });
 
