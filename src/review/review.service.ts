@@ -6,7 +6,6 @@ import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
 import { UserService } from 'src/user/user.service';
 import { CreateReviewRequestDto } from './dto/createReview.request.dto';
 import { RecordService } from 'src/record/record.service';
-import { ThemeService } from 'src/theme/theme.service';
 import { GetVisibleReviewsResponseDto } from './dto/getVisibleReviews.response.dto';
 
 @Injectable()
@@ -15,8 +14,7 @@ export class ReviewService {
         @InjectRepository(Review)
         private readonly reviewRepository: Repository<Review>,
         private readonly userService: UserService,
-        private readonly recordService: RecordService,
-        private readonly themeService: ThemeService
+        private readonly recordService: RecordService
     ) { }
 
     async getReviewById(id: number) {
@@ -73,6 +71,27 @@ export class ReviewService {
             .addSelect('s.name', 'store_name')
             .addSelect('t.name', 'theme_name')
             .where('t2.visibility = true')
+            .orderBy('play_date', 'DESC')
+            .getRawMany();
+
+        const mapReviews = reviews.map((review) => {
+            return new GetVisibleReviewsResponseDto(review);
+        });
+
+        return mapReviews;
+    }
+
+    async getVisibleReviewsOfTheme(themeId: number) {
+        const reviews = await this.reviewRepository.createQueryBuilder('r')
+            .leftJoinAndSelect('record', 'r2', 'r.record_id = r2.id')
+            .leftJoinAndSelect('user', 'u', 'u.id = r.writer_id')
+            .leftJoin('theme', 't', 'r2.theme_id = t.id')
+            .leftJoin('store', 's', 't.store_id = s.id')
+            .leftJoinAndSelect('tag', 't2', 't2.record_id = r.record_id and r.writer_id = t2.user_id')
+            .addSelect('u.nickname', 'nickname')
+            .addSelect('s.name', 'store_name')
+            .addSelect('t.name', 'theme_name')
+            .where('t2.visibility = true and t.id = :themeId', { themeId })
             .orderBy('play_date', 'DESC')
             .getRawMany();
 

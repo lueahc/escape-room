@@ -17,6 +17,12 @@ export class RecordController {
         return this.recordService.getLogs(userId);
     }
 
+    @Get()
+    @UseGuards(JwtAuthGuard)
+    getAllRecordsAndReviews(@User('id') userId: number) {
+        return this.recordService.getAllRecordsAndReviews(userId);
+    }
+
     @Get('/:recordId')
     @UseGuards(JwtAuthGuard)
     getRecordandReviews(@Param('recordId', ParseIntPipe) recordId: number) {
