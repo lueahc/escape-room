@@ -40,40 +40,24 @@ export class ReviewService {
     }
 
     async countVisibleReviewsOfTheme(themeId: number) {
-        const rawQuery =
-            `select count(*) from (select r.id
-                                from record
-                                    right join review r on record.id = r.record_id
-                                where record.theme_id = ?
-                                    and record.writer_id = r.writer_id
-                                    and record.visibility in (select visibility
-                                                                from record
-                                                                where record.visibility = true)
-            union
-                                select r.id
-                                from record
-                                    right join review r on record.id = r.record_id
-                                    right join tag t on record.id = t.record_id
-                                where record.theme_id = ?
-                                    and record.writer_id != r.writer_id
-                                    and t.visibility in (select visibility
-                                                            from tag
-                                                            where tag.visibility = true)) ha`;
-
-        const result = await this.reviewRepository.query(rawQuery, [themeId, themeId]);
-        const reviewCount = parseInt(result[0]['count(*)'], 10);
+        const reviewCount = await this.reviewRepository.createQueryBuilder('r')
+            .leftJoin('record', 'r2', 'r.record_id = r2.id')
+            .leftJoin('tag', 't', 't.record_id = r.record_id and r.writer_id = t.user_id')
+            .addSelect('r.id', 'id')
+            .where('r2.theme_id = :themeId and t.visibility = true', { themeId })
+            .getCount();
 
         return reviewCount;
     }
 
-    async countReviewsOfStore(storeId: number) {
-        let reviewCount = 0;
-        const themeList = await this.themeService.getThemeListByStoreId(storeId);
-
-        for (const themeId of themeList) {
-            const reviewNumber = await this.countVisibleReviewsOfTheme(themeId);
-            reviewCount += reviewNumber;
-        }
+    async countVisibleReviewsOfStore(storeId: number) {
+        const reviewCount = await this.reviewRepository.createQueryBuilder('r')
+            .leftJoin('record', 'r2', 'r.record_id = r2.id')
+            .leftJoin('theme', 't', 'r2.theme_id = t.id')
+            .leftJoin('tag', 't2', 't2.record_id = r.record_id and r.writer_id = t2.user_id')
+            .addSelect('r.id', 'id')
+            .where('t.store_id = :storeId and t2.visibility = true', { storeId })
+            .getCount();
 
         return reviewCount;
     }
@@ -130,9 +114,8 @@ export class ReviewService {
             );
         }
 
-        const isWriter = userId === record.writer.id;
-        const isTagged = await this.recordService.isUserTagged(userId, recordId);
-        if (!isWriter && !isTagged) {
+        const isTagged = await this.recordService.getOneTag(userId, recordId);
+        if (!isTagged) {
             throw new ForbiddenException(
                 '리뷰를 등록할 수 있는 사용자가 아닙니다.',
                 'USER_FORBIDDEN')
