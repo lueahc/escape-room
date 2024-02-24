@@ -19,6 +19,7 @@ export class RecordService {
         @InjectRepository(Tag)
         private readonly tagRepository: Repository<Tag>,
         private readonly userService: UserService,
+        @Inject(forwardRef(() => ThemeService))
         private readonly themeService: ThemeService,
         @Inject(forwardRef(() => ReviewService))
         private readonly reviewService: ReviewService
@@ -145,6 +146,10 @@ export class RecordService {
         }
 
         return record;
+    }
+
+    async getAllRecordsAndReviews(userId: number) {
+
     }
 
     @Transactional()

@@ -12,7 +12,7 @@ import { ReviewModule } from 'src/review/review.module';
   imports: [
     TypeOrmModule.forFeature([Record, Tag]),
     UserModule,
-    ThemeModule,
+    forwardRef(() => ThemeModule),
     forwardRef(() => ReviewModule)],
   controllers: [RecordController],
   providers: [RecordService],

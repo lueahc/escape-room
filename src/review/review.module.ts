@@ -11,8 +11,7 @@ import { ThemeModule } from 'src/theme/theme.module';
   imports: [
     TypeOrmModule.forFeature([Review]),
     UserModule,
-    RecordModule,
-    ThemeModule],
+    RecordModule],
   controllers: [ReviewController],
   providers: [ReviewService],
   exports: [ReviewService]

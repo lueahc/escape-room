@@ -10,7 +10,8 @@ export class ThemeController {
 
     @Get('/search')
     searchThemes(@Query('keyword') keyword: string) {
-        return this.themeService.getThemesByKeyword(keyword);
+        const result = this.themeService.getThemesByKeyword(keyword);
+        return result
     }
 
     @Get()
@@ -18,11 +19,13 @@ export class ThemeController {
         if (!location) {
             return this.themeService.getAllThemes();
         }
-        return this.themeService.getThemesByLocation(location);
+        const result = this.themeService.getThemesByLocation(location);
+        return result
     }
 
     @Get('/:themeId')
     getThemeInfo(@Param('themeId', ParseIntPipe) themeId: number) {
-        return this.themeService.getOneTheme(themeId);
+        const result = this.themeService.getOneTheme(themeId);
+        return result
     }
 }

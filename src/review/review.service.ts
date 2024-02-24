@@ -15,8 +15,7 @@ export class ReviewService {
         @InjectRepository(Review)
         private readonly reviewRepository: Repository<Review>,
         private readonly userService: UserService,
-        private readonly recordService: RecordService,
-        private readonly themeService: ThemeService
+        private readonly recordService: RecordService
     ) { }
 
     async getReviewById(id: number) {

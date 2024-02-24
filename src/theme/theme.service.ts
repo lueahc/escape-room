@@ -1,14 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Theme } from './theme.entity';
 import { Like, Repository } from 'typeorm';
 import { LocationEnum } from '../store/location.enum';
+import { GetAllThemesResponseDto } from './dto/getAllThemes.response.dto';
+import { ReviewService } from 'src/review/review.service';
 
 @Injectable()
 export class ThemeService {
     constructor(
         @InjectRepository(Theme)
         private readonly themeRepository: Repository<Theme>,
+        private readonly reviewService: ReviewService
     ) { }
 
     async getThemeById(id: number) {
@@ -27,29 +30,26 @@ export class ThemeService {
         })
     }
 
-    async getThemeListByStoreId(storeId: number) {
-        const themes = await this.themeRepository.find({
-            where: {
-                store: {
-                    id: storeId
-                }
-            }
-        })
-        const themeList = themes.map((theme) => theme.id);
-
-        return themeList;
-    }
-
     async getAllThemes() {
-        return await this.themeRepository.find({
+        const themes = await this.themeRepository.find({
             relations: {
                 store: true
             },
+            order: {
+                id: 'DESC'
+            }
         });
+
+        const mapthemes = await Promise.all(themes.map(async (theme) => {
+            const reviewCount = await this.reviewService.countVisibleReviewsOfTheme(theme.id);
+            return new GetAllThemesResponseDto({ theme, reviewCount });
+        }));
+
+        return mapthemes;
     }
 
     async getThemesByLocation(location: LocationEnum) {
-        return await this.themeRepository.find({
+        const themes = await this.themeRepository.find({
             relations: {
                 store: true
             },
