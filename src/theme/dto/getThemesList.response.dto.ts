@@ -24,7 +24,13 @@ export class GetThemesListResponseDto {
     note: string;
     reviewCount: number;
 
-    constructor(params: { theme: { id: number; name: string; image: string; plot: string; genre: string; time: number; level: number; price: number; note: string; store: { name: string; location: LocationEnum } }; reviewCount: number; }) {
+    constructor(params: {
+        theme: {
+            id: number; name: string; image: string; plot: string; genre: string; time: number; level: number; price: number; note: string;
+            store: { name: string; location: LocationEnum }
+        };
+        reviewCount: number;
+    }) {
         this.id = params.theme.id;
         this.storeName = params.theme.store.name;
         this.storeLocation = params.theme.store.location;

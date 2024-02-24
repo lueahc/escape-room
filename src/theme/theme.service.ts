@@ -1,10 +1,11 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Theme } from './theme.entity';
 import { Like, Repository } from 'typeorm';
 import { LocationEnum } from '../store/location.enum';
 import { GetThemesListResponseDto } from './dto/getThemesList.response.dto';
 import { ReviewService } from 'src/review/review.service';
+import { GetOneThemeResponseDto } from './dto/getOneTheme.response.dto';
 
 @Injectable()
 export class ThemeService {
@@ -104,37 +105,18 @@ export class ThemeService {
     }
 
     async getOneTheme(id: number) {
-        return await this.themeRepository.findOne({
-            // select: {
-            //     id: true,
-            //     name: true,
-            //     store: {
-            //         id: true,
-            //         name: true,
-            //     },
-            //     records: {
-            //         id: true,
-            //         playDate: true,
-            //         reviews: {
-            //             id: true,
-            //             writer: {
-            //                 nickname: true
-            //             },
-            //             rate: true
-            //         }
-            //     }
-            // },
-            relations: {
-                store: true,
-                records: {
-                    reviews: {
-                        writer: true
-                    }
-                }
-            },
-            where: {
-                id
-            }
-        })
+        const theme = await this.getThemeById(id);
+        if (!theme) {
+            throw new NotFoundException(
+                '테마가 존재하지 않습니다.',
+                'NON_EXISTING_THEME'
+            )
+        }
+
+        const themeReviewCount = await this.reviewService.countVisibleReviewsOfTheme(id);
+        const storeReviewCount = await this.reviewService.countVisibleReviewsOfStore(theme.store.id);
+        const reviews = await this.reviewService.getVisibleReviewsOfTheme(id);
+        console.log(reviews)
+        return new GetOneThemeResponseDto({ theme, themeReviewCount, storeReviewCount, reviews });
     }
 }

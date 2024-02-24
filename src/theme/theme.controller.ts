@@ -10,8 +10,7 @@ export class ThemeController {
 
     @Get('/search')
     searchThemes(@Query('keyword') keyword: string) {
-        const result = this.themeService.getThemesByKeyword(keyword);
-        return result
+        return this.themeService.getThemesByKeyword(keyword);
     }
 
     @Get()

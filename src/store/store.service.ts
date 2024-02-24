@@ -81,8 +81,8 @@ export class StoreService {
             )
         }
 
-        const reviewCount = await this.reviewService.countVisibleReviewsOfStore(store.id);
-        const themes = await this.themeService.getThemesByStoreId(store.id);
+        const reviewCount = await this.reviewService.countVisibleReviewsOfStore(id);
+        const themes = await this.themeService.getThemesByStoreId(id);
 
         return new GetOneStoreResponseDto({ store, reviewCount, themes });
     }

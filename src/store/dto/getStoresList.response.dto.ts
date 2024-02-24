@@ -9,7 +9,12 @@ export class GetStoresListResponseDto {
     homepageUrl: string;
     reviewCount: number;
 
-    constructor(params: { store: { id: number; name: string; location: LocationEnum; address: string; phoneNo: string; homepageUrl: string; }; reviewCount: number; }) {
+    constructor(params: {
+        store: {
+            id: number; name: string; location: LocationEnum; address: string; phoneNo: string; homepageUrl: string;
+        };
+        reviewCount: number;
+    }) {
         this.id = params.store.id;
         this.name = params.store.name;
         this.location = params.store.location;
