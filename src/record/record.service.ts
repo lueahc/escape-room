@@ -109,6 +109,28 @@ export class RecordService {
         })
     }
 
+    async getTaggedUsersByRecordId(recordId: number) {
+        const tags = await this.tagRepository.find({
+            select: {
+                user: {
+                    id: true
+                }
+            },
+            relations: {
+                user: true,
+            },
+            where: {
+                record: {
+                    id: recordId
+                }
+            }
+        })
+
+        return tags.map((tag) => {
+            return tag.user.id;
+        });
+    }
+
     changeVisibility(element) {
         if (element.visibility) element.visibility = false;
         else element.visibility = true;
@@ -192,15 +214,19 @@ export class RecordService {
         });
         await this.tagRepository.save(tag);
 
-        if (party) {
-            if (headCount < party.length) {
+        // 본인 제외
+        let filteredParty = party.filter((element) => element !== userId);
+        // 중복값 제외
+        let uniqueParty = [...new Set(filteredParty)];
+        if (uniqueParty) {
+            if (headCount <= uniqueParty.length) {
                 throw new BadRequestException(
                     '일행으로 추가할 사용자 수가 인원 수보다 많습니다.',
                     'PARTY_LENGTH_OVER_HEADCOUNT'
                 )
             }
 
-            for (const memberId of party) {
+            for (const memberId of uniqueParty) {
                 const member = await this.userService.findOneById(memberId);
                 if (!member) {
                     throw new NotFoundException(
@@ -221,8 +247,9 @@ export class RecordService {
         return record;
     }
 
+    @Transactional()
     async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto) {
-        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, note } = updateRecordRequestDto;
+        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, note, party } = updateRecordRequestDto;
 
         const record = await this.getRecordById(recordId);
         if (!record) {
@@ -265,6 +292,74 @@ export class RecordService {
         record.image = image;
         record.note = note;
         await this.recordRepository.save(record);
+
+        let filteredParty = party.filter((element) => element !== userId);
+        let uniqueParty = [...new Set(filteredParty)];
+        if (uniqueParty) {
+            if (!headCount) {
+                throw new BadRequestException(
+                    '인원수를 명시해야 합니다.',
+                    'EMPTY_HEADCOUNT'
+                )
+            }
+
+            if (headCount <= uniqueParty.length) {
+                throw new BadRequestException(
+                    '일행으로 추가할 사용자 수가 인원 수보다 많습니다.',
+                    'PARTY_LENGTH_OVER_HEADCOUNT'
+                )
+            }
+
+            const result = await this.getTaggedUsersByRecordId(recordId);
+            let originalParty = result.filter((element) => element !== userId);
+
+            // 일행 추가
+            for (const memberId of uniqueParty) {
+                const member = await this.userService.findOneById(memberId);
+                if (!member) {
+                    throw new NotFoundException(
+                        `일행 memberId:${memberId}는 존재하지 않습니다.`,
+                        'NON_EXISTING_PARTY'
+                    );
+                }
+
+                if (!originalParty.includes(memberId)) {
+                    const tag = this.tagRepository.create({
+                        user: member,
+                        record,
+                        isWriter: false
+                    });
+                    await this.tagRepository.save(tag);
+                }
+            }
+
+            let filteredParty;
+            for (const memberId of uniqueParty) {
+                filteredParty = originalParty.filter((element) => element !== memberId);
+            }
+
+            // 일행 삭제
+            for (const memberId of filteredParty) {
+                // 작성 리뷰 있는 경우
+                const hasWrittenReview = await this.reviewService.hasWrittenReview(memberId, recordId);
+                if (hasWrittenReview) {
+                    throw new NotFoundException(
+                        `일행 memberId:${memberId}는 이미 작성한 리뷰가 있습니다.`,
+                        'EXISTING_REVIEW'
+                    );
+                }
+
+                // 작성 리뷰 없는 경우 일행 삭제
+                const deleteTag = await this.getOneTag(memberId, recordId);
+                if (!deleteTag) {
+                    throw new NotFoundException(
+                        '삭제할 일행이 존재하지 않습니다.',
+                        'NON_EXISTING_USER'
+                    );
+                }
+                await this.tagRepository.softDelete({ id: deleteTag.id });
+            }
+        }
 
         return record;
     }

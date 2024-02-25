@@ -17,4 +17,6 @@ export class UpdateRecordRequestDto {
     image: string;
 
     note: string;
+
+    party: number[];
 }
