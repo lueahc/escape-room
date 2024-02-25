@@ -102,6 +102,25 @@ export class ReviewService {
         return mapReviews;
     }
 
+    async hasWrittenReview(userId: number, recordId: number) {
+        const review = await this.reviewRepository.findOne({
+            relations: {
+                writer: true
+            },
+            where: {
+                writer: {
+                    id: userId
+                },
+                record: {
+                    id: recordId
+                }
+            }
+        });
+
+        if (!review) return false;
+        else return true;
+    }
+
     async createReview(userId: number, createReviewRequestDto: CreateReviewRequestDto) {
         const { recordId, content, rate, activity, story, dramatic, volume, problem, difficulty, horror, interior } = createReviewRequestDto;
 
