@@ -33,7 +33,9 @@ export class UserController {
 
     @Get('/search')
     @UseGuards(JwtAuthGuard)
-    searchUser(@Query('nickname') nickname: string) {
-        return this.userService.searchUser(nickname);
+    searchUser(
+        @User('id') userId: number,
+        @Query('nickname') nickname: string) {
+        return this.userService.searchUser(userId, nickname);
     }
 }

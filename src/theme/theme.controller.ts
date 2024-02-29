@@ -25,4 +25,9 @@ export class ThemeController {
     getThemeInfo(@Param('themeId', ParseIntPipe) themeId: number) {
         return this.themeService.getOneTheme(themeId);
     }
+
+    @Get('/:themeId/review')
+    getThemeReviews(@Param('themeId', ParseIntPipe) themeId: number) {
+        return this.themeService.getThemeReviews(themeId);
+    }
 }

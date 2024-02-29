@@ -1,8 +1,6 @@
 import { IsNotEmpty } from "class-validator";
 
 export class UpdateRecordRequestDto {
-    themeId: number;
-
     playDate: Date;
 
     isSuccess: boolean;

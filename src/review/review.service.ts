@@ -60,27 +60,6 @@ export class ReviewService {
         return reviewCount;
     }
 
-    async getVisibleReviews() {
-        const reviews = await this.reviewRepository.createQueryBuilder('r')
-            .leftJoinAndSelect('record', 'r2', 'r.record_id = r2.id')
-            .leftJoinAndSelect('user', 'u', 'u.id = r.writer_id')
-            .leftJoin('theme', 't', 'r2.theme_id = t.id')
-            .leftJoin('store', 's', 't.store_id = s.id')
-            .leftJoinAndSelect('tag', 't2', 't2.record_id = r.record_id and r.writer_id = t2.user_id')
-            .addSelect('u.nickname', 'nickname')
-            .addSelect('s.name', 'store_name')
-            .addSelect('t.name', 'theme_name')
-            .where('t2.visibility = true')
-            .orderBy('play_date', 'DESC')
-            .getRawMany();
-
-        const mapReviews = reviews.map((review) => {
-            return new GetVisibleReviewsResponseDto(review);
-        });
-
-        return mapReviews;
-    }
-
     async getVisibleReviewsOfTheme(themeId: number) {
         const reviews = await this.reviewRepository.createQueryBuilder('r')
             .leftJoinAndSelect('record', 'r2', 'r.record_id = r2.id')
@@ -92,7 +71,29 @@ export class ReviewService {
             .addSelect('s.name', 'store_name')
             .addSelect('t.name', 'theme_name')
             .where('t2.visibility = true and t.id = :themeId', { themeId })
-            .orderBy('play_date', 'DESC')
+            .orderBy('r.created_at', 'DESC')
+            .getRawMany();
+
+        const mapReviews = reviews.map((review) => {
+            return new GetVisibleReviewsResponseDto(review);
+        });
+
+        return mapReviews;
+    }
+
+    async get3VisibleReviewsOfTheme(themeId: number) {
+        const reviews = await this.reviewRepository.createQueryBuilder('r')
+            .leftJoinAndSelect('record', 'r2', 'r.record_id = r2.id')
+            .leftJoinAndSelect('user', 'u', 'u.id = r.writer_id')
+            .leftJoin('theme', 't', 'r2.theme_id = t.id')
+            .leftJoin('store', 's', 't.store_id = s.id')
+            .leftJoinAndSelect('tag', 't2', 't2.record_id = r.record_id and r.writer_id = t2.user_id')
+            .addSelect('u.nickname', 'nickname')
+            .addSelect('s.name', 'store_name')
+            .addSelect('t.name', 'theme_name')
+            .where('t2.visibility = true and t.id = :themeId', { themeId })
+            .orderBy('r.created_at', 'DESC')
+            .limit(3)
             .getRawMany();
 
         const mapReviews = reviews.map((review) => {

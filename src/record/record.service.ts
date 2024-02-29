@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Record } from './record.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
 import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
@@ -37,7 +37,7 @@ export class RecordService {
     }
 
     async getRecordInfo(id: number) {
-        return await this.recordRepository.findOne({
+        const result = await this.recordRepository.findOne({
             select: {
                 id: true,
                 writer: {
@@ -90,6 +90,8 @@ export class RecordService {
                 id
             }
         });
+
+        return result;
     }
 
     async getOneTag(userId: number, recordId: number) {
@@ -128,6 +130,31 @@ export class RecordService {
 
         return tags.map((tag) => {
             return tag.user.id;
+        });
+    }
+
+    async getTaggedNicknamesByRecordId(userId: number, recordId: number) {
+        const tags = await this.tagRepository.find({
+            select: {
+                user: {
+                    nickname: true,
+                }
+            },
+            relations: {
+                user: true,
+            },
+            where: {
+                user: {
+                    id: Not(userId)
+                },
+                record: {
+                    id: recordId
+                }
+            }
+        })
+
+        return tags.map((tag) => {
+            return tag.user.nickname;
         });
     }
 
@@ -249,7 +276,7 @@ export class RecordService {
 
     @Transactional()
     async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto) {
-        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, note, party } = updateRecordRequestDto;
+        const { isSuccess, playDate, headCount, hintCount, playTime, image, note, party } = updateRecordRequestDto;
 
         const record = await this.getRecordById(recordId);
         if (!record) {
@@ -275,15 +302,6 @@ export class RecordService {
             )
         }
 
-        const theme = await this.themeService.getThemeById(themeId);
-        if (!theme) {
-            throw new NotFoundException(
-                '테마가 존재하지 않습니다.',
-                'NON_EXISTING_THEME'
-            );
-        }
-
-        record.theme = theme;
         record.isSuccess = isSuccess;
         record.playDate = playDate;
         record.headCount = headCount;

@@ -23,9 +23,17 @@ export class RecordController {
         return this.recordService.getAllRecordsAndReviews(userId);
     }
 
+    @Get('/:recordId/tag')
+    @UseGuards(JwtAuthGuard)
+    getRecordandReviews(
+        @User('id') userId: number,
+        @Param('recordId', ParseIntPipe) recordId: number) {
+        return this.recordService.getTaggedNicknamesByRecordId(userId, recordId);
+    }
+
     @Get('/:recordId')
     @UseGuards(JwtAuthGuard)
-    getRecordandReviews(@Param('recordId', ParseIntPipe) recordId: number) {
+    getTaggedUsersByRecordId(@Param('recordId', ParseIntPipe) recordId: number) {
         return this.recordService.getRecordAndReviews(recordId);
     }
 

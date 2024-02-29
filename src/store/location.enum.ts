@@ -1,4 +1,4 @@
 export enum LocationEnum {
-    KANGNAM = 'KANGNAM',
-    HONGDAE = 'HONGDAE'
+    KANGNAM = '강남',
+    HONGDAE = '홍대'
 }

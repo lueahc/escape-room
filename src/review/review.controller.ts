@@ -11,12 +11,6 @@ export class ReviewController {
         private reviewService: ReviewService
     ) { }
 
-    @Get()
-    @UseGuards(JwtAuthGuard)
-    getVisibleReviews() {
-        return this.reviewService.getVisibleReviews();
-    }
-
     @Post()
     @HttpCode(201)
     @UseGuards(JwtAuthGuard)

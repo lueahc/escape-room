@@ -41,7 +41,7 @@ export class UserService {
         });
     }
 
-    async searchUser(nickname: string) {
+    async searchUser(userId: number, nickname: string) {
         const user = await this.findOneByNickname(nickname);
         if (!user) {
             throw new NotFoundException(
@@ -50,8 +50,16 @@ export class UserService {
             );
         }
 
+        if (user.id === userId) {
+            throw new NotFoundException(
+                '본인은 등록할 수 없습니다.',
+                'NOT_ALLOWED_TO_TAG_ONESELF'
+            );
+        }
+
         return {
-            userId: user.id
+            userId: user.id,
+            userNickname: user.nickname
         }
     }
 
