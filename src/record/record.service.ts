@@ -10,6 +10,7 @@ import { UserService } from 'src/user/user.service';
 import { Tag } from './tag.entity';
 import { ReviewService } from 'src/review/review.service';
 import { GetLogsResponseDto } from './dto/getLogs.response.dto';
+import { RecordPartial } from './record.types';
 
 @Injectable()
 export class RecordService {
@@ -197,8 +198,87 @@ export class RecordService {
         return record;
     }
 
-    async getAllRecordsAndReviews(userId: number) {
+    async getAllRecordsAndReviews(userId: number, visibility: string) {
+        let whereConditions: RecordPartial = {};
 
+        if (visibility === 'true') {
+            whereConditions.tags = {
+                visibility: true,
+                user: {
+                    id: userId
+                }
+            };
+        } else if (visibility === 'false') {
+            whereConditions.tags = {
+                visibility: false,
+                user: {
+                    id: userId
+                }
+            };
+        } else {
+            whereConditions.tags = {
+                user: {
+                    id: userId
+                }
+            };
+        }
+
+        const result = await this.recordRepository.find({
+            select: {
+                id: true,
+                writer: {
+                    id: true,
+                    nickname: true,
+                },
+                theme: {
+                    id: true,
+                    name: true,
+                    store: {
+                        id: true,
+                        name: true
+                    }
+                },
+                playDate: true,
+                isSuccess: true,
+                headCount: true,
+                hintCount: true,
+                playTime: true,
+                image: true,
+                note: true,
+                reviews: {
+                    id: true,
+                    writer: {
+                        id: true,
+                        nickname: true
+                    },
+                    content: true,
+                    rate: true,
+                    activity: true,
+                    story: true,
+                    dramatic: true,
+                    volume: true,
+                    problem: true,
+                    difficulty: true,
+                    horror: true,
+                    interior: true,
+                }
+            },
+            relations: {
+                writer: true,
+                theme: {
+                    store: true
+                },
+                reviews: {
+                    writer: true
+                }
+            },
+            where: whereConditions,
+            order: {
+                id: 'DESC'
+            }
+        });
+
+        return result;
     }
 
     @Transactional()
