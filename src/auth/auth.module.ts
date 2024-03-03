@@ -9,7 +9,7 @@ import 'dotenv/config';
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: {
-        expiresIn: '60m'
+        expiresIn: process.env.JWT_EXPIRES_IN
       },
     }),
   ],
