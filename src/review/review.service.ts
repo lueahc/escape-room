@@ -148,6 +148,14 @@ export class ReviewService {
                 'USER_FORBIDDEN')
         }
 
+        const hasWrittenReview = await this.hasWrittenReview(userId, recordId);
+        if (hasWrittenReview) {
+            throw new ForbiddenException(
+                `해당 기록에 이미 작성한 리뷰가 있습니다.`,
+                'EXISTING_REVIEW'
+            );
+        }
+
         const review = this.reviewRepository.create({
             writer: user,
             record,
