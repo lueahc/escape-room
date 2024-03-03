@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { RecordService } from './record.service';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
@@ -19,8 +19,10 @@ export class RecordController {
 
     @Get()
     @UseGuards(JwtAuthGuard)
-    getAllRecordsAndReviews(@User('id') userId: number) {
-        return this.recordService.getAllRecordsAndReviews(userId);
+    getAllRecordsAndReviews(
+        @User('id') userId: number,
+        @Query('visibility') visibility: string) {
+        return this.recordService.getAllRecordsAndReviews(userId, visibility);
     }
 
     @Get('/:recordId/tag')
