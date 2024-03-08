@@ -1,10 +1,5 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { initializeTransactionalContext } from 'typeorm-transactional';
-import { ValidationPipe } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-
 dotenv.config({
   path: path.resolve(
     process.env.NODE_ENV === 'production'
@@ -14,6 +9,11 @@ dotenv.config({
         : '.development.env',
   ),
 });
+
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { initializeTransactionalContext } from 'typeorm-transactional';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   initializeTransactionalContext();

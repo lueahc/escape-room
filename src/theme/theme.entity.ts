@@ -29,7 +29,7 @@ export class Theme extends TimestampEntity {
     @Column()
     price: number;
 
-    @Column()
+    @Column({ nullable: true })
     note: string;
 
     @ManyToOne(() => Store, (store) => store.themes)

@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { addTransactionalDataSource, deleteDataSourceByName } from 'typeorm-transactional';
-import 'dotenv/config';
 
 @Module({
     imports: [
