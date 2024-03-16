@@ -282,7 +282,7 @@ export class RecordService {
     }
 
     @Transactional()
-    async createRecord(userId: number, createRecordRequestDto: CreateRecordRequestDto) {
+    async createRecord(userId: number, createRecordRequestDto: CreateRecordRequestDto, file: Express.Multer.File) {
         const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, note, party } = createRecordRequestDto;
 
         const user = await this.userService.findOneById(userId);
@@ -300,6 +300,8 @@ export class RecordService {
                 'NON_EXISTING_THEME'
             );
         }
+
+        //const fileLocation = await this.processUpload(file);
 
         const record = this.recordRepository.create({
             writer: user,

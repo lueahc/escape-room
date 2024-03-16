@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { RecordService } from './record.service';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
 import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
 import { User } from 'src/user/user.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('record')
 export class RecordController {
@@ -39,13 +40,24 @@ export class RecordController {
         return this.recordService.getRecordAndReviews(recordId);
     }
 
+    @Post('/upload')
+    @UseInterceptors(FileInterceptor('file'))
+    uploadFile(
+        @UploadedFile()
+        file: Express.Multer.File
+    ) {
+        return file
+    }
+
     @Post()
     @HttpCode(201)
     @UseGuards(JwtAuthGuard)
+    @UseInterceptors(FileInterceptor('file'))
     createRecord(
         @User('id') userId: number,
-        @Body() createRecordRequestDto: CreateRecordRequestDto) {
-        return this.recordService.createRecord(userId, createRecordRequestDto);
+        @Body() createRecordRequestDto: CreateRecordRequestDto,
+        @UploadedFile() file: Express.Multer.File,) {
+        return this.recordService.createRecord(userId, createRecordRequestDto, file);
     }
 
     @Patch('/:recordId')
