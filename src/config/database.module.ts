@@ -17,7 +17,7 @@ import { addTransactionalDataSource, deleteDataSourceByName } from 'typeorm-tran
                     database: process.env.DB_DATABASE,
                     autoLoadEntities: true,
                     synchronize: true,
-                    logging: true,
+                    logging: false,
                     namingStrategy: new SnakeNamingStrategy(),
                 };
             },
