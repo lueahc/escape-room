@@ -7,9 +7,13 @@ import { AuthModule } from './auth/auth.module';
 import { JwtPassportModule } from './jwt/jwt.passport.module';
 import { StoreModule } from './store/store.module';
 import { RecordModule } from './record/record.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [DatabaseModule, ThemeModule, UserModule, ReviewModule, AuthModule, JwtPassportModule, StoreModule, RecordModule],
+  imports: [DatabaseModule, ThemeModule, UserModule, ReviewModule, AuthModule, JwtPassportModule, StoreModule, RecordModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    })],
   controllers: [],
   providers: [],
 })

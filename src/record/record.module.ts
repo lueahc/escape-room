@@ -7,13 +7,15 @@ import { Tag } from 'src/record/tag.entity';
 import { ThemeModule } from 'src/theme/theme.module';
 import { UserModule } from 'src/user/user.module';
 import { ReviewModule } from 'src/review/review.module';
+import { S3StorageModule } from 'src/config/s3Storage.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Record, Tag]),
     UserModule,
     forwardRef(() => ThemeModule),
-    forwardRef(() => ReviewModule)],
+    forwardRef(() => ReviewModule),
+    S3StorageModule],
   controllers: [RecordController],
   providers: [RecordService],
   exports: [RecordService],

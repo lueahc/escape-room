@@ -12,8 +12,6 @@ export class UpdateRecordRequestDto {
 
     playTime: number;
 
-    image: string;
-
     note: string;
 
     party: number[];

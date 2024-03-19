@@ -282,8 +282,9 @@ export class RecordService {
     }
 
     @Transactional()
-    async createRecord(userId: number, createRecordRequestDto: CreateRecordRequestDto) {
-        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, image, note, party } = createRecordRequestDto;
+    async createRecord(userId: number, createRecordRequestDto: CreateRecordRequestDto, file: Express.Multer.File) {
+        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, note, party } = createRecordRequestDto;
+        const s3File = file as any;
 
         const user = await this.userService.findOneById(userId);
         if (!user) {
@@ -309,7 +310,7 @@ export class RecordService {
             headCount,
             hintCount,
             playTime,
-            image,
+            image: s3File.location,
             note
         });
         await this.recordRepository.save(record);
@@ -355,8 +356,9 @@ export class RecordService {
     }
 
     @Transactional()
-    async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto) {
-        const { isSuccess, playDate, headCount, hintCount, playTime, image, note, party } = updateRecordRequestDto;
+    async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto, file: Express.Multer.File) {
+        const { isSuccess, playDate, headCount, hintCount, playTime, note, party } = updateRecordRequestDto;
+        const s3File = file as any;
 
         const record = await this.getRecordById(recordId);
         if (!record) {
@@ -387,7 +389,7 @@ export class RecordService {
         record.headCount = headCount;
         record.hintCount = hintCount;
         record.playTime = playTime;
-        record.image = image;
+        record.image = s3File.location;
         record.note = note;
         await this.recordRepository.save(record);
 
