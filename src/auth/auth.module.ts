@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: {
-        expiresIn: '60000m'
+        expiresIn: process.env.JWT_EXPIRES_IN
       },
     }),
   ],
@@ -16,5 +16,4 @@ import { JwtModule } from '@nestjs/jwt';
   providers: [AuthService],
   exports: [AuthService]
 })
-export class AuthModule {
-}
+export class AuthModule { }

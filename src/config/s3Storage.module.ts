@@ -45,7 +45,6 @@ function createS3Storage(configService: ConfigService) {
         bucket: configService.get<string>('AWS_S3_BUCKET') as any,
         contentType: multerS3.AUTO_CONTENT_TYPE,
         key(req, file, cb) {
-            //cb(null, `${new Date().getTime()}.${mime.extension(file.mimetype)}`);
             const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
             cb(null, file.fieldname + '-' + uniqueSuffix);
         },
