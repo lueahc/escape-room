@@ -11,7 +11,7 @@ import * as multerS3 from 'multer-s3'
         MulterModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
-            useFactory: async (configService: ConfigService) => ({
+            useFactory: (configService: ConfigService) => ({
                 storage: createS3Storage(configService),
                 // limits: {
                 //     fileSize: 1024 * 1024 * 5, // 5 MB
@@ -25,6 +25,7 @@ import * as multerS3 from 'multer-s3'
     ],
     controllers: [],
     providers: [],
+    exports: [MulterModule]
 })
 export class S3StorageModule { }
 
@@ -42,7 +43,6 @@ function createS3Storage(configService: ConfigService) {
     return multerS3({
         s3,
         bucket: configService.get<string>('AWS_S3_BUCKET') as any,
-        acl: 'public-read',
         contentType: multerS3.AUTO_CONTENT_TYPE,
         key(req, file, cb) {
             //cb(null, `${new Date().getTime()}.${mime.extension(file.mimetype)}`);
