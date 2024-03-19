@@ -17,8 +17,6 @@ export class CreateRecordRequestDto {
 
     playTime: number;
 
-    image: string;
-
     note: string;
 
     party: number[];

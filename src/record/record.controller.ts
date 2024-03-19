@@ -40,15 +40,6 @@ export class RecordController {
         return this.recordService.getRecordAndReviews(recordId);
     }
 
-    @Post('/upload')
-    @UseInterceptors(FileInterceptor('file'))
-    uploadFile(
-        @UploadedFile()
-        file: Express.Multer.File
-    ) {
-        return file
-    }
-
     @Post()
     @HttpCode(201)
     @UseGuards(JwtAuthGuard)
@@ -56,17 +47,19 @@ export class RecordController {
     createRecord(
         @User('id') userId: number,
         @Body() createRecordRequestDto: CreateRecordRequestDto,
-        @UploadedFile() file: Express.Multer.File,) {
+        @UploadedFile() file: Express.Multer.File) {
         return this.recordService.createRecord(userId, createRecordRequestDto, file);
     }
 
     @Patch('/:recordId')
     @UseGuards(JwtAuthGuard)
+    @UseInterceptors(FileInterceptor('file'))
     updateRecord(
         @User('id') userId: number,
         @Param('recordId', ParseIntPipe) recordId: number,
-        @Body() updateRecordRequestDto: UpdateRecordRequestDto) {
-        return this.recordService.updateRecord(userId, recordId, updateRecordRequestDto);
+        @Body() updateRecordRequestDto: UpdateRecordRequestDto,
+        @UploadedFile() file: Express.Multer.File) {
+        return this.recordService.updateRecord(userId, recordId, updateRecordRequestDto, file);
     }
 
     @Patch('/:recordId/visibility')
