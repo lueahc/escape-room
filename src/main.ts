@@ -18,6 +18,8 @@ import * as bodyParser from 'body-parser';
 import { WinstonLogger } from './logger/winston.util';
 import { HttpExceptionFilter } from './logger/httpException.filter';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import createSwagger from './config/swaggerConfig';
+import * as expressBasicAuth from 'express-basic-auth';
 
 async function bootstrap() {
   initializeTransactionalContext();
@@ -25,6 +27,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: WinstonLogger,
   });
+
+  app.use(
+    ['/api'],
+    expressBasicAuth({
+      challenge: true,
+      users: { [process.env.SWAGGER_USER as string]: process.env.SWAGGER_PWD as string },
+    }),
+  );
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
@@ -39,6 +49,8 @@ async function bootstrap() {
 
   // const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
   // app.useGlobalFilters(new HttpExceptionFilter(logger));
+
+  createSwagger(app);
 
   await app.listen(process.env.PORT || 3000);
 }
