@@ -29,4 +29,7 @@ export class CreateRecordRequestDto {
 
     @ApiProperty({ description: '일행 태그' })
     party: number[];
+
+    @ApiProperty({ description: '이미지 파일', type: 'string', format: 'binary' })
+    file: Express.Multer.File
 }

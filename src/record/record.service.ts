@@ -322,33 +322,35 @@ export class RecordService {
         });
         await this.tagRepository.save(tag);
 
-        // 본인 제외
-        let filteredParty = party.filter((element) => element !== userId);
-        // 중복값 제외
-        let uniqueParty = [...new Set(filteredParty)];
-        if (uniqueParty) {
-            if (headCount <= uniqueParty.length) {
-                throw new BadRequestException(
-                    '일행으로 추가할 사용자 수가 인원 수보다 많습니다.',
-                    'PARTY_LENGTH_OVER_HEADCOUNT'
-                )
-            }
-
-            for (const memberId of uniqueParty) {
-                const member = await this.userService.findOneById(memberId);
-                if (!member) {
-                    throw new NotFoundException(
-                        '일행이 존재하지 않습니다.',
-                        'NON_EXISTING_PARTY'
-                    );
+        if (party) {
+            // 본인 제외
+            let filteredParty = party.filter((element) => element !== userId);
+            // 중복값 제외
+            let uniqueParty = [...new Set(filteredParty)];
+            if (uniqueParty) {
+                if (headCount <= uniqueParty.length) {
+                    throw new BadRequestException(
+                        '일행으로 추가할 사용자 수가 인원 수보다 많습니다.',
+                        'PARTY_LENGTH_OVER_HEADCOUNT'
+                    )
                 }
 
-                const tag = this.tagRepository.create({
-                    user: member,
-                    record,
-                    isWriter: false
-                });
-                await this.tagRepository.save(tag);
+                for (const memberId of uniqueParty) {
+                    const member = await this.userService.findOneById(memberId);
+                    if (!member) {
+                        throw new NotFoundException(
+                            '일행이 존재하지 않습니다.',
+                            'NON_EXISTING_PARTY'
+                        );
+                    }
+
+                    const tag = this.tagRepository.create({
+                        user: member,
+                        record,
+                        isWriter: false
+                    });
+                    await this.tagRepository.save(tag);
+                }
             }
         }
 
@@ -396,14 +398,8 @@ export class RecordService {
         let filteredParty = party.filter((element) => element !== userId);
         let uniqueParty = [...new Set(filteredParty)];
         if (uniqueParty) {
-            if (!headCount) {
-                throw new BadRequestException(
-                    '인원수를 명시해야 합니다.',
-                    'EMPTY_HEADCOUNT'
-                )
-            }
-
-            if (headCount <= uniqueParty.length) {
+            let countParty = (headCount !== undefined && headCount !== null) ? headCount : record.headCount;
+            if (countParty <= uniqueParty.length) {
                 throw new BadRequestException(
                     '일행으로 추가할 사용자 수가 인원 수보다 많습니다.',
                     'PARTY_LENGTH_OVER_HEADCOUNT'

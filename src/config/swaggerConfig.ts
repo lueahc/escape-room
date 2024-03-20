@@ -6,15 +6,10 @@ const createSwagger = (app: INestApplication) => {
         .setTitle('ESCAPE-ROOM')
         .setDescription('API description')
         .setVersion('1.0')
-        .addBearerAuth({
+        .addSecurity('AdminAuth', {
             type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT',
-            name: 'JWT',
-            in: 'header',
-        },
-            'token'
-        )
+            scheme: 'bearer'
+        })
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);

@@ -8,7 +8,6 @@ export class UpdateRecordRequestDto {
     @ApiProperty({ description: '탈출 여부' })
     isSuccess: boolean;
 
-    @IsNotEmpty()
     @ApiProperty({ description: '플레이 인원 수' })
     headCount: number;
 
@@ -23,4 +22,7 @@ export class UpdateRecordRequestDto {
 
     @ApiProperty({ description: '일행 태그' })
     party: number[];
+
+    @ApiProperty({ description: '이미지 파일', type: 'string', format: 'binary' })
+    file: Express.Multer.File
 }

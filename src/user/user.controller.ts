@@ -5,7 +5,7 @@ import { SignInRequestDto } from './dto/signIn.request.dto';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { UpdateInfoRequestDto } from './dto/updateInfo.request.dto';
 import { User } from './user.decorator';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 @Controller('user')
 @ApiTags('user API')
@@ -30,6 +30,7 @@ export class UserController {
     @Patch('/info')
     @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: '회원 정보 수정 API', description: '회원의 정보를 수정함' })
+    @ApiSecurity('AdminAuth')
     updateInfo(
         @User('id') userId: number,
         @Body() updateInfoRequestDto: UpdateInfoRequestDto) {
@@ -39,6 +40,7 @@ export class UserController {
     @Get('/search')
     @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: '회원 검색 API', description: '닉네임으로 회원을 검색함' })
+    @ApiSecurity('AdminAuth')
     searchUser(
         @User('id') userId: number,
         @Query('nickname') nickname: string) {
