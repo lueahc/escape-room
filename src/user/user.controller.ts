@@ -16,7 +16,7 @@ export class UserController {
 
     @Post('/signUp')
     @HttpCode(201)
-    @ApiOperation({ summary: '회원가입 API', description: '회원을 생성한다.' })
+    @ApiOperation({ summary: '회원가입 API', description: '회원을 생성함' })
     signUp(@Body() signUpRequestDto: SignUpRequestDto) {
         return this.userService.signUp(signUpRequestDto);
     }

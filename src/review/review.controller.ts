@@ -4,8 +4,10 @@ import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
 import { User } from 'src/user/user.decorator';
 import { CreateReviewRequestDto } from './dto/createReview.request.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @Controller('review')
+@ApiTags('review API')
 export class ReviewController {
     constructor(
         private reviewService: ReviewService
@@ -14,6 +16,7 @@ export class ReviewController {
     @Post()
     @HttpCode(201)
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '리뷰 생성 API', description: '기록에 대한 리뷰를 생성함' })
     createReview(
         @User('id') userId: number,
         @Body() createReviewRequestDto: CreateReviewRequestDto) {
@@ -22,6 +25,7 @@ export class ReviewController {
 
     @Patch('/:reviewId')
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '리뷰 수정 API', description: '리뷰를 수정함' })
     updateReview(
         @User('id') userId: number,
         @Param('reviewId', ParseIntPipe) reviewId: number,
@@ -32,6 +36,7 @@ export class ReviewController {
     @Delete('/:reviewId')
     @HttpCode(204)
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '리뷰 삭제 API', description: '리뷰를 삭제함' })
     deleteReview(
         @User('id') userId: number,
         @Param('reviewId', ParseIntPipe) reviewId: number) {
