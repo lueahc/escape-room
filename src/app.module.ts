@@ -9,13 +9,14 @@ import { StoreModule } from './store/store.module';
 import { RecordModule } from './record/record.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './logger/logger.middleware';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [DatabaseModule, ThemeModule, UserModule, ReviewModule, AuthModule, JwtPassportModule, StoreModule, RecordModule,
     ConfigModule.forRoot({
       isGlobal: true,
     })],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule implements NestModule {
