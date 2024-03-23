@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty } from "class-validator";
 
 export class UpdateRecordRequestDto {
     @ApiProperty({ description: '플레이 날짜' })

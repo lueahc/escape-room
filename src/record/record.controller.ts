@@ -6,6 +6,8 @@ import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
 import { User } from 'src/user/user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { GetLogsResponseDto } from './dto/getLogs.response.dto';
+import { CreateAndUpdateRecordResponseDto } from './dto/createAndUpdateRecord.response.dto';
 
 @Controller('record')
 @ApiTags('record API')
@@ -18,7 +20,7 @@ export class RecordController {
     @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: '탈출일지 조회 API', description: '회원의 탈출일지를 조회함' })
     @ApiSecurity('AdminAuth')
-    getLogs(@User('id') userId: number) {
+    getLogs(@User('id') userId: number): Promise<GetLogsResponseDto[]> {
         return this.recordService.getLogs(userId);
     }
 
@@ -32,22 +34,22 @@ export class RecordController {
         return this.recordService.getAllRecordsAndReviews(userId, visibility);
     }
 
-    @Get('/:recordId/tag')
+    @Get('/:recordId')
     @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: '특정 기록리뷰 조회 API', description: '특정한 기록리뷰를 조회함' })
     @ApiSecurity('AdminAuth')
-    getRecordandReviews(
-        @User('id') userId: number,
-        @Param('recordId', ParseIntPipe) recordId: number) {
-        return this.recordService.getTaggedNicknamesByRecordId(userId, recordId);
+    getRecordandReviews(@Param('recordId', ParseIntPipe) recordId: number) {
+        return this.recordService.getRecordAndReviews(recordId);
     }
 
-    @Get('/:recordId')
+    @Get('/:recordId/tag')
     @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: '특정 기록에 태그된 회원 조회 API', description: '특정한 기록에 태그된 회원을 조회함' })
     @ApiSecurity('AdminAuth')
-    getTaggedUsersByRecordId(@Param('recordId', ParseIntPipe) recordId: number) {
-        return this.recordService.getRecordAndReviews(recordId);
+    getTaggedUsersByRecordId(
+        @User('id') userId: number,
+        @Param('recordId', ParseIntPipe) recordId: number): Promise<string[]> {
+        return this.recordService.getTaggedNicknamesByRecordId(userId, recordId);
     }
 
     @Post()
@@ -60,7 +62,7 @@ export class RecordController {
     createRecord(
         @User('id') userId: number,
         @Body() createRecordRequestDto: CreateRecordRequestDto,
-        @UploadedFile() file: Express.Multer.File) {
+        @UploadedFile() file: Express.Multer.File): Promise<CreateAndUpdateRecordResponseDto> {
         return this.recordService.createRecord(userId, createRecordRequestDto, file);
     }
 
@@ -74,7 +76,7 @@ export class RecordController {
         @User('id') userId: number,
         @Param('recordId', ParseIntPipe) recordId: number,
         @Body() updateRecordRequestDto: UpdateRecordRequestDto,
-        @UploadedFile() file: Express.Multer.File) {
+        @UploadedFile() file: Express.Multer.File): Promise<CreateAndUpdateRecordResponseDto> {
         return this.recordService.updateRecord(userId, recordId, updateRecordRequestDto, file);
     }
 
@@ -84,7 +86,7 @@ export class RecordController {
     @ApiSecurity('AdminAuth')
     changeRecordVisibility(
         @User('id') userId: number,
-        @Param('recordId', ParseIntPipe) recordId: number) {
+        @Param('recordId', ParseIntPipe) recordId: number): Promise<void> {
         return this.recordService.changeRecordVisibility(userId, recordId);
     }
 
@@ -95,7 +97,7 @@ export class RecordController {
     @ApiSecurity('AdminAuth')
     deleteRecord(
         @User('id') userId: number,
-        @Param('recordId', ParseIntPipe) recordId: number) {
+        @Param('recordId', ParseIntPipe) recordId: number): Promise<void> {
         return this.recordService.deleteRecord(userId, recordId);
     }
 }
