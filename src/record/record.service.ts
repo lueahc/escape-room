@@ -11,6 +11,7 @@ import { Tag } from './tag.entity';
 import { ReviewService } from 'src/review/review.service';
 import { GetLogsResponseDto } from './dto/getLogs.response.dto';
 import { RecordPartial } from './record.types';
+import { CreateAndUpdateRecordResponseDto } from './dto/createAndUpdateRecord.response.dto';
 
 @Injectable()
 export class RecordService {
@@ -112,7 +113,7 @@ export class RecordService {
         })
     }
 
-    async getTaggedUsersByRecordId(recordId: number) {
+    async getTaggedUsersByRecordId(recordId: number): Promise<number[]> {
         const tags = await this.tagRepository.find({
             select: {
                 user: {
@@ -129,12 +130,16 @@ export class RecordService {
             }
         })
 
+        if (!tags) {
+            return [];
+        }
+
         return tags.map((tag) => {
             return tag.user.id;
         });
     }
 
-    async getTaggedNicknamesByRecordId(userId: number, recordId: number) {
+    async getTaggedNicknamesByRecordId(userId: number, recordId: number): Promise<string[]> {
         const tags = await this.tagRepository.find({
             select: {
                 user: {
@@ -154,6 +159,10 @@ export class RecordService {
             }
         })
 
+        if (!tags) {
+            return [];
+        }
+
         return tags.map((tag) => {
             return tag.user.nickname;
         });
@@ -164,7 +173,7 @@ export class RecordService {
         else element.visibility = true;
     }
 
-    async getLogs(userId: number) {
+    async getLogs(userId: number): Promise<GetLogsResponseDto[]> {
         const logs = await this.recordRepository.createQueryBuilder('r')
             .leftJoin('theme', 't', 'r.theme_id = t.id')
             .leftJoin('store', 's', 't.store_id = s.id')
@@ -179,6 +188,10 @@ export class RecordService {
             .orderBy('play_date', 'DESC')
             .getRawMany();
 
+        if (!logs) {
+            return [];
+        }
+
         const mapLogs = logs.map((log) => {
             return new GetLogsResponseDto(log);
         });
@@ -186,7 +199,7 @@ export class RecordService {
         return mapLogs;
     }
 
-    async getRecordAndReviews(recordId: number) {
+    async getRecordAndReviews(recordId: number): Promise<Record> {
         const record = await this.getRecordInfo(recordId);
         if (!record) {
             throw new NotFoundException(
@@ -278,11 +291,15 @@ export class RecordService {
             }
         });
 
+        if (!result) {
+            return [];
+        }
+
         return result;
     }
 
     @Transactional()
-    async createRecord(userId: number, createRecordRequestDto: CreateRecordRequestDto, file: Express.Multer.File) {
+    async createRecord(userId: number, createRecordRequestDto: CreateRecordRequestDto, file: Express.Multer.File): Promise<CreateAndUpdateRecordResponseDto> {
         const { themeId, isSuccess, playDate, headCount, hintCount, playTime, note, party } = createRecordRequestDto;
         const s3File = file as any;
 
@@ -354,11 +371,11 @@ export class RecordService {
             }
         }
 
-        return record;
+        return new CreateAndUpdateRecordResponseDto(record);
     }
 
     @Transactional()
-    async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto, file: Express.Multer.File) {
+    async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto, file: Express.Multer.File): Promise<CreateAndUpdateRecordResponseDto> {
         const { isSuccess, playDate, headCount, hintCount, playTime, note, party } = updateRecordRequestDto;
         const s3File = file as any;
 
@@ -457,10 +474,10 @@ export class RecordService {
             }
         }
 
-        return record;
+        return new CreateAndUpdateRecordResponseDto(record);
     }
 
-    async changeRecordVisibility(userId: number, recordId: number) {
+    async changeRecordVisibility(userId: number, recordId: number): Promise<void> {
         const record = await this.getRecordById(recordId);
         if (!record) {
             throw new NotFoundException(
@@ -486,11 +503,9 @@ export class RecordService {
 
         this.changeVisibility(tag);
         await this.tagRepository.save(tag);
-
-        return {}
     }
 
-    async deleteRecord(userId: number, recordId: number) {
+    async deleteRecord(userId: number, recordId: number): Promise<void> {
         const record = await this.getRecordById(recordId);
         if (!record) {
             throw new NotFoundException(
