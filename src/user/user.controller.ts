@@ -6,6 +6,7 @@ import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { UpdateInfoRequestDto } from './dto/updateInfo.request.dto';
 import { User } from './user.decorator';
 import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { SignUpResponseDto } from './dto/signUp.response.dto';
 
 @Controller('user')
 @ApiTags('user API')
@@ -17,7 +18,7 @@ export class UserController {
     @Post('/signUp')
     @HttpCode(201)
     @ApiOperation({ summary: '회원가입 API', description: '회원을 생성함' })
-    signUp(@Body() signUpRequestDto: SignUpRequestDto) {
+    signUp(@Body() signUpRequestDto: SignUpRequestDto): Promise<SignUpResponseDto> {
         return this.userService.signUp(signUpRequestDto);
     }
 
@@ -33,7 +34,7 @@ export class UserController {
     @ApiSecurity('AdminAuth')
     updateInfo(
         @User('id') userId: number,
-        @Body() updateInfoRequestDto: UpdateInfoRequestDto) {
+        @Body() updateInfoRequestDto: UpdateInfoRequestDto): Promise<void> {
         return this.userService.updateInfo(userId, updateInfoRequestDto);
     }
 

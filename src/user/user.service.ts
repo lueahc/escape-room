@@ -8,7 +8,6 @@ import { SignInRequestDto } from './dto/signIn.request.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { SignUpResponseDto } from './dto/signUp.response.dto';
 import { UpdateInfoRequestDto } from './dto/updateInfo.request.dto';
-import { SlackService } from 'nestjs-slack';
 
 @Injectable()
 export class UserService {
@@ -16,7 +15,6 @@ export class UserService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
         private readonly authService: AuthService,
-        private slackService: SlackService
     ) { }
 
     async findOneById(id: number) {
@@ -65,7 +63,7 @@ export class UserService {
         }
     }
 
-    async signUp(signUpRequestDto: SignUpRequestDto) {
+    async signUp(signUpRequestDto: SignUpRequestDto): Promise<SignUpResponseDto> {
         const { email, password, nickname } = signUpRequestDto;
 
         const existUser = await this.findOneByEmail(email);
@@ -94,8 +92,6 @@ export class UserService {
     }
 
     async signIn(signInRequestDto: SignInRequestDto) {
-        this.slackService.sendText('Hello World!');
-
         const { email, password } = signInRequestDto;
 
         const user = await this.findOneByEmail(email);
@@ -119,12 +115,11 @@ export class UserService {
         });
 
         return {
-            nickname: user.nickname,
             accessToken,
         };
     }
 
-    async updateInfo(userId: number, updateInfoRequestDto: UpdateInfoRequestDto) {
+    async updateInfo(userId: number, updateInfoRequestDto: UpdateInfoRequestDto): Promise<void> {
         const user = await this.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
@@ -155,7 +150,5 @@ export class UserService {
         }
 
         await this.userRepository.save(user);
-
-        return {}
     }
 }

@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ThemeController } from './theme.controller';
 import { ThemeService } from './theme.service';
 import { Theme } from './theme.entity';

@@ -168,7 +168,7 @@ export class RecordService {
         });
     }
 
-    changeVisibility(element) {
+    changeVisibility(element: Tag): void {
         if (element.visibility) element.visibility = false;
         else element.visibility = true;
     }
