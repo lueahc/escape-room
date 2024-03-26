@@ -10,12 +10,17 @@ import { RecordModule } from './record/record.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { AppController } from './app.controller';
+import { SlackModule } from 'nestjs-slack';
 
 @Module({
   imports: [DatabaseModule, ThemeModule, UserModule, ReviewModule, AuthModule, JwtPassportModule, StoreModule, RecordModule,
     ConfigModule.forRoot({
       isGlobal: true,
-    })],
+    }),
+    SlackModule.forRoot({
+      type: 'webhook',
+      url: process.env.SLACK_WEBHOOK_URL,
+    }),],
   controllers: [AppController],
   providers: [],
 })
