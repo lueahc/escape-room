@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, forwardRef } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Theme } from './theme.entity';
 import { Like, Repository } from 'typeorm';
@@ -6,6 +6,7 @@ import { LocationEnum } from '../store/location.enum';
 import { GetThemesListResponseDto } from './dto/getThemesList.response.dto';
 import { ReviewService } from 'src/review/review.service';
 import { GetOneThemeResponseDto } from './dto/getOneTheme.response.dto';
+import { GetVisibleReviewsResponseDto } from 'src/review/dto/getVisibleReviews.response.dto';
 
 @Injectable()
 export class ThemeService {
@@ -31,7 +32,7 @@ export class ThemeService {
         })
     }
 
-    async getAllThemes() {
+    async getAllThemes(): Promise<GetThemesListResponseDto[]> {
         const themes = await this.themeRepository.find({
             relations: {
                 store: true
@@ -46,7 +47,7 @@ export class ThemeService {
         return mapthemes;
     }
 
-    async getThemesByLocation(location: LocationEnum) {
+    async getThemesByLocation(location: LocationEnum): Promise<GetThemesListResponseDto[]> {
         const themes = await this.themeRepository.find({
             relations: {
                 store: true
@@ -66,7 +67,7 @@ export class ThemeService {
         return mapthemes;
     }
 
-    async getThemesByKeyword(keyword: string) {
+    async getThemesByKeyword(keyword: string): Promise<GetThemesListResponseDto[]> {
         const themes = await this.themeRepository.find({
             relations: {
                 store: true
@@ -84,7 +85,7 @@ export class ThemeService {
         return mapthemes;
     }
 
-    async getThemesByStoreId(storeId: number) {
+    async getThemesByStoreId(storeId: number): Promise<GetThemesListResponseDto[]> {
         const themes = await this.themeRepository.find({
             relations: {
                 store: true
@@ -104,7 +105,7 @@ export class ThemeService {
         return mapthemes;
     }
 
-    async getOneTheme(id: number) {
+    async getOneTheme(id: number): Promise<GetOneThemeResponseDto> {
         const theme = await this.getThemeById(id);
         if (!theme) {
             throw new NotFoundException(
@@ -120,7 +121,7 @@ export class ThemeService {
         return new GetOneThemeResponseDto({ theme, themeReviewCount, storeReviewCount, reviews });
     }
 
-    async getThemeReviews(themeId: number) {
+    async getThemeReviews(themeId: number): Promise<GetVisibleReviewsResponseDto[]> {
         return await this.reviewService.getVisibleReviewsOfTheme(themeId);
     }
 }

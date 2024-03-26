@@ -8,6 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { GetLogsResponseDto } from './dto/getLogs.response.dto';
 import { CreateAndUpdateRecordResponseDto } from './dto/createAndUpdateRecord.response.dto';
+import { Record } from './record.entity';
 
 @Controller('record')
 @ApiTags('record API')
@@ -38,7 +39,7 @@ export class RecordController {
     @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: '특정 기록리뷰 조회 API', description: '특정한 기록리뷰를 조회함' })
     @ApiSecurity('AdminAuth')
-    getRecordandReviews(@Param('recordId', ParseIntPipe) recordId: number) {
+    getRecordandReviews(@Param('recordId', ParseIntPipe) recordId: number): Promise<Record> {
         return this.recordService.getRecordAndReviews(recordId);
     }
 

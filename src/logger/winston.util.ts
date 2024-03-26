@@ -3,7 +3,7 @@ import * as winstonDaily from 'winston-daily-rotate-file';
 import * as winston from 'winston';
 
 const env = process.env.NODE_ENV;
-const logDir = __dirname + '/../logs';
+const logDir = __dirname + '/../../logs';
 
 // error: 0, warn: 1, info: 2, http: 3, verbose: 4, debug: 5, silly: 6
 const dailyOptions = (level: string) => {

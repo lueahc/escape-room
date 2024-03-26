@@ -17,7 +17,7 @@ export class StoreService {
         private readonly themeService: ThemeService
     ) { }
 
-    async getAllStores() {
+    async getAllStores(): Promise<GetStoresListResponseDto[]> {
         const stores = await this.storeRepository.find({
             order: {
                 id: 'DESC'
@@ -32,7 +32,7 @@ export class StoreService {
         return mapstores;
     }
 
-    async getStoresByLocation(location: LocationEnum) {
+    async getStoresByLocation(location: LocationEnum): Promise<GetStoresListResponseDto[]> {
         const stores = await this.storeRepository.find({
             where: {
                 location
@@ -50,7 +50,7 @@ export class StoreService {
         return mapstores;
     }
 
-    async getStoresByKeyword(keyword: string) {
+    async getStoresByKeyword(keyword: string): Promise<GetStoresListResponseDto[]> {
         const stores = await this.storeRepository.find({
             relations: {
                 themes: true
@@ -68,7 +68,7 @@ export class StoreService {
         return mapstores;
     }
 
-    async getOneStore(id: number) {
+    async getOneStore(id: number): Promise<GetOneStoreResponseDto> {
         const store = await this.storeRepository.findOne({
             where: {
                 id

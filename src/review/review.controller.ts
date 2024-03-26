@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
@@ -20,7 +20,7 @@ export class ReviewController {
     @ApiSecurity('AdminAuth')
     createReview(
         @User('id') userId: number,
-        @Body() createReviewRequestDto: CreateReviewRequestDto) {
+        @Body() createReviewRequestDto: CreateReviewRequestDto): Promise<void> {
         return this.reviewService.createReview(userId, createReviewRequestDto);
     }
 
@@ -31,7 +31,7 @@ export class ReviewController {
     updateReview(
         @User('id') userId: number,
         @Param('reviewId', ParseIntPipe) reviewId: number,
-        @Body() updateReviewRequestDto: UpdateReviewRequestDto) {
+        @Body() updateReviewRequestDto: UpdateReviewRequestDto): Promise<void> {
         return this.reviewService.updateReview(userId, reviewId, updateReviewRequestDto);
     }
 
@@ -42,7 +42,7 @@ export class ReviewController {
     @ApiSecurity('AdminAuth')
     deleteReview(
         @User('id') userId: number,
-        @Param('reviewId', ParseIntPipe) reviewId: number) {
+        @Param('reviewId', ParseIntPipe) reviewId: number): Promise<void> {
         return this.reviewService.deleteReview(userId, reviewId);
     }
 }

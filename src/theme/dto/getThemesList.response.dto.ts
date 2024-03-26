@@ -1,15 +1,5 @@
 import { LocationEnum } from "src/store/location.enum";
 
-// class StoreDto {
-//     name: string;
-//     location: LocationEnum;
-
-//     constructor(params: { name: string; location: LocationEnum; }) {
-//         this.name = params.name;
-//         this.location = params.location;
-//     }
-// }
-
 export class GetThemesListResponseDto {
     id: number;
     storeName: string;
@@ -42,7 +32,6 @@ export class GetThemesListResponseDto {
         this.level = params.theme.level;
         this.price = params.theme.price;
         this.note = params.theme.note;
-        //this.store = new StoreDto(params.store);
         this.reviewCount = params.reviewCount;
     }
 }
