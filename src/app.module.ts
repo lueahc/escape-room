@@ -11,6 +11,8 @@ import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { AppController } from './app.controller';
 import { SlackModule } from 'nestjs-slack';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './logger/httpException.filter';
 
 @Module({
   imports: [DatabaseModule, ThemeModule, UserModule, ReviewModule, AuthModule, JwtPassportModule, StoreModule, RecordModule,
@@ -22,7 +24,12 @@ import { SlackModule } from 'nestjs-slack';
       url: process.env.SLACK_WEBHOOK_URL,
     }),],
   controllers: [AppController],
-  providers: [],
+  providers: [
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: HttpExceptionFilter,
+    // },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

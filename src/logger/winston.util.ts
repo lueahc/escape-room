@@ -1,6 +1,8 @@
 import { utilities, WinstonModule } from 'nest-winston';
 import * as winstonDaily from 'winston-daily-rotate-file';
 import * as winston from 'winston';
+import * as SlackWebhookTransport from 'winston-slack-webhook-transport';
+
 
 const env = process.env.NODE_ENV;
 const logDir = __dirname + '/../../logs';
@@ -34,6 +36,10 @@ export const WinstonLogger = WinstonModule.createLogger({
         new winstonDaily(dailyOptions('info')),
         new winstonDaily(dailyOptions('warn')),
         new winstonDaily(dailyOptions('error')),
+        new SlackWebhookTransport({
+            webhookUrl: process.env.SLACK_WEBHOOK_URL as string,
+            level: 'warn',
+        }),
     ],
 });
 
