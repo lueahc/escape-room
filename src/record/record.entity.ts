@@ -1,8 +1,8 @@
-import { TimestampEntity } from "src/timestamp.entity"
-import { User } from "src/user/user.entity";
+import { TimestampEntity } from "../timestamp.entity"
+import { User } from "../user/user.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Review } from "../review/review.entity";
-import { Theme } from "src/theme/theme.entity";
+import { Theme } from "../theme/theme.entity";
 import { Tag } from "./tag.entity";
 
 @Entity()

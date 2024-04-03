@@ -4,9 +4,9 @@ import { Theme } from './theme.entity';
 import { Like, Repository } from 'typeorm';
 import { LocationEnum } from '../store/location.enum';
 import { GetThemesListResponseDto } from './dto/getThemesList.response.dto';
-import { ReviewService } from 'src/review/review.service';
+import { ReviewService } from '../review/review.service';
 import { GetOneThemeResponseDto } from './dto/getOneTheme.response.dto';
-import { GetVisibleReviewsResponseDto } from 'src/review/dto/getVisibleReviews.response.dto';
+import { GetVisibleReviewsResponseDto } from '../review/dto/getVisibleReviews.response.dto';
 
 @Injectable()
 export class ThemeService {

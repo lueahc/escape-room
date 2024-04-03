@@ -3,8 +3,8 @@ import { ReviewController } from './review.controller';
 import { ReviewService } from './review.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Review } from './review.entity';
-import { UserModule } from 'src/user/user.module';
-import { RecordModule } from 'src/record/record.module';
+import { UserModule } from '../user/user.module';
+import { RecordModule } from '../record/record.module';
 
 @Module({
   imports: [

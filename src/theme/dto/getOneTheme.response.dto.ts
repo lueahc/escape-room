@@ -1,5 +1,5 @@
-import { GetVisibleReviewsResponseDto } from "src/review/dto/getVisibleReviews.response.dto";
-import { LocationEnum } from "src/store/location.enum";
+import { GetVisibleReviewsResponseDto } from "../../review/dto/getVisibleReviews.response.dto";
+import { LocationEnum } from "../../store/location.enum";
 
 export class GetOneThemeResponseDto {
     id: number;

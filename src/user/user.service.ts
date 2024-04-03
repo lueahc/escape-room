@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { SignUpRequestDto } from './dto/signUp.request.dto';
 import * as bcrypt from 'bcrypt';
 import { SignInRequestDto } from './dto/signIn.request.dto';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { SignUpResponseDto } from './dto/signUp.response.dto';
 import { UpdateInfoRequestDto } from './dto/updateInfo.request.dto';
 

@@ -4,8 +4,8 @@ import { Store } from './store.entity';
 import { Like, Repository } from 'typeorm';
 import { LocationEnum } from './location.enum';
 import { GetStoresListResponseDto } from './dto/getStoresList.response.dto';
-import { ReviewService } from 'src/review/review.service';
-import { ThemeService } from 'src/theme/theme.service';
+import { ReviewService } from '../review/review.service';
+import { ThemeService } from '../theme/theme.service';
 import { GetOneStoreResponseDto } from './dto/getOneStore.response.dto';
 
 @Injectable()

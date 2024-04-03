@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './review.entity';
 import { Repository } from 'typeorm';
 import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { CreateReviewRequestDto } from './dto/createReview.request.dto';
-import { RecordService } from 'src/record/record.service';
+import { RecordService } from '../record/record.service';
 import { GetVisibleReviewsResponseDto } from './dto/getVisibleReviews.response.dto';
 
 @Injectable()

@@ -3,8 +3,8 @@ import { StoreController } from './store.controller';
 import { StoreService } from './store.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Store } from './store.entity';
-import { ReviewModule } from 'src/review/review.module';
-import { ThemeModule } from 'src/theme/theme.module';
+import { ReviewModule } from '../review/review.module';
+import { ThemeModule } from '../theme/theme.module';
 
 @Module({
   imports: [

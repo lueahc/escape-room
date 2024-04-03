@@ -1,4 +1,4 @@
-import { LocationEnum } from "src/store/location.enum";
+import { LocationEnum } from "../../store/location.enum";
 
 export class GetThemesListResponseDto {
     id: number;

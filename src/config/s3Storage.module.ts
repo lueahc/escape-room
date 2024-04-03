@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common'
 import { MulterModule } from '@nestjs/platform-express'
-import * as mime from 'mime-types'
-import s3Storage from 'multer-s3'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3'
 import * as multerS3 from 'multer-s3'
