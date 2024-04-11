@@ -14,11 +14,11 @@ export class Review extends TimestampEntity {
     @ManyToOne(() => Record, (record) => record.reviews)
     public record: Record;
 
-    @Column({ nullable: true })
-    content: string;
+    @Column({ default: 3 })
+    rate: number;
 
     @Column({ nullable: true })
-    rate: number;
+    content: string;
 
     @Column({ nullable: true })
     activity: number;
