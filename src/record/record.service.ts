@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Record } from './record.entity';
 import { Not, Repository } from 'typeorm';
@@ -357,7 +357,7 @@ export class RecordService {
                     const member = await this.userService.findOneById(memberId);
                     if (!member) {
                         throw new NotFoundException(
-                            '일행이 존재하지 않습니다.',
+                            `일행 memberId:${memberId}는 존재하지 않습니다.`,
                             'NON_EXISTING_PARTY'
                         );
                     }
@@ -372,7 +372,18 @@ export class RecordService {
             }
         }
 
-        return new CreateAndUpdateRecordResponseDto(record);
+        const responseRecord = await this.recordRepository.findOne({
+            where: { id: record.id },
+            relations: ['writer', 'theme', 'theme.store']
+        });
+        if (!responseRecord) {
+            throw new BadRequestException(
+                '기록 생성 중 에러가 발생했습니다.',
+                'CREATE_RECORD_ERROR'
+            );
+        }
+
+        return new CreateAndUpdateRecordResponseDto(responseRecord);
     }
 
     @Transactional()
@@ -458,7 +469,7 @@ export class RecordService {
                 // 작성 리뷰 있는 경우
                 const hasWrittenReview = await this.reviewService.hasWrittenReview(memberId, recordId);
                 if (hasWrittenReview) {
-                    throw new NotFoundException(
+                    throw new ConflictException(
                         `일행 memberId:${memberId}는 이미 작성한 리뷰가 있습니다.`,
                         'EXISTING_REVIEW'
                     );
@@ -476,7 +487,18 @@ export class RecordService {
             }
         }
 
-        return new CreateAndUpdateRecordResponseDto(record);
+        const responseRecord = await this.recordRepository.findOne({
+            where: { id: record.id },
+            relations: ['writer', 'theme', 'theme.store']
+        });
+        if (!responseRecord) {
+            throw new BadRequestException(
+                '기록 수정 중 에러가 발생했습니다.',
+                'UPDATE_RECORD_ERROR'
+            );
+        }
+
+        return new CreateAndUpdateRecordResponseDto(responseRecord);
     }
 
     async changeRecordVisibility(userId: number, recordId: number): Promise<void> {
