@@ -17,12 +17,13 @@ export class UserController {
 
     @Post('/signUp')
     @HttpCode(201)
-    @ApiOperation({ summary: '회원가입 API', description: '회원을 생성함' })
+    @ApiOperation({ summary: '회원가입 API', description: '사용자를 생성함' })
     signUp(@Body() signUpRequestDto: SignUpRequestDto): Promise<SignUpResponseDto> {
         return this.userService.signUp(signUpRequestDto);
     }
 
     @Post('/signIn')
+    @HttpCode(200)
     @ApiOperation({ summary: '로그인 API' })
     signIn(@Body() signInRequestDto: SignInRequestDto) {
         return this.userService.signIn(signInRequestDto);
@@ -30,7 +31,7 @@ export class UserController {
 
     @Patch('/info')
     @UseGuards(JwtAuthGuard)
-    @ApiOperation({ summary: '회원 정보 수정 API', description: '회원의 정보를 수정함' })
+    @ApiOperation({ summary: '사용자 정보 수정 API', description: '사용자의 정보를 수정함' })
     @ApiSecurity('AdminAuth')
     updateInfo(
         @User('id') userId: number,
@@ -40,7 +41,7 @@ export class UserController {
 
     @Get('/search')
     @UseGuards(JwtAuthGuard)
-    @ApiOperation({ summary: '회원 검색 API', description: '닉네임으로 회원을 검색함' })
+    @ApiOperation({ summary: '사용자 검색 API', description: '닉네임으로 사용자를 검색함' })
     @ApiSecurity('AdminAuth')
     searchUser(
         @User('id') userId: number,
