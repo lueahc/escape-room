@@ -115,40 +115,29 @@ describe('UserController (E2E)', () => {
     });
 
     describe('POST /user/signIn', () => {
-        it('로그인에 성공한다.', async () => {
-            // given
+        beforeEach(async () => {
             await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
-                    email: "test@test.com",
+                    email: "test1@test.com",
                     password: "test1234",
-                    nickname: "tester"
+                    nickname: "tester1"
                 });
+        });
 
-            // when
+        it('로그인에 성공한다.', async () => {
             const response = await request(app.getHttpServer())
                 .post('/user/signIn')
                 .send({
-                    email: "test@test.com",
+                    email: "test1@test.com",
                     password: "test1234",
                 });
 
-            // then
             expect(response.status).toBe(200);
             expect(response.body.accessToken).toBeDefined();
         });
 
         it('존재하지 않는 사용자가 요청하면 404 에러가 발생한다.', async () => {
-            // given
-            await request(app.getHttpServer())
-                .post('/user/signUp')
-                .send({
-                    email: "test1@test.com",
-                    password: "test1234",
-                    nickname: "tester"
-                });
-
-            // when
             const response = await request(app.getHttpServer())
                 .post('/user/signIn')
                 .send({
@@ -156,52 +145,40 @@ describe('UserController (E2E)', () => {
                     password: "test1234",
                 });
 
-            // then
             expect(response.status).toBe(404);
         });
 
         it('비밀번호가 일치하지 않으면 400 에러가 발생한다.', async () => {
-            // given
-            await request(app.getHttpServer())
-                .post('/user/signUp')
-                .send({
-                    email: "test@test.com",
-                    password: "test1234",
-                    nickname: "tester"
-                });
-
-            // when
             const response = await request(app.getHttpServer())
                 .post('/user/signIn')
                 .send({
-                    email: "test@test.com",
+                    email: "test1@test.com",
                     password: "test12345",
                 });
 
-            // then
             expect(response.status).toBe(400);
         });
     });
     describe('PATCH /user/info', () => {
-        it('사용자의 정보를 수정한다.', async () => {
-            // given
+        beforeEach(async () => {
             await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
-                    email: "test@test.com",
+                    email: "test1@test.com",
                     password: "test1234",
                     nickname: "tester1"
                 });
+        });
 
+        it('사용자의 정보를 수정한다.', async () => {
             const loginResponse = await request(app.getHttpServer())
                 .post('/user/signIn')
                 .send({
-                    email: "test@test.com",
+                    email: "test1@test.com",
                     password: "test1234",
                 });
             const accessToken = loginResponse.body.accessToken;
 
-            // when
             const response = await request(app.getHttpServer())
                 .patch('/user/info')
                 .set('Authorization', `Bearer ${accessToken}`)
@@ -210,25 +187,22 @@ describe('UserController (E2E)', () => {
                     nickname: "tester2"
                 });
 
-            // then
-            expect(response.status).toBe(200);
-            const user = await userService.findOneByEmail("test@test.com");
-            expect(user?.nickname).toBe("tester2");
-        });
-
-        it('존재하지 않는 사용자가 요청하면 404 에러가 발생한다.', async () => {
-        });
-
-        it('이미 존재하는 닉네임이면 409 에러가 발생한다.', async () => {
-            // given
-            await request(app.getHttpServer())
-                .post('/user/signUp')
+            const updatedResponse = await request(app.getHttpServer())
+                .post('/user/signIn')
                 .send({
                     email: "test1@test.com",
-                    password: "test1234",
-                    nickname: "tester1"
+                    password: "test12345",
                 });
 
+            expect(response.status).toBe(200);
+            const user = await userService.findOneByEmail("test1@test.com");
+            expect(user?.nickname).toBe("tester2");
+            expect(updatedResponse.status).toBe(200);
+        });
+
+        it('존재하지 않는 사용자가 요청하면 404 에러가 발생한다.', async () => { });
+
+        it('이미 존재하는 닉네임이면 409 에러가 발생한다.', async () => {
             await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
@@ -245,7 +219,6 @@ describe('UserController (E2E)', () => {
                 });
             const accessToken = loginResponse.body.accessToken;
 
-            // when
             const response = await request(app.getHttpServer())
                 .patch('/user/info')
                 .set('Authorization', `Bearer ${accessToken}`)
@@ -253,14 +226,14 @@ describe('UserController (E2E)', () => {
                     nickname: "tester2"
                 });
 
-            // then
             expect(response.status).toBe(409);
         });
     });
 
     describe('GET /user/search', () => {
-        it('닉네임으로 사용자를 검색한다.', async () => {
-            // given
+        let accessToken: string;
+
+        beforeEach(async () => {
             await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
@@ -269,6 +242,16 @@ describe('UserController (E2E)', () => {
                     nickname: "tester1"
                 });
 
+            const loginResponse = await request(app.getHttpServer())
+                .post('/user/signIn')
+                .send({
+                    email: "test1@test.com",
+                    password: "test1234",
+                });
+            accessToken = loginResponse.body.accessToken;
+        });
+
+        it('닉네임으로 사용자를 검색한다.', async () => {
             await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
@@ -277,79 +260,31 @@ describe('UserController (E2E)', () => {
                     nickname: "tester2"
                 });
 
-            const loginResponse = await request(app.getHttpServer())
-                .post('/user/signIn')
-                .send({
-                    email: "test1@test.com",
-                    password: "test1234",
-                });
-            const accessToken = loginResponse.body.accessToken;
-
-            // when
             const response = await request(app.getHttpServer())
                 .get('/user/search')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .query({ nickname: 'tester2' });
 
-            // then
             expect(response.status).toBe(200);
             expect(response.body.userId).toBeDefined();
             expect(response.body.userNickname).toBeDefined();
         });
 
         it('존재하지 않는 사용자를 검색하면 404 에러가 발생한다.', async () => {
-            // given
-            await request(app.getHttpServer())
-                .post('/user/signUp')
-                .send({
-                    email: "test@test.com",
-                    password: "test1234",
-                    nickname: "tester"
-                });
-
-            const loginResponse = await request(app.getHttpServer())
-                .post('/user/signIn')
-                .send({
-                    email: "test@test.com",
-                    password: "test1234",
-                });
-            const accessToken = loginResponse.body.accessToken;
-
-            // when
             const response = await request(app.getHttpServer())
                 .get('/user/search')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .query({ nickname: 'x' });
 
-            // then
             expect(response.status).toBe(404);
         });
 
         it('본인이면 400 에러가 발생한다.', async () => {
-            // given
-            await request(app.getHttpServer())
-                .post('/user/signUp')
-                .send({
-                    email: "test@test.com",
-                    password: "test1234",
-                    nickname: "tester"
-                });
-
-            const loginResponse = await request(app.getHttpServer())
-                .post('/user/signIn')
-                .send({
-                    email: "test@test.com",
-                    password: "test1234",
-                });
-            const accessToken = loginResponse.body.accessToken;
-
-            // when
             const response = await request(app.getHttpServer())
                 .get('/user/search')
                 .set('Authorization', `Bearer ${accessToken}`)
-                .query({ nickname: 'tester' });
+                .query({ nickname: 'tester1' });
 
-            // then
             expect(response.status).toBe(400);
         });
     });
