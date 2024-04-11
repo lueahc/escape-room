@@ -19,7 +19,7 @@ export class RecordController {
 
     @Get('/log')
     @UseGuards(JwtAuthGuard)
-    @ApiOperation({ summary: '탈출일지 조회 API', description: '회원의 탈출일지를 조회함' })
+    @ApiOperation({ summary: '탈출일지 조회 API', description: '사용자의 탈출일지를 조회함' })
     @ApiSecurity('AdminAuth')
     getLogs(@User('id') userId: number): Promise<GetLogsResponseDto[]> {
         return this.recordService.getLogs(userId);
@@ -45,7 +45,7 @@ export class RecordController {
 
     @Get('/:recordId/tag')
     @UseGuards(JwtAuthGuard)
-    @ApiOperation({ summary: '특정 기록에 태그된 회원 조회 API', description: '특정한 기록에 태그된 회원을 조회함' })
+    @ApiOperation({ summary: '특정 기록에 태그된 사용자 조회 API', description: '특정한 기록에 태그된 사용자를 조회함' })
     @ApiSecurity('AdminAuth')
     getTaggedUsersByRecordId(
         @User('id') userId: number,
