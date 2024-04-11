@@ -301,7 +301,8 @@ export class RecordService {
     @Transactional()
     async createRecord(userId: number, createRecordRequestDto: CreateRecordRequestDto, file: Express.Multer.File): Promise<CreateAndUpdateRecordResponseDto> {
         const { themeId, isSuccess, playDate, headCount, hintCount, playTime, note, party } = createRecordRequestDto;
-        const s3File = file as any;
+        const s3File = file ? file as any : undefined;
+        let image = s3File ? s3File.location : undefined;
 
         const user = await this.userService.findOneById(userId);
         if (!user) {
@@ -327,7 +328,7 @@ export class RecordService {
             headCount,
             hintCount,
             playTime,
-            image: s3File.location,
+            image,
             note
         });
         await this.recordRepository.save(record);
@@ -377,7 +378,8 @@ export class RecordService {
     @Transactional()
     async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto, file: Express.Multer.File): Promise<CreateAndUpdateRecordResponseDto> {
         const { isSuccess, playDate, headCount, hintCount, playTime, note, party } = updateRecordRequestDto;
-        const s3File = file as any;
+        const s3File = file ? file as any : undefined;
+        let image = s3File ? s3File.location : undefined;
 
         const record = await this.getRecordById(recordId);
         if (!record) {
@@ -408,7 +410,7 @@ export class RecordService {
         record.headCount = headCount;
         record.hintCount = hintCount;
         record.playTime = playTime;
-        record.image = s3File.location;
+        record.image = image;
         record.note = note;
         await this.recordRepository.save(record);
 
