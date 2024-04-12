@@ -1,3 +1,9 @@
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+dotenv.config({
+    path: path.resolve('.local.env')
+});
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from "@nestjs/common";
 import { AppModule } from "../../app.module";
@@ -6,8 +12,6 @@ import { DataSource, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserService } from '../user.service';
 import { User } from '../user.entity';
-import * as dotenv from 'dotenv';
-import * as path from 'path';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 
 describe('UserController (E2E)', () => {
@@ -17,10 +21,6 @@ describe('UserController (E2E)', () => {
     let dataSource: DataSource;
 
     beforeAll(async () => {
-        dotenv.config({
-            path: path.resolve('.local.env')
-        });
-
         initializeTransactionalContext();
 
         const moduleRef: TestingModule = await Test.createTestingModule({

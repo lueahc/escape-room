@@ -1,18 +1,23 @@
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+dotenv.config({
+    path: path.resolve('.local.env')
+});
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from "@nestjs/common";
 import { AppModule } from "../../app.module";
 import * as request from 'supertest';
 import { DataSource, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import * as dotenv from 'dotenv';
-import * as path from 'path';
+
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import { RecordService } from '../record.service';
 import { Theme } from '../../theme/theme.entity';
 import { Store } from '../../store/store.entity';
 import { LocationEnum } from '../../store/location.enum';
 
-describe('UserController (E2E)', () => {
+describe('RecordController (E2E)', () => {
     let app: INestApplication;
     let recordService: RecordService;
     let dataSource: DataSource;
@@ -21,10 +26,6 @@ describe('UserController (E2E)', () => {
     let themeRepository: Repository<Theme>;
 
     beforeAll(async () => {
-        dotenv.config({
-            path: path.resolve('.local.env')
-        });
-
         initializeTransactionalContext();
 
         const moduleRef: TestingModule = await Test.createTestingModule({
@@ -34,7 +35,6 @@ describe('UserController (E2E)', () => {
         dataSource = moduleRef.get<DataSource>(DataSource);
 
         recordService = moduleRef.get<RecordService>(RecordService);
-
         const storeRepositoryToken = getRepositoryToken(Store);
         storeRepository = moduleRef.get<Repository<Store>>(storeRepositoryToken);
         const themeRepositoryToken = getRepositoryToken(Theme);
@@ -269,6 +269,8 @@ describe('UserController (E2E)', () => {
             expect(record).toHaveProperty('isSuccess');
             expect(record).toHaveProperty('playDate');
             expect(record).toHaveProperty('headCount');
+            const createdRecord = await recordService.getRecordById(1);
+            expect(createdRecord).toBeDefined();
         });
 
         it('존재하지 않는 사용자가 요청하면 404 에러가 발생한다.', async () => { });
