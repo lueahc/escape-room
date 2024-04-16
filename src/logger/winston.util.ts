@@ -12,7 +12,7 @@ const dailyOptions = (level: string) => {
         datePattern: 'YYYY-MM-DD',
         dirname: logDir + `/${level}`,
         filename: `%DATE%.${level}.log`,
-        maxFiles: 30,
+        maxFiles: 180,
         zippedArchive: true,
     };
 };
@@ -36,4 +36,3 @@ export const WinstonLogger = WinstonModule.createLogger({
         new winstonDaily(dailyOptions('error')),
     ],
 });
-
