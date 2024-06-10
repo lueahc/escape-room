@@ -7,18 +7,20 @@ import { AuthModule } from './auth/auth.module';
 import { JwtPassportModule } from './jwt/jwt.passport.module';
 import { StoreModule } from './store/store.module';
 import { RecordModule } from './record/record.module';
-import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { AppController } from './app.controller';
 import { SlackModule } from 'nestjs-slack';
 import { APP_FILTER } from '@nestjs/core';
 import { ErrorFilter } from './logger/error.filter';
+import { AppConfigModule } from './config/appConfig.module';
 
 @Module({
-  imports: [DatabaseModule, ThemeModule, UserModule, ReviewModule, AuthModule, JwtPassportModule, StoreModule, RecordModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+  imports: [AppConfigModule, DatabaseModule,
+    AuthModule, JwtPassportModule,
+    UserModule, ThemeModule, StoreModule, RecordModule, ReviewModule,
+    // ConfigModule.forRoot({
+    //   isGlobal: true,
+    // }),
     SlackModule.forRoot({
       type: 'webhook',
       url: process.env.SLACK_WEBHOOK_URL,
