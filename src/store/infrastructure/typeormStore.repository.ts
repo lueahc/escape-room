@@ -12,41 +12,31 @@ export class TypeormStoreRepository implements StoreRepository {
         private readonly storeRepository: Repository<Store>,
     ) { }
 
-    async getAllStores(): Promise<Store[]> {
+    async findAll(): Promise<Store[]> {
         return await this.storeRepository.find({
-            order: {
-                id: 'DESC'
-            }
+            order: { id: 'DESC' }
         });
     }
 
-    async getStoresByLocation(location: LocationEnum): Promise<Store[]> {
+    async findByLocation(location: LocationEnum): Promise<Store[]> {
         return await this.storeRepository.find({
-            where: {
-                location
-            },
-            order: {
-                id: 'DESC'
-            }
+            where: { location },
+            order: { id: 'DESC' }
         });
     }
 
-    async getStoresByKeyword(keyword: string): Promise<Store[]> {
+    async findByKeyword(keyword: string): Promise<Store[]> {
         return await this.storeRepository.find({
-            relations: {
-                themes: true
-            },
             where: {
                 name: Like(`%${keyword}%`)
-            }
+            },
+            relations: ['themes']
         });
     }
 
-    async getOneStoreById(id: number) {
+    async findOneById(id: number) {
         return await this.storeRepository.findOne({
-            where: {
-                id
-            }
+            where: { id }
         });
     }
 }

@@ -17,7 +17,7 @@ export class StoreService {
         private readonly themeService: ThemeService
     ) { }
 
-    async mapResponseDto(stores: Store[]): Promise<GetStoresListResponseDto[]> {
+    async mapStoresToResponseDto(stores: Store[]): Promise<GetStoresListResponseDto[]> {
         return await Promise.all(stores.map(async (store) => {
             const reviewCount = await this.reviewService.countVisibleReviewsInStore(store.id);
             return new GetStoresListResponseDto({ store, reviewCount });
@@ -25,25 +25,22 @@ export class StoreService {
     }
 
     async getAllStores(): Promise<GetStoresListResponseDto[]> {
-        const stores = await this.storeRepository.getAllStores();
-        const mapstores = await this.mapResponseDto(stores);
-        return mapstores;
+        const stores = await this.storeRepository.findAll();
+        return await this.mapStoresToResponseDto(stores);
     }
 
     async getStoresByLocation(location: LocationEnum): Promise<GetStoresListResponseDto[]> {
-        const stores = await this.storeRepository.getStoresByLocation(location);
-        const mapstores = await this.mapResponseDto(stores);
-        return mapstores;
+        const stores = await this.storeRepository.findByLocation(location);
+        return await this.mapStoresToResponseDto(stores);
     }
 
     async getStoresByKeyword(keyword: string): Promise<GetStoresListResponseDto[]> {
-        const stores = await this.storeRepository.getStoresByKeyword(keyword);
-        const mapstores = await this.mapResponseDto(stores);
-        return mapstores;
+        const stores = await this.storeRepository.findByKeyword(keyword);
+        return await this.mapStoresToResponseDto(stores);
     }
 
     async getOneStore(id: number): Promise<GetOneStoreResponseDto> {
-        const store = await this.storeRepository.getOneStoreById(id);
+        const store = await this.storeRepository.findOneById(id);
         if (!store) {
             throw new NotFoundException(
                 '매장이 존재하지 않습니다.',
