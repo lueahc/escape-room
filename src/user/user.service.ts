@@ -94,9 +94,7 @@ export class UserService {
             userId: user.getId(),
         });
 
-        return {
-            accessToken,
-        };
+        return { accessToken };
     }
 
     async updateInfo(userId: number, updateInfoRequestDto: UpdateInfoRequestDto): Promise<void> {
@@ -113,8 +111,7 @@ export class UserService {
         if (password) {
             const salt = await bcrypt.genSalt();
             const hashedPassword = await bcrypt.hash(password, salt);
-
-            user.updatePassword(hashedPassword);
+            await user.updatePassword(hashedPassword);
         }
 
         if (nickname) {
@@ -126,7 +123,7 @@ export class UserService {
                 );
             }
 
-            user.updateNickname(nickname);
+            await user.updateNickname(nickname);
         }
 
         await this.userRepository.save(user);
