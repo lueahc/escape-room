@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ReviewController } from './review.controller';
 import { ReviewService } from './review.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,14 +12,13 @@ import { TypeormReviewRepository } from './infrastructure/typeormReview.reposito
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Review, User]),
+    TypeOrmModule.forFeature([Review]),
     UserModule,
     RecordModule
   ],
   controllers: [ReviewController],
   providers: [
     ReviewService,
-    { provide: USER_REPOSITORY, useClass: TypeormUserRepository },
     { provide: REVIEW_REPOSITORY, useClass: TypeormReviewRepository },
   ],
   exports: [ReviewService]

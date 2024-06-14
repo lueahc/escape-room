@@ -14,23 +14,27 @@ import { RECORD_REPOSITORY, THEME_REPOSITORY, USER_REPOSITORY } from 'src/inject
 import { UserRepository } from 'src/user/domain/user.repository';
 import { ThemeRepository } from 'src/theme/domain/theme.repository';
 import { RecordRepository } from './domain/record.repository';
+import { ThemeService } from 'src/theme/theme.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class RecordService {
     constructor(
-        @InjectRepository(Tag)
-        private readonly tagRepository: Repository<Tag>,
-        @Inject(USER_REPOSITORY)
-        private readonly userRepository: UserRepository,
-        @Inject(THEME_REPOSITORY)
-        private readonly themeRepository: ThemeRepository,
+        private readonly userService: UserService,
         @Inject(RECORD_REPOSITORY)
         private readonly recordRepository: RecordRepository,
-        // @Inject(forwardRef(() => ThemeService))
-        // private readonly themeService: ThemeService,
+        @Inject(forwardRef(() => ThemeService))
+        private readonly themeService: ThemeService,
         @Inject(forwardRef(() => ReviewService))
         private readonly reviewService: ReviewService
     ) { }
+
+    async getRecordById(id: number) {
+        return await this.recordRepository.getRecordById(id);
+    }
+    async getOneTag(userId: number, recordId: number) {
+        return await this.recordRepository.getOneTag(userId, recordId);
+    }
 
     async getTaggedUsersByRecordId(recordId: number): Promise<number[]> {
         const tags = await this.recordRepository.getTaggedUsersByRecordId(recordId);
@@ -126,7 +130,7 @@ export class RecordService {
         const { themeId, isSuccess, playDate, headCount, hintCount, playTime, note, party } = createRecordRequestDto;
         const s3File = file as any;
 
-        const user = await this.userRepository.findOneById(userId);
+        const user = await this.userService.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -134,7 +138,7 @@ export class RecordService {
             );
         }
 
-        const theme = await this.themeRepository.getThemeById(themeId);
+        const theme = await this.themeService.getThemeById(themeId);
         if (!theme) {
             throw new NotFoundException(
                 '테마가 존재하지 않습니다.',
@@ -155,12 +159,12 @@ export class RecordService {
         });
         await this.recordRepository.save(record);
 
-        const tag = this.tagRepository.create({
+        const tag = this.recordRepository.createTag({
             user,
             record,
             isWriter: true
         });
-        await this.tagRepository.save(tag);
+        await this.recordRepository.saveTag(tag);
 
         if (party) {
             // 본인 제외
@@ -176,7 +180,7 @@ export class RecordService {
                 }
 
                 for (const memberId of uniqueParty) {
-                    const member = await this.userRepository.findOneById(memberId);
+                    const member = await this.userService.findOneById(memberId);
                     if (!member) {
                         throw new NotFoundException(
                             '일행이 존재하지 않습니다.',
@@ -184,12 +188,12 @@ export class RecordService {
                         );
                     }
 
-                    const tag = this.tagRepository.create({
+                    const tag = this.recordRepository.createTag({
                         user: member,
                         record,
                         isWriter: false
                     });
-                    await this.tagRepository.save(tag);
+                    await this.recordRepository.saveTag(tag);
                 }
             }
         }
@@ -210,7 +214,7 @@ export class RecordService {
             )
         }
 
-        const user = await this.userRepository.findOneById(userId);
+        const user = await this.userService.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -251,7 +255,7 @@ export class RecordService {
 
             // 일행 추가
             for (const memberId of uniqueParty) {
-                const member = await this.userRepository.findOneById(memberId);
+                const member = await this.userService.findOneById(memberId);
                 if (!member) {
                     throw new NotFoundException(
                         `일행 memberId:${memberId}는 존재하지 않습니다.`,
@@ -260,12 +264,12 @@ export class RecordService {
                 }
 
                 if (!originalParty.includes(memberId)) {
-                    const tag = this.tagRepository.create({
+                    const tag = this.recordRepository.createTag({
                         user: member,
                         record,
                         isWriter: false
                     });
-                    await this.tagRepository.save(tag);
+                    await this.recordRepository.saveTag(tag);
                 }
             }
 
@@ -293,7 +297,7 @@ export class RecordService {
                         'NON_EXISTING_USER'
                     );
                 }
-                await this.tagRepository.softDelete({ id: deleteTag.id });
+                await this.recordRepository.softDeleteTag(deleteTag.id);
             }
         }
 
@@ -309,7 +313,7 @@ export class RecordService {
             )
         }
 
-        const user = await this.userRepository.findOneById(userId);
+        const user = await this.userService.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -325,7 +329,7 @@ export class RecordService {
         }
 
         this.changeVisibility(tag);
-        await this.tagRepository.save(tag);
+        await this.recordRepository.saveTag(tag);
     }
 
     async deleteRecord(userId: number, recordId: number): Promise<void> {
@@ -337,7 +341,7 @@ export class RecordService {
             )
         }
 
-        const user = await this.userRepository.findOneById(userId);
+        const user = await this.userService.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',

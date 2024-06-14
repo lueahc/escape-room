@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ReviewRepository } from "../domain/review.repository";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Review } from "../domain/review.entity";
-import { Repository, SelectQueryBuilder } from "typeorm";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class TypeormReviewRepository implements ReviewRepository {

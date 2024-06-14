@@ -3,7 +3,6 @@ import { Like, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Theme } from "../domain/theme.entity";
 import { ThemeRepository } from "../domain/theme.repository";
-import { GetThemesListResponseDto } from "../dto/getThemesList.response.dto";
 import { LocationEnum } from "src/store/location.enum";
 
 @Injectable()

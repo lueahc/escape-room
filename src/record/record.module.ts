@@ -9,24 +9,19 @@ import { UserModule } from 'src/user/user.module';
 import { ReviewModule } from 'src/review/review.module';
 import { S3StorageModule } from 'src/config/s3Storage.module';
 import { RECORD_REPOSITORY, THEME_REPOSITORY, USER_REPOSITORY } from 'src/inject.constant';
-import { TypeormUserRepository } from 'src/user/infrastructure/typeormUser.repository';
-import { User } from 'src/user/domain/user.entity';
-import { Theme } from 'src/theme/domain/theme.entity';
-import { TypeormThemeRepository } from 'src/theme/infrastructure/typeormTheme.repository';
 import { TypeormRecordRepository } from './infrastructure/typeormRecord.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Record, Tag, User, Theme]),
+    TypeOrmModule.forFeature([Record, Tag]),
     UserModule,
     forwardRef(() => ThemeModule),
     forwardRef(() => ReviewModule),
     S3StorageModule
   ],
   controllers: [RecordController],
-  providers: [RecordService,
-    { provide: USER_REPOSITORY, useClass: TypeormUserRepository },
-    { provide: THEME_REPOSITORY, useClass: TypeormThemeRepository },
+  providers: [
+    RecordService,
     { provide: RECORD_REPOSITORY, useClass: TypeormRecordRepository },
   ],
   exports: [RecordService],

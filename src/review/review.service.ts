@@ -3,17 +3,16 @@ import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
 import { CreateReviewRequestDto } from './dto/createReview.request.dto';
 import { RecordService } from 'src/record/record.service';
 import { GetVisibleReviewsResponseDto } from './dto/getVisibleReviews.response.dto';
-import { REVIEW_REPOSITORY, USER_REPOSITORY } from 'src/inject.constant';
-import { UserRepository } from 'src/user/domain/user.repository';
+import { REVIEW_REPOSITORY } from 'src/inject.constant';
 import { ReviewRepository } from './domain/review.repository';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class ReviewService {
     constructor(
         @Inject(REVIEW_REPOSITORY)
         private readonly reviewRepository: ReviewRepository,
-        @Inject(USER_REPOSITORY)
-        private readonly userRepository: UserRepository,
+        private readonly userService: UserService,
         private readonly recordService: RecordService
     ) { }
 
@@ -66,7 +65,7 @@ export class ReviewService {
             )
         }
 
-        const user = await this.userRepository.findOneById(userId);
+        const user = await this.userService.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -117,7 +116,7 @@ export class ReviewService {
             )
         }
 
-        const user = await this.userRepository.findOneById(userId);
+        const user = await this.userService.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -155,7 +154,7 @@ export class ReviewService {
             )
         }
 
-        const user = await this.userRepository.findOneById(userId);
+        const user = await this.userService.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',

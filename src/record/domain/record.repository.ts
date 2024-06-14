@@ -13,4 +13,7 @@ export interface RecordRepository {
     save(record: Record): Promise<Record>;
     softDelete(id: number): Promise<void>;
     getRecordAndReviews(whereConditions: RecordPartial): Promise<Record[]>;
+    createTag(tag: Partial<Tag>): Tag;
+    saveTag(tag: Tag): Promise<Tag>;
+    softDeleteTag(id: number): Promise<void>;
 }

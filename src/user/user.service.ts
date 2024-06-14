@@ -1,7 +1,4 @@
 import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './domain/user.entity';
-import { Repository } from 'typeorm';
 import { SignUpRequestDto } from './dto/signUp.request.dto';
 import * as bcrypt from 'bcrypt';
 import { SignInRequestDto } from './dto/signIn.request.dto';
@@ -18,6 +15,10 @@ export class UserService {
         private readonly userRepository: UserRepository,
         private readonly authService: AuthService,
     ) { }
+
+    async findOneById(id: number) {
+        return await this.userRepository.findOneById(id);
+    }
 
     async searchUser(userId: number, nickname: string) {
         const user = await this.userRepository.findOneByNickname(nickname);

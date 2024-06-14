@@ -222,4 +222,16 @@ export class TypeormRecordRepository implements RecordRepository {
             }
         });
     }
+
+    createTag(tag: Partial<Tag>): Tag {
+        return this.tagRepository.create(tag);
+    }
+
+    async saveTag(tag: Tag): Promise<Tag> {
+        return await this.tagRepository.save(tag);
+    }
+
+    async softDeleteTag(id: number): Promise<void> {
+        await this.tagRepository.softDelete(id);
+    }
 }

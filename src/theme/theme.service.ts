@@ -1,25 +1,23 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Theme } from './domain/theme.entity';
-import { Like, Repository } from 'typeorm';
 import { LocationEnum } from '../store/location.enum';
 import { GetThemesListResponseDto } from './dto/getThemesList.response.dto';
 import { ReviewService } from 'src/review/review.service';
 import { GetOneThemeResponseDto } from './dto/getOneTheme.response.dto';
 import { GetVisibleReviewsResponseDto } from 'src/review/dto/getVisibleReviews.response.dto';
-import { REVIEW_REPOSITORY, THEME_REPOSITORY } from 'src/inject.constant';
+import { THEME_REPOSITORY } from 'src/inject.constant';
 import { ThemeRepository } from './domain/theme.repository';
-import { ReviewRepository } from 'src/review/domain/review.repository';
 
 @Injectable()
 export class ThemeService {
     constructor(
         @Inject(THEME_REPOSITORY)
         private readonly themeRepository: ThemeRepository,
-        @Inject(REVIEW_REPOSITORY)
-        private readonly reviewRepository: ReviewRepository,
         private readonly reviewService: ReviewService
     ) { }
+
+    async getThemeById(id: number) {
+        return await this.themeRepository.getThemeById(id);
+    }
 
     async getAllThemes(): Promise<GetThemesListResponseDto[]> {
         const themes = await this.themeRepository.getAllThemes();
