@@ -1,12 +1,17 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { UserService } from 'src/user/user.service';
+import { USER_REPOSITORY } from 'src/inject.constant';
+import { UserRepository } from 'src/user/domain/user.repository';
 // import 'dotenv/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-    constructor(private readonly userService: UserService) {
+    constructor(
+        @Inject(USER_REPOSITORY)
+        private readonly userRepository: UserRepository,
+    ) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
@@ -15,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload: any) {
-        const user = await this.userService.findOneById(payload.userId);
+        const user = await this.userRepository.findOneById(payload.userId);
 
         if (!user) {
             throw new UnauthorizedException(

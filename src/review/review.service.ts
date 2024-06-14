@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './review.entity';
 import { Repository } from 'typeorm';
@@ -7,13 +7,16 @@ import { UserService } from 'src/user/user.service';
 import { CreateReviewRequestDto } from './dto/createReview.request.dto';
 import { RecordService } from 'src/record/record.service';
 import { GetVisibleReviewsResponseDto } from './dto/getVisibleReviews.response.dto';
+import { USER_REPOSITORY } from 'src/inject.constant';
+import { UserRepository } from 'src/user/domain/user.repository';
 
 @Injectable()
 export class ReviewService {
     constructor(
         @InjectRepository(Review)
         private readonly reviewRepository: Repository<Review>,
-        private readonly userService: UserService,
+        @Inject(USER_REPOSITORY)
+        private readonly userRepository: UserRepository,
         private readonly recordService: RecordService
     ) { }
 
@@ -134,7 +137,7 @@ export class ReviewService {
             )
         }
 
-        const user = await this.userService.findOneById(userId);
+        const user = await this.userRepository.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -185,7 +188,7 @@ export class ReviewService {
             )
         }
 
-        const user = await this.userService.findOneById(userId);
+        const user = await this.userRepository.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -223,7 +226,7 @@ export class ReviewService {
             )
         }
 
-        const user = await this.userService.findOneById(userId);
+        const user = await this.userRepository.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',

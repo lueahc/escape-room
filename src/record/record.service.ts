@@ -12,6 +12,8 @@ import { ReviewService } from 'src/review/review.service';
 import { GetLogsResponseDto } from './dto/getLogs.response.dto';
 import { RecordPartial } from './record.types';
 import { CreateAndUpdateRecordResponseDto } from './dto/createAndUpdateRecord.response.dto';
+import { USER_REPOSITORY } from 'src/inject.constant';
+import { UserRepository } from 'src/user/domain/user.repository';
 
 @Injectable()
 export class RecordService {
@@ -20,7 +22,8 @@ export class RecordService {
         private readonly recordRepository: Repository<Record>,
         @InjectRepository(Tag)
         private readonly tagRepository: Repository<Tag>,
-        private readonly userService: UserService,
+        @Inject(USER_REPOSITORY)
+        private readonly userRepository: UserRepository,
         @Inject(forwardRef(() => ThemeService))
         private readonly themeService: ThemeService,
         @Inject(forwardRef(() => ReviewService))
@@ -303,7 +306,7 @@ export class RecordService {
         const { themeId, isSuccess, playDate, headCount, hintCount, playTime, note, party } = createRecordRequestDto;
         const s3File = file as any;
 
-        const user = await this.userService.findOneById(userId);
+        const user = await this.userRepository.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -353,7 +356,7 @@ export class RecordService {
                 }
 
                 for (const memberId of uniqueParty) {
-                    const member = await this.userService.findOneById(memberId);
+                    const member = await this.userRepository.findOneById(memberId);
                     if (!member) {
                         throw new NotFoundException(
                             '일행이 존재하지 않습니다.',
@@ -387,7 +390,7 @@ export class RecordService {
             )
         }
 
-        const user = await this.userService.findOneById(userId);
+        const user = await this.userRepository.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -428,7 +431,7 @@ export class RecordService {
 
             // 일행 추가
             for (const memberId of uniqueParty) {
-                const member = await this.userService.findOneById(memberId);
+                const member = await this.userRepository.findOneById(memberId);
                 if (!member) {
                     throw new NotFoundException(
                         `일행 memberId:${memberId}는 존재하지 않습니다.`,
@@ -486,7 +489,7 @@ export class RecordService {
             )
         }
 
-        const user = await this.userService.findOneById(userId);
+        const user = await this.userRepository.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -514,7 +517,7 @@ export class RecordService {
             )
         }
 
-        const user = await this.userService.findOneById(userId);
+        const user = await this.userRepository.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',

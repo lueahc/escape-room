@@ -1,5 +1,5 @@
 import { TimestampEntity } from "src/timestamp.entity"
-import { User } from "src/user/user.entity";
+import { User } from "src/user/domain/user.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Record } from "./record.entity";
 
