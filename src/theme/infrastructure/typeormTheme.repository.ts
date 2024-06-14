@@ -12,64 +12,47 @@ export class TypeormThemeRepository implements ThemeRepository {
         private readonly themeRepository: Repository<Theme>,
     ) { }
 
-    async getThemeById(id: number) {
+    async findOneById(id: number) {
         return await this.themeRepository.findOne({
-            relations: {
-                store: true,
-                records: {
-                    reviews: {
-                        writer: true
-                    }
-                }
-            },
-            where: {
-                id
-            }
-        })
-    }
-
-    async getAllThemes(): Promise<Theme[]> {
-        return await this.themeRepository.find({
-            relations: {
-                store: true
-            },
+            where: { id },
+            relations: ['store', 'records.reviews.writer']
         });
     }
 
-    async getThemesByLocation(location: LocationEnum): Promise<Theme[]> {
+    async findAll(): Promise<Theme[]> {
         return await this.themeRepository.find({
-            relations: {
-                store: true
-            },
+            relations: ['store']
+        });
+    }
+
+    async findByLocation(location: LocationEnum): Promise<Theme[]> {
+        return await this.themeRepository.find({
             where: {
                 store: {
                     location
                 }
             },
+            relations: ['store']
         });
     }
 
-    async getThemesByKeyword(keyword: string): Promise<Theme[]> {
+    async findByKeyword(keyword: string): Promise<Theme[]> {
         return await this.themeRepository.find({
-            relations: {
-                store: true
-            },
             where: {
                 name: Like(`%${keyword}%`)
-            }
+            },
+            relations: ['store']
         });
     }
 
-    async getThemesByStoreId(storeId: number): Promise<Theme[]> {
+    async findByStoreId(storeId: number): Promise<Theme[]> {
         return await this.themeRepository.find({
-            relations: {
-                store: true
-            },
             where: {
                 store: {
                     id: storeId
                 }
             },
+            relations: ['store']
         });
     }
 }

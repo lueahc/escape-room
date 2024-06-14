@@ -6,6 +6,7 @@ import { GetOneThemeResponseDto } from './dto/getOneTheme.response.dto';
 import { GetVisibleReviewsResponseDto } from 'src/review/dto/getVisibleReviews.response.dto';
 import { THEME_REPOSITORY } from 'src/inject.constant';
 import { ThemeRepository } from './domain/theme.repository';
+import { Theme } from './domain/theme.entity';
 
 @Injectable()
 export class ThemeService {
@@ -15,56 +16,39 @@ export class ThemeService {
         private readonly reviewService: ReviewService
     ) { }
 
-    async getThemeById(id: number) {
-        return await this.themeRepository.getThemeById(id);
+    async findOneById(id: number) {
+        return await this.themeRepository.findOneById(id);
+    }
+
+    async mapThemesToResponseDto(themes: Theme[]): Promise<GetThemesListResponseDto[]> {
+        return await Promise.all(themes.map(async (theme) => {
+            const reviewCount = await this.reviewService.countVisibleReviewsInTheme(theme.id);
+            return new GetThemesListResponseDto({ theme, reviewCount });
+        }));
     }
 
     async getAllThemes(): Promise<GetThemesListResponseDto[]> {
-        const themes = await this.themeRepository.getAllThemes();
-
-        const mapthemes = await Promise.all(themes.map(async (theme) => {
-            const reviewCount = await this.reviewService.countVisibleReviewsInTheme(theme.id);
-            return new GetThemesListResponseDto({ theme, reviewCount });
-        }));
-
-        return mapthemes;
+        const themes = await this.themeRepository.findAll();
+        return await this.mapThemesToResponseDto(themes);
     }
 
     async getThemesByLocation(location: LocationEnum): Promise<GetThemesListResponseDto[]> {
-        const themes = await this.themeRepository.getThemesByLocation(location);
-
-        const mapthemes = await Promise.all(themes.map(async (theme) => {
-            const reviewCount = await this.reviewService.countVisibleReviewsInTheme(theme.id);
-            return new GetThemesListResponseDto({ theme, reviewCount });
-        }));
-
-        return mapthemes;
+        const themes = await this.themeRepository.findByLocation(location);
+        return await this.mapThemesToResponseDto(themes);
     }
 
     async getThemesByKeyword(keyword: string): Promise<GetThemesListResponseDto[]> {
-        const themes = await this.themeRepository.getThemesByKeyword(keyword);
-
-        const mapthemes = await Promise.all(themes.map(async (theme) => {
-            const reviewCount = await this.reviewService.countVisibleReviewsInTheme(theme.id);
-            return new GetThemesListResponseDto({ theme, reviewCount });
-        }));
-
-        return mapthemes;
+        const themes = await this.themeRepository.findByKeyword(keyword);
+        return await this.mapThemesToResponseDto(themes);
     }
 
     async getThemesByStoreId(storeId: number): Promise<GetThemesListResponseDto[]> {
-        const themes = await this.themeRepository.getThemesByStoreId(storeId);
-
-        const mapthemes = await Promise.all(themes.map(async (theme) => {
-            const reviewCount = await this.reviewService.countVisibleReviewsInTheme(theme.id);
-            return new GetThemesListResponseDto({ theme, reviewCount });
-        }));
-
-        return mapthemes;
+        const themes = await this.themeRepository.findByStoreId(storeId);
+        return await this.mapThemesToResponseDto(themes);
     }
 
     async getOneTheme(id: number): Promise<GetOneThemeResponseDto> {
-        const theme = await this.themeRepository.getThemeById(id);
+        const theme = await this.themeRepository.findOneById(id);
         if (!theme) {
             throw new NotFoundException(
                 '테마가 존재하지 않습니다.',

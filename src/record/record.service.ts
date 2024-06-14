@@ -138,7 +138,7 @@ export class RecordService {
             );
         }
 
-        const theme = await this.themeService.getThemeById(themeId);
+        const theme = await this.themeService.findOneById(themeId);
         if (!theme) {
             throw new NotFoundException(
                 '테마가 존재하지 않습니다.',
