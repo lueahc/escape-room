@@ -6,7 +6,6 @@ import { GetVisibleReviewsResponseDto } from './dto/getVisibleReviews.response.d
 import { REVIEW_REPOSITORY } from 'src/inject.constant';
 import { ReviewRepository } from './domain/review.repository';
 import { UserService } from 'src/user/user.service';
-import { Review } from './domain/review.entity';
 
 @Injectable()
 export class ReviewService {
@@ -54,7 +53,7 @@ export class ReviewService {
     async createReview(userId: number, createReviewRequestDto: CreateReviewRequestDto): Promise<void> {
         const { recordId, content, rate, activity, story, dramatic, volume, problem, difficulty, horror, interior } = createReviewRequestDto;
 
-        const record = await this.recordService.getRecordById(recordId);
+        const record = await this.recordService.findOneById(recordId);
         if (!record) {
             throw new NotFoundException(
                 '기록이 존재하지 않습니다.',

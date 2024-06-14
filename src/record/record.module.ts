@@ -8,7 +8,7 @@ import { ThemeModule } from 'src/theme/theme.module';
 import { UserModule } from 'src/user/user.module';
 import { ReviewModule } from 'src/review/review.module';
 import { S3StorageModule } from 'src/config/s3Storage.module';
-import { RECORD_REPOSITORY, THEME_REPOSITORY, USER_REPOSITORY } from 'src/inject.constant';
+import { RECORD_REPOSITORY } from 'src/inject.constant';
 import { TypeormRecordRepository } from './infrastructure/typeormRecord.repository';
 
 @Module({

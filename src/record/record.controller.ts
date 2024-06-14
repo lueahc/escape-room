@@ -47,10 +47,10 @@ export class RecordController {
     @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: '특정 기록에 태그된 회원 조회 API', description: '특정한 기록에 태그된 회원을 조회함' })
     @ApiSecurity('AdminAuth')
-    getTaggedUsersByRecordId(
+    getTaggedUserIds(
         @User('id') userId: number,
         @Param('recordId', ParseIntPipe) recordId: number): Promise<string[]> {
-        return this.recordService.getTaggedNicknamesByRecordId(userId, recordId);
+        return this.recordService.getTaggedNicknames(userId, recordId);
     }
 
     @Post()

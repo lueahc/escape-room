@@ -15,14 +15,50 @@ export class TypeormRecordRepository implements RecordRepository {
         private readonly tagRepository: Repository<Tag>,
     ) { }
 
-    async getRecordById(id: number) {
+    create(record: Partial<Record>): Record {
+        return this.recordRepository.create(record);
+    }
+
+    async save(record: Record): Promise<Record> {
+        return await this.recordRepository.save(record);
+    }
+
+    async softDelete(id: number): Promise<void> {
+        await this.recordRepository.softDelete(id);
+    }
+
+    createTag(tag: Partial<Tag>): Tag {
+        return this.tagRepository.create(tag);
+    }
+
+    async saveTag(tag: Tag): Promise<Tag> {
+        return await this.tagRepository.save(tag);
+    }
+
+    async softDeleteTag(id: number): Promise<void> {
+        await this.tagRepository.softDelete(id);
+    }
+
+    async getLogs(userId: number) {
+        return await this.recordRepository.createQueryBuilder('r')
+            .leftJoin('theme', 't', 'r.theme_id = t.id')
+            .leftJoin('store', 's', 't.store_id = s.id')
+            .leftJoin('tag', 't2', 't2.record_id = r.id')
+            .addSelect('r.id', 'id')
+            .addSelect('r.playDate', 'play_date')
+            .addSelect('s.name', 'store_name')
+            .addSelect('t.name', 'theme_name')
+            .addSelect('r.isSuccess', 'is_success')
+            .where('r.writer__id = :userId and t2.isWriter = true and t2.visibility = true', { userId })
+            .orWhere('t2.user__id = :userId and t2.isWriter = false and t2.visibility = true', { userId })
+            .orderBy('play_date', 'DESC')
+            .getRawMany();
+    }
+
+    async findOneById(id: number) {
         return await this.recordRepository.findOne({
-            relations: {
-                writer: true
-            },
-            where: {
-                id
-            }
+            relations: ['writer'],
+            where: { id }
         });
     }
 
@@ -67,103 +103,50 @@ export class TypeormRecordRepository implements RecordRepository {
                     interior: true,
                 }
             },
-            relations: {
-                writer: true,
-                theme: {
-                    store: true
-                },
-                reviews: {
-                    writer: true
-                }
-            },
-            where: {
-                id
-            }
+            relations: [
+                'writer',
+                'theme.store',
+                'reviews.writer'
+            ],
+            where: { id }
         });
     }
 
     async getOneTag(userId: number, recordId: number) {
         return await this.tagRepository.findOne({
-            relations: {
-                user: true,
-                record: true
-            },
+            relations: ['user', 'record'],
             where: {
-                user: {
-                    _id: userId
-                },
-                record: {
-                    id: recordId
-                }
+                user: { _id: userId },
+                record: { id: recordId }
             }
         })
     }
 
-    async getTaggedUsersByRecordId(recordId: number): Promise<Tag[]> {
+    async getTaggedUserIds(recordId: number): Promise<Tag[]> {
         return await this.tagRepository.find({
             select: {
                 user: {
                     _id: true
                 }
             },
-            relations: {
-                user: true,
-            },
-            where: {
-                record: {
-                    id: recordId
-                }
-            }
+            relations: ['user'],
+            where: { record: { id: recordId } }
         })
     }
 
-    async getTaggedNicknamesByRecordId(userId: number, recordId: number): Promise<Tag[]> {
+    async getTaggedNicknames(userId: number, recordId: number): Promise<Tag[]> {
         return await this.tagRepository.find({
             select: {
                 user: {
                     _nickname: true,
                 }
             },
-            relations: {
-                user: true,
-            },
+            relations: ['user'],
             where: {
-                user: {
-                    _id: Not(userId)
-                },
-                record: {
-                    id: recordId
-                }
+                user: { _id: Not(userId) },
+                record: { id: recordId }
             }
         })
-    }
-
-    async getLogs(userId: number) {
-        return await this.recordRepository.createQueryBuilder('r')
-            .leftJoin('theme', 't', 'r.theme_id = t.id')
-            .leftJoin('store', 's', 't.store_id = s.id')
-            .leftJoin('tag', 't2', 't2.record_id = r.id')
-            .addSelect('r.id', 'id')
-            .addSelect('r.playDate', 'play_date')
-            .addSelect('s.name', 'store_name')
-            .addSelect('t.name', 'theme_name')
-            .addSelect('r.isSuccess', 'is_success')
-            .where('r.writer__id = :userId and t2.isWriter = true and t2.visibility = true', { userId })
-            .orWhere('t2.user__id = :userId and t2.isWriter = false and t2.visibility = true', { userId })
-            .orderBy('play_date', 'DESC')
-            .getRawMany();
-    }
-
-    create(record: Partial<Record>): Record {
-        return this.recordRepository.create(record);
-    }
-
-    async save(record: Record): Promise<Record> {
-        return await this.recordRepository.save(record);
-    }
-
-    async softDelete(id: number): Promise<void> {
-        await this.recordRepository.softDelete(id);
     }
 
     async getRecordAndReviews(whereConditions: RecordPartial): Promise<Record[]> {
@@ -207,31 +190,13 @@ export class TypeormRecordRepository implements RecordRepository {
                     interior: true,
                 }
             },
-            relations: {
-                writer: true,
-                theme: {
-                    store: true
-                },
-                reviews: {
-                    writer: true
-                }
-            },
+            relations: [
+                'writer',
+                'theme.store',
+                'reviews.writer'
+            ],
             where: whereConditions,
-            order: {
-                id: 'DESC'
-            }
+            order: { id: 'DESC' }
         });
-    }
-
-    createTag(tag: Partial<Tag>): Tag {
-        return this.tagRepository.create(tag);
-    }
-
-    async saveTag(tag: Tag): Promise<Tag> {
-        return await this.tagRepository.save(tag);
-    }
-
-    async softDeleteTag(id: number): Promise<void> {
-        await this.tagRepository.softDelete(id);
     }
 }

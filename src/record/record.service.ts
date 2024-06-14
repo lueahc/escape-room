@@ -1,7 +1,5 @@
 import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Record } from './domain/record.entity';
-import { Not, Repository } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
 import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
@@ -10,9 +8,7 @@ import { ReviewService } from 'src/review/review.service';
 import { GetLogsResponseDto } from './dto/getLogs.response.dto';
 import { RecordPartial } from './record.types';
 import { CreateAndUpdateRecordResponseDto } from './dto/createAndUpdateRecord.response.dto';
-import { RECORD_REPOSITORY, THEME_REPOSITORY, USER_REPOSITORY } from 'src/inject.constant';
-import { UserRepository } from 'src/user/domain/user.repository';
-import { ThemeRepository } from 'src/theme/domain/theme.repository';
+import { RECORD_REPOSITORY } from 'src/inject.constant';
 import { RecordRepository } from './domain/record.repository';
 import { ThemeService } from 'src/theme/theme.service';
 import { UserService } from 'src/user/user.service';
@@ -20,24 +16,25 @@ import { UserService } from 'src/user/user.service';
 @Injectable()
 export class RecordService {
     constructor(
-        private readonly userService: UserService,
         @Inject(RECORD_REPOSITORY)
         private readonly recordRepository: RecordRepository,
+        private readonly userService: UserService,
         @Inject(forwardRef(() => ThemeService))
         private readonly themeService: ThemeService,
         @Inject(forwardRef(() => ReviewService))
         private readonly reviewService: ReviewService
     ) { }
 
-    async getRecordById(id: number) {
-        return await this.recordRepository.getRecordById(id);
+    async findOneById(id: number) {
+        return await this.recordRepository.findOneById(id);
     }
+
     async getOneTag(userId: number, recordId: number) {
         return await this.recordRepository.getOneTag(userId, recordId);
     }
 
-    async getTaggedUsersByRecordId(recordId: number): Promise<number[]> {
-        const tags = await this.recordRepository.getTaggedUsersByRecordId(recordId);
+    async getTaggedUserIds(recordId: number): Promise<number[]> {
+        const tags = await this.recordRepository.getTaggedUserIds(recordId);
 
         if (!tags) {
             return [];
@@ -48,8 +45,8 @@ export class RecordService {
         });
     }
 
-    async getTaggedNicknamesByRecordId(userId: number, recordId: number): Promise<string[]> {
-        const tags = await this.recordRepository.getTaggedNicknamesByRecordId(userId, recordId);
+    async getTaggedNicknames(userId: number, recordId: number): Promise<string[]> {
+        const tags = await this.recordRepository.getTaggedNicknames(userId, recordId);
 
         if (!tags) {
             return [];
@@ -206,7 +203,7 @@ export class RecordService {
         const { isSuccess, playDate, headCount, hintCount, playTime, note, party } = updateRecordRequestDto;
         const s3File = file as any;
 
-        const record = await this.recordRepository.getRecordById(recordId);
+        const record = await this.recordRepository.findOneById(recordId);
         if (!record) {
             throw new NotFoundException(
                 '기록이 존재하지 않습니다.',
@@ -250,7 +247,7 @@ export class RecordService {
                 )
             }
 
-            const result = await this.getTaggedUsersByRecordId(recordId);
+            const result = await this.getTaggedUserIds(recordId);
             let originalParty = result.filter((element) => element !== userId);
 
             // 일행 추가
@@ -305,7 +302,7 @@ export class RecordService {
     }
 
     async changeRecordVisibility(userId: number, recordId: number): Promise<void> {
-        const record = await this.recordRepository.getRecordById(recordId);
+        const record = await this.recordRepository.findOneById(recordId);
         if (!record) {
             throw new NotFoundException(
                 '기록이 존재하지 않습니다.',
@@ -333,7 +330,7 @@ export class RecordService {
     }
 
     async deleteRecord(userId: number, recordId: number): Promise<void> {
-        const record = await this.recordRepository.getRecordById(recordId);
+        const record = await this.recordRepository.findOneById(recordId);
         if (!record) {
             throw new NotFoundException(
                 '기록이 존재하지 않습니다.',
