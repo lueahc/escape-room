@@ -12,8 +12,9 @@ import { ReviewService } from 'src/review/review.service';
 import { GetLogsResponseDto } from './dto/getLogs.response.dto';
 import { RecordPartial } from './record.types';
 import { CreateAndUpdateRecordResponseDto } from './dto/createAndUpdateRecord.response.dto';
-import { USER_REPOSITORY } from 'src/inject.constant';
+import { THEME_REPOSITORY, USER_REPOSITORY } from 'src/inject.constant';
 import { UserRepository } from 'src/user/domain/user.repository';
+import { ThemeRepository } from 'src/theme/domain/theme.repository';
 
 @Injectable()
 export class RecordService {
@@ -24,8 +25,10 @@ export class RecordService {
         private readonly tagRepository: Repository<Tag>,
         @Inject(USER_REPOSITORY)
         private readonly userRepository: UserRepository,
-        @Inject(forwardRef(() => ThemeService))
-        private readonly themeService: ThemeService,
+        @Inject(THEME_REPOSITORY)
+        private readonly themeRepository: ThemeRepository,
+        // @Inject(forwardRef(() => ThemeService))
+        // private readonly themeService: ThemeService,
         @Inject(forwardRef(() => ReviewService))
         private readonly reviewService: ReviewService
     ) { }
@@ -186,8 +189,8 @@ export class RecordService {
             .addSelect('s.name', 'store_name')
             .addSelect('t.name', 'theme_name')
             .addSelect('r.isSuccess', 'is_success')
-            .where('r.writer_id = :userId and t2.isWriter = true and t2.visibility = true', { userId })
-            .orWhere('t2.user_id = :userId and t2.isWriter = false and t2.visibility = true', { userId })
+            .where('r.writer__id = :userId and t2.isWriter = true and t2.visibility = true', { userId })
+            .orWhere('t2.user__id = :userId and t2.isWriter = false and t2.visibility = true', { userId })
             .orderBy('play_date', 'DESC')
             .getRawMany();
 
@@ -314,7 +317,7 @@ export class RecordService {
             );
         }
 
-        const theme = await this.themeService.getThemeById(themeId);
+        const theme = await this.themeRepository.getThemeById(themeId);
         if (!theme) {
             throw new NotFoundException(
                 '테마가 존재하지 않습니다.',

@@ -44,7 +44,7 @@ export class ReviewService {
     async countVisibleReviewsOfTheme(themeId: number): Promise<number> {
         const reviewCount = await this.reviewRepository.createQueryBuilder('r')
             .leftJoin('record', 'r2', 'r.record_id = r2.id')
-            .leftJoin('tag', 't', 't.record_id = r.record_id and r.writer_id = t.user_id')
+            .leftJoin('tag', 't', 't.record_id = r.record_id and r.writer__id = t.user__id')
             .addSelect('r.id', 'id')
             .where('r2.theme_id = :themeId and t.visibility = true', { themeId })
             .getCount();
@@ -56,7 +56,7 @@ export class ReviewService {
         const reviewCount = await this.reviewRepository.createQueryBuilder('r')
             .leftJoin('record', 'r2', 'r.record_id = r2.id')
             .leftJoin('theme', 't', 'r2.theme_id = t.id')
-            .leftJoin('tag', 't2', 't2.record_id = r.record_id and r.writer_id = t2.user_id')
+            .leftJoin('tag', 't2', 't2.record_id = r.record_id and r.writer__id = t2.user__id')
             .addSelect('r.id', 'id')
             .where('t.store_id = :storeId and t2.visibility = true', { storeId })
             .getCount();
@@ -67,11 +67,11 @@ export class ReviewService {
     async getVisibleReviewsOfTheme(themeId: number): Promise<GetVisibleReviewsResponseDto[]> {
         const reviews = await this.reviewRepository.createQueryBuilder('r')
             .leftJoinAndSelect('record', 'r2', 'r.record_id = r2.id')
-            .leftJoinAndSelect('user', 'u', 'u.id = r.writer_id')
+            .leftJoinAndSelect('user', 'u', 'u.id = r.writer__id')
             .leftJoin('theme', 't', 'r2.theme_id = t.id')
             .leftJoin('store', 's', 't.store_id = s.id')
-            .leftJoinAndSelect('tag', 't2', 't2.record_id = r.record_id and r.writer_id = t2.user_id')
-            .addSelect('u.nickname', 'nickname')
+            .leftJoinAndSelect('tag', 't2', 't2.record_id = r.record_id and r.writer__id = t2.user__id')
+            .addSelect('u._nickname', 'nickname')
             .addSelect('s.name', 'store_name')
             .addSelect('t.name', 'theme_name')
             .where('t2.visibility = true and t.id = :themeId', { themeId })
@@ -88,11 +88,11 @@ export class ReviewService {
     async get3VisibleReviewsOfTheme(themeId: number): Promise<GetVisibleReviewsResponseDto[]> {
         const reviews = await this.reviewRepository.createQueryBuilder('r')
             .leftJoinAndSelect('record', 'r2', 'r.record_id = r2.id')
-            .leftJoinAndSelect('user', 'u', 'u.id = r.writer_id')
+            .leftJoinAndSelect('user', 'u', 'u.id = r.writer__id')
             .leftJoin('theme', 't', 'r2.theme_id = t.id')
             .leftJoin('store', 's', 't.store_id = s.id')
-            .leftJoinAndSelect('tag', 't2', 't2.record_id = r.record_id and r.writer_id = t2.user_id')
-            .addSelect('u.nickname', 'nickname')
+            .leftJoinAndSelect('tag', 't2', 't2.record_id = r.record_id and r.writer__id = t2.user__id')
+            .addSelect('u._nickname', 'nickname')
             .addSelect('s.name', 'store_name')
             .addSelect('t.name', 'theme_name')
             .where('t2.visibility = true and t.id = :themeId', { themeId })

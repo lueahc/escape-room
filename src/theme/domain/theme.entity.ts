@@ -1,6 +1,6 @@
 import { TimestampEntity } from "src/timestamp.entity"
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Store } from "../store/store.entity";
+import { Store } from "../../store/store.entity";
 import { Record } from "src/record/record.entity";
 
 @Entity()

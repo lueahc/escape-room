@@ -1,43 +1,25 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Theme } from './theme.entity';
+import { Theme } from './domain/theme.entity';
 import { Like, Repository } from 'typeorm';
 import { LocationEnum } from '../store/location.enum';
 import { GetThemesListResponseDto } from './dto/getThemesList.response.dto';
 import { ReviewService } from 'src/review/review.service';
 import { GetOneThemeResponseDto } from './dto/getOneTheme.response.dto';
 import { GetVisibleReviewsResponseDto } from 'src/review/dto/getVisibleReviews.response.dto';
+import { THEME_REPOSITORY } from 'src/inject.constant';
+import { ThemeRepository } from './domain/theme.repository';
 
 @Injectable()
 export class ThemeService {
     constructor(
-        @InjectRepository(Theme)
-        private readonly themeRepository: Repository<Theme>,
+        @Inject(THEME_REPOSITORY)
+        private readonly themeRepository: ThemeRepository,
         private readonly reviewService: ReviewService
     ) { }
 
-    async getThemeById(id: number) {
-        return await this.themeRepository.findOne({
-            relations: {
-                store: true,
-                records: {
-                    reviews: {
-                        writer: true
-                    }
-                }
-            },
-            where: {
-                id
-            }
-        })
-    }
-
     async getAllThemes(): Promise<GetThemesListResponseDto[]> {
-        const themes = await this.themeRepository.find({
-            relations: {
-                store: true
-            },
-        });
+        const themes = await this.themeRepository.getAllThemes();
 
         const mapthemes = await Promise.all(themes.map(async (theme) => {
             const reviewCount = await this.reviewService.countVisibleReviewsOfTheme(theme.id);
@@ -48,16 +30,7 @@ export class ThemeService {
     }
 
     async getThemesByLocation(location: LocationEnum): Promise<GetThemesListResponseDto[]> {
-        const themes = await this.themeRepository.find({
-            relations: {
-                store: true
-            },
-            where: {
-                store: {
-                    location
-                }
-            },
-        });
+        const themes = await this.themeRepository.getThemesByLocation(location);
 
         const mapthemes = await Promise.all(themes.map(async (theme) => {
             const reviewCount = await this.reviewService.countVisibleReviewsOfTheme(theme.id);
@@ -68,14 +41,7 @@ export class ThemeService {
     }
 
     async getThemesByKeyword(keyword: string): Promise<GetThemesListResponseDto[]> {
-        const themes = await this.themeRepository.find({
-            relations: {
-                store: true
-            },
-            where: {
-                name: Like(`%${keyword}%`)
-            }
-        });
+        const themes = await this.themeRepository.getThemesByKeyword(keyword);
 
         const mapthemes = await Promise.all(themes.map(async (theme) => {
             const reviewCount = await this.reviewService.countVisibleReviewsOfTheme(theme.id);
@@ -86,16 +52,7 @@ export class ThemeService {
     }
 
     async getThemesByStoreId(storeId: number): Promise<GetThemesListResponseDto[]> {
-        const themes = await this.themeRepository.find({
-            relations: {
-                store: true
-            },
-            where: {
-                store: {
-                    id: storeId
-                }
-            },
-        });
+        const themes = await this.themeRepository.getThemesByStoreId(storeId);
 
         const mapthemes = await Promise.all(themes.map(async (theme) => {
             const reviewCount = await this.reviewService.countVisibleReviewsOfTheme(theme.id);
@@ -106,7 +63,7 @@ export class ThemeService {
     }
 
     async getOneTheme(id: number): Promise<GetOneThemeResponseDto> {
-        const theme = await this.getThemeById(id);
+        const theme = await this.themeRepository.getThemeById(id);
         if (!theme) {
             throw new NotFoundException(
                 '테마가 존재하지 않습니다.',
