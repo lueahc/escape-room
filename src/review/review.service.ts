@@ -1,82 +1,37 @@
 import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Review } from './review.entity';
-import { Repository } from 'typeorm';
 import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
-import { UserService } from 'src/user/user.service';
 import { CreateReviewRequestDto } from './dto/createReview.request.dto';
 import { RecordService } from 'src/record/record.service';
 import { GetVisibleReviewsResponseDto } from './dto/getVisibleReviews.response.dto';
-import { USER_REPOSITORY } from 'src/inject.constant';
+import { REVIEW_REPOSITORY, USER_REPOSITORY } from 'src/inject.constant';
 import { UserRepository } from 'src/user/domain/user.repository';
+import { ReviewRepository } from './domain/review.repository';
 
 @Injectable()
 export class ReviewService {
     constructor(
-        @InjectRepository(Review)
-        private readonly reviewRepository: Repository<Review>,
+        @Inject(REVIEW_REPOSITORY)
+        private readonly reviewRepository: ReviewRepository,
         @Inject(USER_REPOSITORY)
         private readonly userRepository: UserRepository,
         private readonly recordService: RecordService
     ) { }
 
-    async getReviewById(id: number) {
-        return await this.reviewRepository.findOne({
-            relations: {
-                writer: true
-            },
-            where: {
-                id
-            }
-        });
-    }
-
     async hasReviews(recordId: number): Promise<boolean> {
-        const reviewCount = await this.reviewRepository
-            .createQueryBuilder('review')
-            .where('review.record_id = :recordId', { recordId })
-            .getCount();
-
-        if (reviewCount === 0) return false;
-        else return true;
+        const reviewCount = await this.reviewRepository.countReviewsInRecord(recordId);
+        return reviewCount !== 0;
     }
 
-    async countVisibleReviewsOfTheme(themeId: number): Promise<number> {
-        const reviewCount = await this.reviewRepository.createQueryBuilder('r')
-            .leftJoin('record', 'r2', 'r.record_id = r2.id')
-            .leftJoin('tag', 't', 't.record_id = r.record_id and r.writer__id = t.user__id')
-            .addSelect('r.id', 'id')
-            .where('r2.theme_id = :themeId and t.visibility = true', { themeId })
-            .getCount();
-
-        return reviewCount;
+    async countVisibleReviewsInTheme(themeId: number): Promise<number> {
+        return await this.reviewRepository.countVisibleReviewsInTheme(themeId);
     }
 
-    async countVisibleReviewsOfStore(storeId: number): Promise<number> {
-        const reviewCount = await this.reviewRepository.createQueryBuilder('r')
-            .leftJoin('record', 'r2', 'r.record_id = r2.id')
-            .leftJoin('theme', 't', 'r2.theme_id = t.id')
-            .leftJoin('tag', 't2', 't2.record_id = r.record_id and r.writer__id = t2.user__id')
-            .addSelect('r.id', 'id')
-            .where('t.store_id = :storeId and t2.visibility = true', { storeId })
-            .getCount();
-
-        return reviewCount;
+    async countVisibleReviewsInStore(storeId: number): Promise<number> {
+        return await this.reviewRepository.countVisibleReviewsInStore(storeId);
     }
 
-    async getVisibleReviewsOfTheme(themeId: number): Promise<GetVisibleReviewsResponseDto[]> {
-        const reviews = await this.reviewRepository.createQueryBuilder('r')
-            .leftJoinAndSelect('record', 'r2', 'r.record_id = r2.id')
-            .leftJoinAndSelect('user', 'u', 'u.id = r.writer__id')
-            .leftJoin('theme', 't', 'r2.theme_id = t.id')
-            .leftJoin('store', 's', 't.store_id = s.id')
-            .leftJoinAndSelect('tag', 't2', 't2.record_id = r.record_id and r.writer__id = t2.user__id')
-            .addSelect('u._nickname', 'nickname')
-            .addSelect('s.name', 'store_name')
-            .addSelect('t.name', 'theme_name')
-            .where('t2.visibility = true and t.id = :themeId', { themeId })
-            .orderBy('r.created_at', 'DESC')
-            .getRawMany();
+    async getVisibleReviewsInTheme(themeId: number): Promise<GetVisibleReviewsResponseDto[]> {
+        const reviews = await this.reviewRepository.getVisibleReviewsInTheme(themeId);
 
         const mapReviews = reviews.map((review) => {
             return new GetVisibleReviewsResponseDto(review);
@@ -85,20 +40,8 @@ export class ReviewService {
         return mapReviews;
     }
 
-    async get3VisibleReviewsOfTheme(themeId: number): Promise<GetVisibleReviewsResponseDto[]> {
-        const reviews = await this.reviewRepository.createQueryBuilder('r')
-            .leftJoinAndSelect('record', 'r2', 'r.record_id = r2.id')
-            .leftJoinAndSelect('user', 'u', 'u.id = r.writer__id')
-            .leftJoin('theme', 't', 'r2.theme_id = t.id')
-            .leftJoin('store', 's', 't.store_id = s.id')
-            .leftJoinAndSelect('tag', 't2', 't2.record_id = r.record_id and r.writer__id = t2.user__id')
-            .addSelect('u._nickname', 'nickname')
-            .addSelect('s.name', 'store_name')
-            .addSelect('t.name', 'theme_name')
-            .where('t2.visibility = true and t.id = :themeId', { themeId })
-            .orderBy('r.created_at', 'DESC')
-            .limit(3)
-            .getRawMany();
+    async getThreeVisibleReviewsOfTheme(themeId: number): Promise<GetVisibleReviewsResponseDto[]> {
+        const reviews = await this.reviewRepository.getThreeVisibleReviewsInTheme(themeId);
 
         const mapReviews = reviews.map((review) => {
             return new GetVisibleReviewsResponseDto(review);
@@ -108,22 +51,8 @@ export class ReviewService {
     }
 
     async hasWrittenReview(userId: number, recordId: number): Promise<boolean> {
-        const review = await this.reviewRepository.findOne({
-            relations: {
-                writer: true
-            },
-            where: {
-                writer: {
-                    _id: userId
-                },
-                record: {
-                    id: recordId
-                }
-            }
-        });
-
-        if (!review) return false;
-        else return true;
+        const review = await this.reviewRepository.getOneReviewByUserIdAndRecordId(userId, recordId);
+        return !!review;
     }
 
     async createReview(userId: number, createReviewRequestDto: CreateReviewRequestDto): Promise<void> {
@@ -180,7 +109,7 @@ export class ReviewService {
     async updateReview(userId: number, reviewId: number, updateReviewRequestDto: UpdateReviewRequestDto): Promise<void> {
         const { content, rate, activity, story, dramatic, volume, problem, difficulty, horror, interior } = updateReviewRequestDto;
 
-        const review = await this.getReviewById(reviewId);
+        const review = await this.reviewRepository.getReviewById(reviewId);
         if (!review) {
             throw new NotFoundException(
                 '리뷰가 존재하지 않습니다.',
@@ -218,7 +147,7 @@ export class ReviewService {
     }
 
     async deleteReview(userId: number, reviewId: number): Promise<void> {
-        const review = await this.getReviewById(reviewId);
+        const review = await this.reviewRepository.getReviewById(reviewId);
         if (!review) {
             throw new NotFoundException(
                 '리뷰가 존재하지 않습니다.',
@@ -242,6 +171,6 @@ export class ReviewService {
             )
         }
 
-        await this.reviewRepository.softDelete({ id: reviewId });
+        await this.reviewRepository.softDelete(reviewId);
     }
 }

@@ -1,7 +1,7 @@
 import { TimestampEntity } from "src/timestamp.entity"
 import { User } from "src/user/domain/user.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Record } from "../record/record.entity";
+import { Record } from "../../record/record.entity";
 
 @Entity()
 export class Review extends TimestampEntity {

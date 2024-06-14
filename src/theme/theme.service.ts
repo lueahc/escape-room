@@ -7,14 +7,17 @@ import { GetThemesListResponseDto } from './dto/getThemesList.response.dto';
 import { ReviewService } from 'src/review/review.service';
 import { GetOneThemeResponseDto } from './dto/getOneTheme.response.dto';
 import { GetVisibleReviewsResponseDto } from 'src/review/dto/getVisibleReviews.response.dto';
-import { THEME_REPOSITORY } from 'src/inject.constant';
+import { REVIEW_REPOSITORY, THEME_REPOSITORY } from 'src/inject.constant';
 import { ThemeRepository } from './domain/theme.repository';
+import { ReviewRepository } from 'src/review/domain/review.repository';
 
 @Injectable()
 export class ThemeService {
     constructor(
         @Inject(THEME_REPOSITORY)
         private readonly themeRepository: ThemeRepository,
+        @Inject(REVIEW_REPOSITORY)
+        private readonly reviewRepository: ReviewRepository,
         private readonly reviewService: ReviewService
     ) { }
 
@@ -22,7 +25,7 @@ export class ThemeService {
         const themes = await this.themeRepository.getAllThemes();
 
         const mapthemes = await Promise.all(themes.map(async (theme) => {
-            const reviewCount = await this.reviewService.countVisibleReviewsOfTheme(theme.id);
+            const reviewCount = await this.reviewService.countVisibleReviewsInTheme(theme.id);
             return new GetThemesListResponseDto({ theme, reviewCount });
         }));
 
@@ -33,7 +36,7 @@ export class ThemeService {
         const themes = await this.themeRepository.getThemesByLocation(location);
 
         const mapthemes = await Promise.all(themes.map(async (theme) => {
-            const reviewCount = await this.reviewService.countVisibleReviewsOfTheme(theme.id);
+            const reviewCount = await this.reviewService.countVisibleReviewsInTheme(theme.id);
             return new GetThemesListResponseDto({ theme, reviewCount });
         }));
 
@@ -44,7 +47,7 @@ export class ThemeService {
         const themes = await this.themeRepository.getThemesByKeyword(keyword);
 
         const mapthemes = await Promise.all(themes.map(async (theme) => {
-            const reviewCount = await this.reviewService.countVisibleReviewsOfTheme(theme.id);
+            const reviewCount = await this.reviewService.countVisibleReviewsInTheme(theme.id);
             return new GetThemesListResponseDto({ theme, reviewCount });
         }));
 
@@ -55,7 +58,7 @@ export class ThemeService {
         const themes = await this.themeRepository.getThemesByStoreId(storeId);
 
         const mapthemes = await Promise.all(themes.map(async (theme) => {
-            const reviewCount = await this.reviewService.countVisibleReviewsOfTheme(theme.id);
+            const reviewCount = await this.reviewService.countVisibleReviewsInTheme(theme.id);
             return new GetThemesListResponseDto({ theme, reviewCount });
         }));
 
@@ -71,14 +74,14 @@ export class ThemeService {
             )
         }
 
-        const themeReviewCount = await this.reviewService.countVisibleReviewsOfTheme(id);
-        const storeReviewCount = await this.reviewService.countVisibleReviewsOfStore(theme.store.id);
-        const reviews = await this.reviewService.get3VisibleReviewsOfTheme(id);
+        const themeReviewCount = await this.reviewService.countVisibleReviewsInTheme(id);
+        const storeReviewCount = await this.reviewService.countVisibleReviewsInStore(theme.store.id);
+        const reviews = await this.reviewService.getThreeVisibleReviewsOfTheme(id);
 
         return new GetOneThemeResponseDto({ theme, themeReviewCount, storeReviewCount, reviews });
     }
 
     async getThemeReviews(themeId: number): Promise<GetVisibleReviewsResponseDto[]> {
-        return await this.reviewService.getVisibleReviewsOfTheme(themeId);
+        return await this.reviewService.getVisibleReviewsInTheme(themeId);
     }
 }

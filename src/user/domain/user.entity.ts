@@ -1,7 +1,7 @@
 import { TimestampEntity } from "src/timestamp.entity"
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Record } from "src/record/record.entity";
-import { Review } from "src/review/review.entity";
+import { Review } from "src/review/domain/review.entity";
 import { Tag } from "src/record/tag.entity";
 
 @Entity()
