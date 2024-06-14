@@ -1,9 +1,9 @@
 import { TimestampEntity } from "src/timestamp.entity"
 import { User } from "src/user/domain/user.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Review } from "../review/domain/review.entity";
+import { Review } from "../../review/domain/review.entity";
 import { Theme } from "src/theme/domain/theme.entity";
-import { Tag } from "./tag.entity";
+import { Tag } from "../tag.entity";
 
 @Entity()
 export class Record extends TimestampEntity {

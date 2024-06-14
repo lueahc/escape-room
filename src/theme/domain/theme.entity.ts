@@ -1,7 +1,7 @@
 import { TimestampEntity } from "src/timestamp.entity"
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Store } from "../../store/domain/store.entity";
-import { Record } from "src/record/record.entity";
+import { Record } from "src/record/domain/record.entity";
 
 @Entity()
 export class Theme extends TimestampEntity {

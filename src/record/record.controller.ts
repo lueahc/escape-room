@@ -8,7 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { GetLogsResponseDto } from './dto/getLogs.response.dto';
 import { CreateAndUpdateRecordResponseDto } from './dto/createAndUpdateRecord.response.dto';
-import { Record } from './record.entity';
+import { Record } from './domain/record.entity';
 
 @Controller('record')
 @ApiTags('record API')

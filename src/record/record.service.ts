@@ -1,140 +1,39 @@
 import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Record } from './record.entity';
+import { Record } from './domain/record.entity';
 import { Not, Repository } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
 import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
-import { ThemeService } from 'src/theme/theme.service';
-import { UserService } from 'src/user/user.service';
-import { Tag } from './tag.entity';
+import { Tag } from './domain/tag.entity';
 import { ReviewService } from 'src/review/review.service';
 import { GetLogsResponseDto } from './dto/getLogs.response.dto';
 import { RecordPartial } from './record.types';
 import { CreateAndUpdateRecordResponseDto } from './dto/createAndUpdateRecord.response.dto';
-import { THEME_REPOSITORY, USER_REPOSITORY } from 'src/inject.constant';
+import { RECORD_REPOSITORY, THEME_REPOSITORY, USER_REPOSITORY } from 'src/inject.constant';
 import { UserRepository } from 'src/user/domain/user.repository';
 import { ThemeRepository } from 'src/theme/domain/theme.repository';
+import { RecordRepository } from './domain/record.repository';
 
 @Injectable()
 export class RecordService {
     constructor(
-        @InjectRepository(Record)
-        private readonly recordRepository: Repository<Record>,
         @InjectRepository(Tag)
         private readonly tagRepository: Repository<Tag>,
         @Inject(USER_REPOSITORY)
         private readonly userRepository: UserRepository,
         @Inject(THEME_REPOSITORY)
         private readonly themeRepository: ThemeRepository,
+        @Inject(RECORD_REPOSITORY)
+        private readonly recordRepository: RecordRepository,
         // @Inject(forwardRef(() => ThemeService))
         // private readonly themeService: ThemeService,
         @Inject(forwardRef(() => ReviewService))
         private readonly reviewService: ReviewService
     ) { }
 
-    async getRecordById(id: number) {
-        return await this.recordRepository.findOne({
-            relations: {
-                writer: true
-            },
-            where: {
-                id
-            }
-        });
-    }
-
-    async getRecordInfo(id: number) {
-        const result = await this.recordRepository.findOne({
-            select: {
-                id: true,
-                writer: {
-                    _id: true,
-                    _nickname: true,
-                },
-                theme: {
-                    id: true,
-                    name: true,
-                    store: {
-                        id: true,
-                        name: true
-                    }
-                },
-                playDate: true,
-                isSuccess: true,
-                headCount: true,
-                hintCount: true,
-                playTime: true,
-                image: true,
-                note: true,
-                reviews: {
-                    id: true,
-                    writer: {
-                        _id: true,
-                        _nickname: true
-                    },
-                    content: true,
-                    rate: true,
-                    activity: true,
-                    story: true,
-                    dramatic: true,
-                    volume: true,
-                    problem: true,
-                    difficulty: true,
-                    horror: true,
-                    interior: true,
-                }
-            },
-            relations: {
-                writer: true,
-                theme: {
-                    store: true
-                },
-                reviews: {
-                    writer: true
-                }
-            },
-            where: {
-                id
-            }
-        });
-
-        return result;
-    }
-
-    async getOneTag(userId: number, recordId: number) {
-        return await this.tagRepository.findOne({
-            relations: {
-                user: true,
-                record: true
-            },
-            where: {
-                user: {
-                    _id: userId
-                },
-                record: {
-                    id: recordId
-                }
-            }
-        })
-    }
-
     async getTaggedUsersByRecordId(recordId: number): Promise<number[]> {
-        const tags = await this.tagRepository.find({
-            select: {
-                user: {
-                    _id: true
-                }
-            },
-            relations: {
-                user: true,
-            },
-            where: {
-                record: {
-                    id: recordId
-                }
-            }
-        })
+        const tags = await this.recordRepository.getTaggedUsersByRecordId(recordId);
 
         if (!tags) {
             return [];
@@ -146,24 +45,7 @@ export class RecordService {
     }
 
     async getTaggedNicknamesByRecordId(userId: number, recordId: number): Promise<string[]> {
-        const tags = await this.tagRepository.find({
-            select: {
-                user: {
-                    _nickname: true,
-                }
-            },
-            relations: {
-                user: true,
-            },
-            where: {
-                user: {
-                    _id: Not(userId)
-                },
-                record: {
-                    id: recordId
-                }
-            }
-        })
+        const tags = await this.recordRepository.getTaggedNicknamesByRecordId(userId, recordId);
 
         if (!tags) {
             return [];
@@ -180,19 +62,7 @@ export class RecordService {
     }
 
     async getLogs(userId: number): Promise<GetLogsResponseDto[]> {
-        const logs = await this.recordRepository.createQueryBuilder('r')
-            .leftJoin('theme', 't', 'r.theme_id = t.id')
-            .leftJoin('store', 's', 't.store_id = s.id')
-            .leftJoin('tag', 't2', 't2.record_id = r.id')
-            .addSelect('r.id', 'id')
-            .addSelect('r.playDate', 'play_date')
-            .addSelect('s.name', 'store_name')
-            .addSelect('t.name', 'theme_name')
-            .addSelect('r.isSuccess', 'is_success')
-            .where('r.writer__id = :userId and t2.isWriter = true and t2.visibility = true', { userId })
-            .orWhere('t2.user__id = :userId and t2.isWriter = false and t2.visibility = true', { userId })
-            .orderBy('play_date', 'DESC')
-            .getRawMany();
+        const logs = await this.recordRepository.getLogs(userId);
 
         if (!logs) {
             return [];
@@ -206,7 +76,7 @@ export class RecordService {
     }
 
     async getRecordAndReviews(recordId: number): Promise<Record> {
-        const record = await this.getRecordInfo(recordId);
+        const record = await this.recordRepository.getRecordInfo(recordId);
         if (!record) {
             throw new NotFoundException(
                 '기록이 존재하지 않습니다.',
@@ -242,60 +112,7 @@ export class RecordService {
             };
         }
 
-        const result = await this.recordRepository.find({
-            select: {
-                id: true,
-                writer: {
-                    _id: true,
-                    _nickname: true,
-                },
-                theme: {
-                    id: true,
-                    name: true,
-                    store: {
-                        id: true,
-                        name: true
-                    }
-                },
-                playDate: true,
-                isSuccess: true,
-                headCount: true,
-                hintCount: true,
-                playTime: true,
-                image: true,
-                note: true,
-                reviews: {
-                    id: true,
-                    writer: {
-                        _id: true,
-                        _nickname: true
-                    },
-                    content: true,
-                    rate: true,
-                    activity: true,
-                    story: true,
-                    dramatic: true,
-                    volume: true,
-                    problem: true,
-                    difficulty: true,
-                    horror: true,
-                    interior: true,
-                }
-            },
-            relations: {
-                writer: true,
-                theme: {
-                    store: true
-                },
-                reviews: {
-                    writer: true
-                }
-            },
-            where: whereConditions,
-            order: {
-                id: 'DESC'
-            }
-        });
+        const result = await this.recordRepository.getRecordAndReviews(whereConditions);
 
         if (!result) {
             return [];
@@ -385,7 +202,7 @@ export class RecordService {
         const { isSuccess, playDate, headCount, hintCount, playTime, note, party } = updateRecordRequestDto;
         const s3File = file as any;
 
-        const record = await this.getRecordById(recordId);
+        const record = await this.recordRepository.getRecordById(recordId);
         if (!record) {
             throw new NotFoundException(
                 '기록이 존재하지 않습니다.',
@@ -469,7 +286,7 @@ export class RecordService {
                 }
 
                 // 작성 리뷰 없는 경우 일행 삭제
-                const deleteTag = await this.getOneTag(memberId, recordId);
+                const deleteTag = await this.recordRepository.getOneTag(memberId, recordId);
                 if (!deleteTag) {
                     throw new NotFoundException(
                         '삭제할 일행이 존재하지 않습니다.',
@@ -484,7 +301,7 @@ export class RecordService {
     }
 
     async changeRecordVisibility(userId: number, recordId: number): Promise<void> {
-        const record = await this.getRecordById(recordId);
+        const record = await this.recordRepository.getRecordById(recordId);
         if (!record) {
             throw new NotFoundException(
                 '기록이 존재하지 않습니다.',
@@ -500,7 +317,7 @@ export class RecordService {
             );
         }
 
-        const tag = await this.getOneTag(userId, recordId);
+        const tag = await this.recordRepository.getOneTag(userId, recordId);
         if (!tag) {
             throw new ForbiddenException(
                 '해당 기록에 태그된 사용자가 아닙니다.',
@@ -512,7 +329,7 @@ export class RecordService {
     }
 
     async deleteRecord(userId: number, recordId: number): Promise<void> {
-        const record = await this.getRecordById(recordId);
+        const record = await this.recordRepository.getRecordById(recordId);
         if (!record) {
             throw new NotFoundException(
                 '기록이 존재하지 않습니다.',
@@ -543,7 +360,7 @@ export class RecordService {
                 'REVIEWS_EXISTING_IN_RECORD'
             )
         } else {
-            await this.recordRepository.softDelete({ id: recordId });
+            await this.recordRepository.softDelete(recordId);
         }
     }
 }

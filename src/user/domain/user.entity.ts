@@ -1,8 +1,8 @@
 import { TimestampEntity } from "src/timestamp.entity"
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Record } from "src/record/record.entity";
+import { Record } from "src/record/domain/record.entity";
 import { Review } from "src/review/domain/review.entity";
-import { Tag } from "src/record/tag.entity";
+import { Tag } from "src/record/domain/tag.entity";
 
 @Entity()
 export class User extends TimestampEntity {
