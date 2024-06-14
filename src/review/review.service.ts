@@ -6,6 +6,7 @@ import { GetVisibleReviewsResponseDto } from './dto/getVisibleReviews.response.d
 import { REVIEW_REPOSITORY } from 'src/inject.constant';
 import { ReviewRepository } from './domain/review.repository';
 import { UserService } from 'src/user/user.service';
+import { Review } from './domain/review.entity';
 
 @Injectable()
 export class ReviewService {
@@ -29,29 +30,25 @@ export class ReviewService {
         return await this.reviewRepository.countVisibleReviewsInStore(storeId);
     }
 
-    async getVisibleReviewsInTheme(themeId: number): Promise<GetVisibleReviewsResponseDto[]> {
-        const reviews = await this.reviewRepository.getVisibleReviewsInTheme(themeId);
+    async hasWrittenReview(userId: number, recordId: number): Promise<boolean> {
+        const review = await this.reviewRepository.findOneByUserIdAndRecordId(userId, recordId);
+        return !!review;
+    }
 
-        const mapReviews = reviews.map((review) => {
+    async mapReviewsToResponseDto(reviews) {
+        return await reviews.map((review) => {
             return new GetVisibleReviewsResponseDto(review);
         });
+    }
 
-        return mapReviews;
+    async getVisibleReviewsInTheme(themeId: number): Promise<GetVisibleReviewsResponseDto[]> {
+        const reviews = await this.reviewRepository.getVisibleReviewsInTheme(themeId);
+        return await this.mapReviewsToResponseDto(reviews);
     }
 
     async getThreeVisibleReviewsOfTheme(themeId: number): Promise<GetVisibleReviewsResponseDto[]> {
         const reviews = await this.reviewRepository.getThreeVisibleReviewsInTheme(themeId);
-
-        const mapReviews = reviews.map((review) => {
-            return new GetVisibleReviewsResponseDto(review);
-        });
-
-        return mapReviews;
-    }
-
-    async hasWrittenReview(userId: number, recordId: number): Promise<boolean> {
-        const review = await this.reviewRepository.getOneReviewByUserIdAndRecordId(userId, recordId);
-        return !!review;
+        return await this.mapReviewsToResponseDto(reviews);
     }
 
     async createReview(userId: number, createReviewRequestDto: CreateReviewRequestDto): Promise<void> {
@@ -108,7 +105,7 @@ export class ReviewService {
     async updateReview(userId: number, reviewId: number, updateReviewRequestDto: UpdateReviewRequestDto): Promise<void> {
         const { content, rate, activity, story, dramatic, volume, problem, difficulty, horror, interior } = updateReviewRequestDto;
 
-        const review = await this.reviewRepository.getReviewById(reviewId);
+        const review = await this.reviewRepository.findOneById(reviewId);
         if (!review) {
             throw new NotFoundException(
                 '리뷰가 존재하지 않습니다.',
@@ -146,7 +143,7 @@ export class ReviewService {
     }
 
     async deleteReview(userId: number, reviewId: number): Promise<void> {
-        const review = await this.reviewRepository.getReviewById(reviewId);
+        const review = await this.reviewRepository.findOneById(reviewId);
         if (!review) {
             throw new NotFoundException(
                 '리뷰가 존재하지 않습니다.',

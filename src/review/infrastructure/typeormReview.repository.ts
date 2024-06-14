@@ -11,33 +11,6 @@ export class TypeormReviewRepository implements ReviewRepository {
         private readonly reviewRepository: Repository<Review>,
     ) { }
 
-    async getReviewById(id: number) {
-        return await this.reviewRepository.findOne({
-            relations: {
-                writer: true
-            },
-            where: {
-                id
-            }
-        });
-    }
-
-    async getOneReviewByUserIdAndRecordId(userId: number, recordId: number) {
-        return await this.reviewRepository.findOne({
-            relations: {
-                writer: true
-            },
-            where: {
-                writer: {
-                    _id: userId
-                },
-                record: {
-                    id: recordId
-                }
-            }
-        });
-    }
-
     create(review: Partial<Review>): Review {
         return this.reviewRepository.create(review);
     }
@@ -48,6 +21,27 @@ export class TypeormReviewRepository implements ReviewRepository {
 
     async softDelete(id: number): Promise<void> {
         await this.reviewRepository.softDelete(id);
+    }
+
+    async findOneById(id: number) {
+        return await this.reviewRepository.findOne({
+            relations: ['writer'],
+            where: { id }
+        });
+    }
+
+    async findOneByUserIdAndRecordId(userId: number, recordId: number) {
+        return await this.reviewRepository.findOne({
+            relations: ['writer'],
+            where: {
+                writer: {
+                    _id: userId
+                },
+                record: {
+                    id: recordId
+                }
+            }
+        });
     }
 
     async countReviewsInRecord(recordId: number): Promise<number> {
