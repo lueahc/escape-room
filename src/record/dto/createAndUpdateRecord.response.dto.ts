@@ -25,14 +25,14 @@ export class CreateAndUpdateRecordResponseDto {
 
     constructor(params: {
         id: number;
-        writer: { id: number; nickname: string; };
+        writer: { _id: number; _nickname: string; };
         theme: { id: number; name: string; store: { id: number; name: string; } };
         isSuccess: boolean; playDate: Date; headCount: number; hintCount: number; playTime: number; image: string; note: string;
     }) {
         this.id = params.id;
         this.writer = {
-            id: params.writer.id,
-            nickname: params.writer.nickname
+            id: params.writer._id,
+            nickname: params.writer._nickname
         };
         this.theme = {
             id: params.theme.id,

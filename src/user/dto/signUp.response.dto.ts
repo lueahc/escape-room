@@ -3,9 +3,9 @@ export class SignUpResponseDto {
     email: string;
     createdAt: Date;
 
-    constructor(params: { id: number; email: string; createdAt: Date }) {
-        this.id = params.id;
-        this.email = params.email;
+    constructor(params: { _id: number; _email: string; createdAt: Date }) {
+        this.id = params._id;
+        this.email = params._email;
         this.createdAt = params.createdAt;
     }
 }

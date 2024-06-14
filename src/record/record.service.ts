@@ -43,8 +43,8 @@ export class RecordService {
             select: {
                 id: true,
                 writer: {
-                    id: true,
-                    nickname: true,
+                    _id: true,
+                    _nickname: true,
                 },
                 theme: {
                     id: true,
@@ -64,8 +64,8 @@ export class RecordService {
                 reviews: {
                     id: true,
                     writer: {
-                        id: true,
-                        nickname: true
+                        _id: true,
+                        _nickname: true
                     },
                     content: true,
                     rate: true,
@@ -104,7 +104,7 @@ export class RecordService {
             },
             where: {
                 user: {
-                    id: userId
+                    _id: userId
                 },
                 record: {
                     id: recordId
@@ -117,7 +117,7 @@ export class RecordService {
         const tags = await this.tagRepository.find({
             select: {
                 user: {
-                    id: true
+                    _id: true
                 }
             },
             relations: {
@@ -135,7 +135,7 @@ export class RecordService {
         }
 
         return tags.map((tag) => {
-            return tag.user.id;
+            return tag.user.getId();
         });
     }
 
@@ -143,7 +143,7 @@ export class RecordService {
         const tags = await this.tagRepository.find({
             select: {
                 user: {
-                    nickname: true,
+                    _nickname: true,
                 }
             },
             relations: {
@@ -151,7 +151,7 @@ export class RecordService {
             },
             where: {
                 user: {
-                    id: Not(userId)
+                    _id: Not(userId)
                 },
                 record: {
                     id: recordId
@@ -164,7 +164,7 @@ export class RecordService {
         }
 
         return tags.map((tag) => {
-            return tag.user.nickname;
+            return tag.user.getNickname();
         });
     }
 
@@ -218,20 +218,20 @@ export class RecordService {
             whereConditions.tags = {
                 visibility: true,
                 user: {
-                    id: userId
+                    _id: userId
                 }
             };
         } else if (visibility === 'false') {
             whereConditions.tags = {
                 visibility: false,
                 user: {
-                    id: userId
+                    _id: userId
                 }
             };
         } else {
             whereConditions.tags = {
                 user: {
-                    id: userId
+                    _id: userId
                 }
             };
         }
@@ -240,8 +240,8 @@ export class RecordService {
             select: {
                 id: true,
                 writer: {
-                    id: true,
-                    nickname: true,
+                    _id: true,
+                    _nickname: true,
                 },
                 theme: {
                     id: true,
@@ -261,8 +261,8 @@ export class RecordService {
                 reviews: {
                     id: true,
                     writer: {
-                        id: true,
-                        nickname: true
+                        _id: true,
+                        _nickname: true
                     },
                     content: true,
                     rate: true,
@@ -396,7 +396,7 @@ export class RecordService {
         }
 
         const recordWriter = record.writer;
-        if (userId !== recordWriter.id) {
+        if (userId !== recordWriter._id) {
             throw new ForbiddenException(
                 '기록을 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
@@ -523,7 +523,7 @@ export class RecordService {
         }
 
         const recordWriter = record.writer;
-        if (userId !== recordWriter.id) {
+        if (userId !== recordWriter._id) {
             throw new ForbiddenException(
                 '기록을 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'

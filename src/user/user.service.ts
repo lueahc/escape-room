@@ -20,7 +20,7 @@ export class UserService {
     async findOneById(id: number) {
         return await this.userRepository.findOne({
             where: {
-                id
+                _id: id
             },
         });
     }
@@ -28,7 +28,7 @@ export class UserService {
     async findOneByEmail(email: string) {
         return await this.userRepository.findOne({
             where: {
-                email
+                _email: email
             },
         });
     }
@@ -36,7 +36,7 @@ export class UserService {
     async findOneByNickname(nickname: string) {
         return await this.userRepository.findOne({
             where: {
-                nickname
+                _nickname: nickname
             },
         });
     }
@@ -50,7 +50,7 @@ export class UserService {
             );
         }
 
-        if (user.id === userId) {
+        if (user.getId() === userId) {
             throw new NotFoundException(
                 '본인은 등록할 수 없습니다.',
                 'NOT_ALLOWED_TO_TAG_ONESELF'
@@ -58,8 +58,8 @@ export class UserService {
         }
 
         return {
-            userId: user.id,
-            userNickname: user.nickname
+            userId: user.getId(),
+            userNickname: user.getNickname()
         }
     }
 
@@ -85,7 +85,8 @@ export class UserService {
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const user = this.userRepository.create({ email, password: hashedPassword, nickname });
+        const user = this.userRepository.create({ _email: email, _nickname: nickname });
+        user.updatePassword(hashedPassword);
         const createdUser = await this.userRepository.save(user);
 
         return new SignUpResponseDto(createdUser);
@@ -102,7 +103,7 @@ export class UserService {
             );
         }
 
-        const isMatched = await bcrypt.compare(password, user.password);
+        const isMatched = await bcrypt.compare(password, user.getPassword());
         if (!isMatched) {
             throw new BadRequestException(
                 '비밀번호가 일치하지 않습니다.',
@@ -111,7 +112,7 @@ export class UserService {
         }
 
         const accessToken = this.authService.signWithJwt({
-            userId: user.id,
+            userId: user.getId(),
         });
 
         return {
@@ -134,7 +135,7 @@ export class UserService {
             const salt = await bcrypt.genSalt();
             const hashedPassword = await bcrypt.hash(password, salt);
 
-            user.password = hashedPassword;
+            user.updatePassword(hashedPassword);
         }
 
         if (nickname) {
@@ -146,7 +147,7 @@ export class UserService {
                 );
             }
 
-            user.nickname = nickname;
+            user.updateNickname(nickname);
         }
 
         await this.userRepository.save(user);
