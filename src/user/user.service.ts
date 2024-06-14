@@ -20,6 +20,11 @@ export class UserService {
         return await this.userRepository.findOneById(id);
     }
 
+    async hashPassword(password: string) {
+        const salt = await bcrypt.genSalt();
+        return await bcrypt.hash(password, salt);
+    }
+
     async searchUser(userId: number, nickname: string) {
         const user = await this.userRepository.findOneByNickname(nickname);
         if (!user) {
@@ -61,9 +66,7 @@ export class UserService {
             );
         }
 
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(password, salt);
-
+        const hashedPassword = await this.hashPassword(password);
         const user = this.userRepository.create({ _email: email, _nickname: nickname });
         user.updatePassword(hashedPassword);
         const createdUser = await this.userRepository.save(user);
@@ -109,8 +112,7 @@ export class UserService {
         const { password, nickname } = updateInfoRequestDto;
 
         if (password) {
-            const salt = await bcrypt.genSalt();
-            const hashedPassword = await bcrypt.hash(password, salt);
+            const hashedPassword = await this.hashPassword(password);
             await user.updatePassword(hashedPassword);
         }
 
