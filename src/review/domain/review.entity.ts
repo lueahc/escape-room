@@ -43,4 +43,56 @@ export class Review extends TimestampEntity {
 
     @Column({ nullable: true })
     interior: number;
+
+    public getId(): number {
+        return this.id;
+    }
+
+    public getContent(): string {
+        return this.content;
+    }
+
+    public getRate(): number {
+        return this.rate;
+    }
+
+    public getActivity(): number {
+        return this.activity;
+    }
+
+    public getStory(): number {
+        return this.story;
+    }
+
+    public getDramatic(): number {
+        return this.dramatic;
+    }
+
+    public getVolume(): number {
+        return this.volume;
+    }
+
+    public getProblem(): number {
+        return this.problem;
+    }
+
+    public getDifficulty(): number {
+        return this.difficulty;
+    }
+
+    public getHorror(): number {
+        return this.horror;
+    }
+
+    public getInterior(): number {
+        return this.interior;
+    }
+
+    public getWriter(): User {
+        return this.writer;
+    }
+
+    public getRecord(): Record {
+        return this.record;
+    }
 }

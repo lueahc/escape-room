@@ -19,4 +19,24 @@ export class Tag extends TimestampEntity {
 
     @Column()
     isWriter: boolean;
+
+    public getId(): number {
+        return this.id;
+    }
+
+    public getVisibility(): boolean {
+        return this.visibility;
+    }
+
+    public getIsWriter(): boolean {
+        return this.isWriter;
+    }
+
+    public getUser(): User {
+        return this.user;
+    }
+
+    public getRecord(): Record {
+        return this.record;
+    }
 }

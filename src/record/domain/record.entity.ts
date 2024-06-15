@@ -42,4 +42,52 @@ export class Record extends TimestampEntity {
 
     @OneToMany(() => Tag, (tag) => tag.record)
     public tags: Tag[];
+
+    public getId(): number {
+        return this.id;
+    }
+
+    public getPlayDate(): Date {
+        return this.playDate;
+    }
+
+    public getIsSuccess(): boolean {
+        return this.isSuccess;
+    }
+
+    public getHeadCount(): number {
+        return this.headCount;
+    }
+
+    public getHintCount(): number {
+        return this.hintCount;
+    }
+
+    public getPlayTime(): number {
+        return this.playTime;
+    }
+
+    public getImage(): string {
+        return this.image;
+    }
+
+    public getNote(): string {
+        return this.note;
+    }
+
+    public getWriter(): User {
+        return this.writer;
+    }
+
+    public getTheme(): Theme {
+        return this.theme;
+    }
+
+    public getReviews(): Review[] {
+        return this.reviews;
+    }
+
+    public getTags(): Tag[] {
+        return this.tags;
+    }
 }
