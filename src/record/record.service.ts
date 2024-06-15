@@ -41,7 +41,7 @@ export class RecordService {
         }
 
         return tags.map((tag) => {
-            return tag.user.getId();
+            return tag.getUser().getId();
         });
     }
 
@@ -53,13 +53,13 @@ export class RecordService {
         }
 
         return tags.map((tag) => {
-            return tag.user.getNickname();
+            return tag.getUser().getNickname();
         });
     }
 
     changeVisibility(element: Tag): void {
-        if (element.visibility) element.visibility = false;
-        else element.visibility = true;
+        if (element.getVisibility()) element.setVisibilityFalse();
+        else element.setVisibilityTrue();
     }
 
     async getLogs(userId: number): Promise<GetLogsResponseDto[]> {
@@ -219,8 +219,8 @@ export class RecordService {
             );
         }
 
-        const recordWriter = record.writer;
-        if (userId !== recordWriter._id) {
+        const recordWriter = record.getWriter();
+        if (userId !== recordWriter.getId()) {
             throw new ForbiddenException(
                 '기록을 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
@@ -346,8 +346,8 @@ export class RecordService {
             );
         }
 
-        const recordWriter = record.writer;
-        if (userId !== recordWriter._id) {
+        const recordWriter = record.getWriter();
+        if (userId !== recordWriter.getId()) {
             throw new ForbiddenException(
                 '기록을 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'

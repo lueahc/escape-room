@@ -22,7 +22,7 @@ export class ThemeService {
 
     async mapThemesToResponseDto(themes: Theme[]): Promise<GetThemesListResponseDto[]> {
         return await Promise.all(themes.map(async (theme) => {
-            const reviewCount = await this.reviewService.countVisibleReviewsInTheme(theme.id);
+            const reviewCount = await this.reviewService.countVisibleReviewsInTheme(theme.getId());
             return new GetThemesListResponseDto({ theme, reviewCount });
         }));
     }
@@ -57,7 +57,7 @@ export class ThemeService {
         }
 
         const themeReviewCount = await this.reviewService.countVisibleReviewsInTheme(id);
-        const storeReviewCount = await this.reviewService.countVisibleReviewsInStore(theme.store.id);
+        const storeReviewCount = await this.reviewService.countVisibleReviewsInStore(theme.getStore().getId());
         const reviews = await this.reviewService.getThreeVisibleReviewsOfTheme(id);
 
         return new GetOneThemeResponseDto({ theme, themeReviewCount, storeReviewCount, reviews });

@@ -19,7 +19,7 @@ export class StoreService {
 
     async mapStoresToResponseDto(stores: Store[]): Promise<GetStoresListResponseDto[]> {
         return await Promise.all(stores.map(async (store) => {
-            const reviewCount = await this.reviewService.countVisibleReviewsInStore(store.id);
+            const reviewCount = await this.reviewService.countVisibleReviewsInStore(store.getId());
             return new GetStoresListResponseDto({ store, reviewCount });
         }));
     }

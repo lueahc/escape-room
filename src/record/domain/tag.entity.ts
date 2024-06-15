@@ -39,4 +39,12 @@ export class Tag extends TimestampEntity {
     public getRecord(): Record {
         return this.record;
     }
+
+    public setVisibilityTrue() {
+        this.visibility = true;
+    }
+
+    public setVisibilityFalse() {
+        this.visibility = false;
+    }
 }

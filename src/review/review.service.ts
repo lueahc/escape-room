@@ -120,8 +120,8 @@ export class ReviewService {
             );
         }
 
-        const reviewWriter = review.writer;
-        if (userId !== reviewWriter._id) {
+        const reviewWriter = review.getWriter();
+        if (userId !== reviewWriter.getId()) {
             throw new ForbiddenException(
                 '리뷰를 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
@@ -158,8 +158,8 @@ export class ReviewService {
             );
         }
 
-        const reviewWriter = review.writer;
-        if (userId !== reviewWriter._id) {
+        const reviewWriter = review.getWriter();
+        if (userId !== reviewWriter.getId()) {
             throw new ForbiddenException(
                 '리뷰를 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
