@@ -6,36 +6,36 @@ import { LocationEnum } from "../location.enum";
 @Entity()
 export class Store extends TimestampEntity {
     @PrimaryGeneratedColumn()
-    id: number;
+    _id: number;
 
     @Column()
-    name: string;
+    _name: string;
 
     @Column()
-    location: LocationEnum;
+    _location: LocationEnum;
 
     @Column()
-    address: string;
+    private address: string;
 
     @Column()
-    phoneNo: string;
+    private phoneNo: string;
 
     @Column()
-    homepageUrl: string;
+    private homepageUrl: string;
 
-    @OneToMany(() => Theme, (theme) => theme.store)
-    public themes: Theme[];
+    @OneToMany(() => Theme, (theme) => theme._store)
+    _themes: Theme[];
 
     public getId(): number {
-        return this.id;
+        return this._id;
     }
 
     public getName(): string {
-        return this.name;
+        return this._name;
     }
 
     public getLocation(): LocationEnum {
-        return this.location;
+        return this._location;
     }
 
     public getAddress(): string {
@@ -51,6 +51,10 @@ export class Store extends TimestampEntity {
     }
 
     public getThemes(): Theme[] {
-        return this.themes;
+        return this._themes;
+    }
+
+    public getCreatedAt(): Date {
+        return this.createdAt;
     }
 }

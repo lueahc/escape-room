@@ -21,8 +21,8 @@ export class GetThemesListResponseDto {
     }) {
         const { theme, reviewCount } = params;
         this.id = theme.getId();
-        this.storeName = theme.getStore().name;
-        this.storeLocation = theme.getStore()._location;
+        this.storeName = theme.getStore().getName();
+        this.storeLocation = theme.getStore().getLocation();
         this.themeName = theme.getName();
         this.image = theme.getImage();
         this.plot = theme.getPlot();

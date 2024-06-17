@@ -13,30 +13,24 @@ export class TypeormStoreRepository implements StoreRepository {
     ) { }
 
     async findAll(): Promise<Store[]> {
-        return await this.storeRepository.find({
-            order: { id: 'DESC' }
-        });
+        return await this.storeRepository.find();
     }
 
     async findByLocation(location: LocationEnum): Promise<Store[]> {
         return await this.storeRepository.find({
-            where: { location },
-            order: { id: 'DESC' }
+            where: { _location: location }
         });
     }
 
     async findByKeyword(keyword: string): Promise<Store[]> {
         return await this.storeRepository.find({
-            where: {
-                name: Like(`%${keyword}%`)
-            },
-            relations: ['themes']
+            where: { _name: Like(`%${keyword}%`) }
         });
     }
 
     async findOneById(id: number) {
         return await this.storeRepository.findOne({
-            where: { id }
+            where: { _id: id }
         });
     }
 }
