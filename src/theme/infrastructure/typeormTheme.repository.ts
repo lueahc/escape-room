@@ -14,45 +14,47 @@ export class TypeormThemeRepository implements ThemeRepository {
 
     async findOneById(id: number) {
         return await this.themeRepository.findOne({
-            where: { id },
-            relations: ['store', 'records.reviews.writer']
+            where: {
+                _id: id
+            },
+            relations: ['_store', '_records._reviews._writer']
         });
     }
 
     async findAll(): Promise<Theme[]> {
         return await this.themeRepository.find({
-            relations: ['store']
+            relations: ['_store']
         });
     }
 
     async findByLocation(location: LocationEnum): Promise<Theme[]> {
         return await this.themeRepository.find({
             where: {
-                store: {
-                    location
+                _store: {
+                    _location: location
                 }
             },
-            relations: ['store']
+            relations: ['_store']
         });
     }
 
     async findByKeyword(keyword: string): Promise<Theme[]> {
         return await this.themeRepository.find({
             where: {
-                name: Like(`%${keyword}%`)
+                _name: Like(`%${keyword}%`)
             },
-            relations: ['store']
+            relations: ['_store']
         });
     }
 
     async findByStoreId(storeId: number): Promise<Theme[]> {
         return await this.themeRepository.find({
             where: {
-                store: {
-                    id: storeId
+                _store: {
+                    _id: storeId
                 }
             },
-            relations: ['store']
+            relations: ['_store']
         });
     }
 }

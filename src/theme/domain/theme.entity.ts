@@ -1,49 +1,50 @@
 import { TimestampEntity } from "src/timestamp.entity"
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Store } from "../../store/domain/store.entity";
 import { Record } from "src/record/domain/record.entity";
 
 @Entity()
 export class Theme extends TimestampEntity {
     @PrimaryGeneratedColumn()
-    id: number;
+    _id: number;
 
     @Column()
-    name: string;
+    _name: string;
 
     @Column()
-    image: string;
+    private image: string;
 
     @Column()
-    plot: string;
+    private plot: string;
 
     @Column()
-    genre: string;
+    private genre: string;
 
     @Column()
-    time: number;
+    private time: number;
 
     @Column()
-    level: number;
+    private level: number;
 
     @Column()
-    price: number;
+    private price: number;
 
     @Column({ nullable: true })
-    note: string;
+    private note: string;
 
-    @ManyToOne(() => Store, (store) => store.themes)
-    public store: Store;
+    @ManyToOne(() => Store, (store) => store._themes)
+    @JoinColumn({ name: 'store_id' })
+    _store: Store;
 
-    @OneToMany(() => Record, (record) => record.theme)
-    public records: Record[];
+    @OneToMany(() => Record, (record) => record._theme)
+    _records: Record[];
 
     public getId(): number {
-        return this.id;
+        return this._id;
     }
 
     public getName(): string {
-        return this.name;
+        return this._name;
     }
 
     public getImage(): string {
@@ -75,10 +76,10 @@ export class Theme extends TimestampEntity {
     }
 
     public getStore(): Store {
-        return this.store;
+        return this._store;
     }
 
     public getRecords(): Record[] {
-        return this.records;
+        return this._records;
     }
 }

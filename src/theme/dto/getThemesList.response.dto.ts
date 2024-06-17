@@ -1,4 +1,5 @@
 import { LocationEnum } from "src/store/location.enum";
+import { Theme } from "../domain/theme.entity";
 
 export class GetThemesListResponseDto {
     id: number;
@@ -15,23 +16,21 @@ export class GetThemesListResponseDto {
     reviewCount: number;
 
     constructor(params: {
-        theme: {
-            id: number; name: string; image: string; plot: string; genre: string; time: number; level: number; price: number; note: string;
-            store: { name: string; location: LocationEnum }
-        };
+        theme: Theme;
         reviewCount: number;
     }) {
-        this.id = params.theme.id;
-        this.storeName = params.theme.store.name;
-        this.storeLocation = params.theme.store.location;
-        this.themeName = params.theme.name;
-        this.image = params.theme.image;
-        this.plot = params.theme.plot;
-        this.genre = params.theme.genre;
-        this.time = params.theme.time;
-        this.level = params.theme.level;
-        this.price = params.theme.price;
-        this.note = params.theme.note;
-        this.reviewCount = params.reviewCount;
+        const { theme, reviewCount } = params;
+        this.id = theme.getId();
+        this.storeName = theme.getStore().name;
+        this.storeLocation = theme.getStore()._location;
+        this.themeName = theme.getName();
+        this.image = theme.getImage();
+        this.plot = theme.getPlot();
+        this.genre = theme.getGenre();
+        this.time = theme.getTime();
+        this.level = theme.getLevel();
+        this.price = theme.getPrice();
+        this.note = theme.getNote();
+        this.reviewCount = reviewCount;
     }
 }
