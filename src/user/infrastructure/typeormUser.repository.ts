@@ -15,10 +15,6 @@ export class TypeormUserRepository implements UserRepository {
         return await this.userRepository.save(user);
     }
 
-    create(user: Partial<User>): User {
-        return this.userRepository.create(user);
-    }
-
     async findOneById(id: number) {
         return await this.userRepository.findOne({
             where: {

@@ -31,7 +31,7 @@ export class UserController {
     @ApiOperation({ summary: '회원 정보 수정 API', description: '회원의 정보를 수정함' })
     @ApiSecurity('AdminAuth')
     updateInfo(
-        @User('id') userId: number,
+        @User('_id') userId: number,
         @Body() updateInfoRequestDto: UpdateInfoRequestDto) {
         return this.userService.updateInfo(userId, updateInfoRequestDto);
     }
@@ -41,7 +41,7 @@ export class UserController {
     @ApiOperation({ summary: '회원 검색 API', description: '닉네임으로 회원을 검색함' })
     @ApiSecurity('AdminAuth')
     searchUser(
-        @User('id') userId: number,
+        @User('_id') userId: number,
         @Query('nickname') nickname: string) {
         return this.userService.searchUser(userId, nickname);
     }
