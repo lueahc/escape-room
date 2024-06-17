@@ -18,14 +18,23 @@ export class User extends TimestampEntity {
     @Column()
     _nickname: string;
 
-    @OneToMany(() => Record, (record) => record.writer)
-    records: Record[];
+    @OneToMany(() => Record, (record) => record._writer)
+    _records: Record[];
 
-    @OneToMany(() => Review, (review) => review.writer)
-    reviews: Review[];
+    @OneToMany(() => Review, (review) => review._writer)
+    _reviews: Review[];
 
-    @OneToMany(() => Tag, (tag) => tag.user)
-    tags: Tag[];
+    @OneToMany(() => Tag, (tag) => tag._user)
+    _tags: Tag[];
+
+    static async create(params: { email: string, password: string, nickname: string }): Promise<User> {
+        const { email, password, nickname } = params;
+        const user = new User();
+        user._email = email;
+        user.password = password;
+        user._nickname = nickname;
+        return user;
+    }
 
     public getId(): number {
         return this._id;
@@ -44,15 +53,19 @@ export class User extends TimestampEntity {
     }
 
     public getRecords(): Record[] {
-        return this.records;
+        return this._records;
     }
 
     public getReviews(): Review[] {
-        return this.reviews;
+        return this._reviews;
     }
 
     public getTags(): Tag[] {
-        return this.tags;
+        return this._tags;
+    }
+
+    public getCreatedAt(): Date {
+        return this.createdAt;
     }
 
     public updatePassword(newPassword: string): void {

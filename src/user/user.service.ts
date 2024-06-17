@@ -3,10 +3,10 @@ import { SignUpRequestDto } from './dto/signUp.request.dto';
 import * as bcrypt from 'bcrypt';
 import { SignInRequestDto } from './dto/signIn.request.dto';
 import { AuthService } from 'src/auth/auth.service';
-import { SignUpResponseDto } from './dto/signUp.response.dto';
 import { UpdateInfoRequestDto } from './dto/updateInfo.request.dto';
 import { USER_REPOSITORY } from 'src/inject.constant';
 import { UserRepository } from './domain/user.repository';
+import { User } from './domain/user.entity';
 
 @Injectable()
 export class UserService {
@@ -47,7 +47,7 @@ export class UserService {
         }
     }
 
-    async signUp(signUpRequestDto: SignUpRequestDto): Promise<SignUpResponseDto> {
+    async signUp(signUpRequestDto: SignUpRequestDto) {
         const { email, password, nickname } = signUpRequestDto;
 
         const existUser = await this.userRepository.findOneByEmail(email);
@@ -67,11 +67,15 @@ export class UserService {
         }
 
         const hashedPassword = await this.hashPassword(password);
-        const user = this.userRepository.create({ _email: email, _nickname: nickname });
-        user.updatePassword(hashedPassword);
+        const user = await User.create({ email, password: hashedPassword, nickname });
         const createdUser = await this.userRepository.save(user);
 
-        return new SignUpResponseDto(createdUser);
+        return {
+            userId: createdUser.getId(),
+            userEmail: createdUser.getEmail(),
+            userNickname: createdUser.getNickname(),
+            createdAt: createdUser.getCreatedAt()
+        }
     }
 
     async signIn(signInRequestDto: SignInRequestDto) {
