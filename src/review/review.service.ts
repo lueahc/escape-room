@@ -85,20 +85,7 @@ export class ReviewService {
             );
         }
 
-        const review = await Review.create({
-            user,
-            record,
-            content,
-            rate,
-            activity,
-            story,
-            dramatic,
-            volume,
-            problem,
-            difficulty,
-            horror,
-            interior
-        });
+        const review = await Review.create({ user, record, content, rate, activity, story, dramatic, volume, problem, difficulty, horror, interior });
         await this.reviewRepository.save(review);
     }
 

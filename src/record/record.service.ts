@@ -12,6 +12,8 @@ import { RECORD_REPOSITORY } from 'src/inject.constant';
 import { RecordRepository } from './domain/record.repository';
 import { ThemeService } from 'src/theme/theme.service';
 import { UserService } from 'src/user/user.service';
+import { GetOneRecordResponseDto } from './dto/getOneRecord.response.dto';
+import { GetRecordReviewsResponseDto } from './dto/getRecordReviews.response.dto';
 
 @Injectable()
 export class RecordService {
@@ -33,50 +35,28 @@ export class RecordService {
         return await this.recordRepository.getOneTag(userId, recordId);
     }
 
-    async getTaggedUserIds(recordId: number): Promise<number[]> {
-        const tags = await this.recordRepository.getTaggedUserIds(recordId);
-
-        if (!tags) {
-            return [];
-        }
-
-        return tags.map((tag) => {
-            return tag.getUser().getId();
-        });
+    private isArrayNotEmpty(arr) {
+        return !(arr.length === 1 && arr[0] === '');
     }
 
-    async getTaggedNicknames(userId: number, recordId: number): Promise<string[]> {
-        const tags = await this.recordRepository.getTaggedNicknames(userId, recordId);
-
-        if (!tags) {
-            return [];
-        }
-
-        return tags.map((tag) => {
-            return tag.getUser().getNickname();
-        });
+    async mapReviewsToResponseDto(record: Record): Promise<GetOneRecordResponseDto> {
+        const reviews = await Promise.all(record.getReviews().map(async (review) => {
+            return new GetRecordReviewsResponseDto(review);
+        }));
+        return new GetOneRecordResponseDto({ record, reviews });
     }
 
-    changeVisibility(element: Tag): void {
-        if (element.getVisibility()) element.setVisibilityFalse();
-        else element.setVisibilityTrue();
+    async getTaggedUsers(userId: number, recordId: number): Promise<string[]> {
+        const tags = await this.recordRepository.getTaggedUsers(userId, recordId);
+        return tags.map(tag => tag.getUser().getNickname());
     }
 
     async getLogs(userId: number): Promise<GetLogsResponseDto[]> {
         const logs = await this.recordRepository.getLogs(userId);
-
-        if (!logs) {
-            return [];
-        }
-
-        const mapLogs = logs.map((log) => {
-            return new GetLogsResponseDto(log);
-        });
-
-        return mapLogs;
+        return logs.map(log => new GetLogsResponseDto(log));
     }
 
-    async getRecordAndReviews(recordId: number): Promise<Record> {
+    async getRecordAndReviews(recordId: number): Promise<GetOneRecordResponseDto> {
         const record = await this.recordRepository.getRecordInfo(recordId);
         if (!record) {
             throw new NotFoundException(
@@ -85,47 +65,44 @@ export class RecordService {
             )
         }
 
-        return record;
+        return await this.mapReviewsToResponseDto(record);
     }
 
-    async getAllRecordsAndReviews(userId: number, visibility: string) {
+    async getAllRecordsAndReviews(userId: number, visibility: string): Promise<GetOneRecordResponseDto[]> {
         let whereConditions: RecordPartial = {};
-
         if (visibility === 'true') {
-            whereConditions.tags = {
-                visibility: true,
-                user: {
+            whereConditions._tags = {
+                _visibility: true,
+                _user: {
                     _id: userId
                 }
             };
         } else if (visibility === 'false') {
-            whereConditions.tags = {
-                visibility: false,
-                user: {
+            whereConditions._tags = {
+                _visibility: false,
+                _user: {
                     _id: userId
                 }
             };
         } else {
-            whereConditions.tags = {
-                user: {
+            whereConditions._tags = {
+                _user: {
                     _id: userId
                 }
             };
         }
 
-        const result = await this.recordRepository.getRecordAndReviews(whereConditions);
-
-        if (!result) {
-            return [];
-        }
-
-        return result;
+        const records = await this.recordRepository.getRecordAndReviews(whereConditions);
+        return await Promise.all(records.map(async (record) => {
+            return await this.mapReviewsToResponseDto(record);
+        }));
     }
 
     @Transactional()
     async createRecord(userId: number, createRecordRequestDto: CreateRecordRequestDto, file: Express.Multer.File): Promise<CreateAndUpdateRecordResponseDto> {
         const { themeId, isSuccess, playDate, headCount, hintCount, playTime, note, party } = createRecordRequestDto;
-        const s3File = file as any;
+        const s3File = file ? file as any : null;
+        const image = s3File ? s3File.location : null;
 
         const user = await this.userService.findOneById(userId);
         if (!user) {
@@ -143,32 +120,15 @@ export class RecordService {
             );
         }
 
-        const record = this.recordRepository.create({
-            writer: user,
-            theme,
-            isSuccess,
-            playDate,
-            headCount,
-            hintCount,
-            playTime,
-            image: s3File.location,
-            note
-        });
+        const record = await Record.create({ user, theme, isSuccess, playDate, headCount, hintCount, playTime, image, note })
         await this.recordRepository.save(record);
 
-        const tag = this.recordRepository.createTag({
-            user,
-            record,
-            isWriter: true
-        });
+        const tag = await Tag.create({ user, record, isWriter: true });
         await this.recordRepository.saveTag(tag);
 
         if (party) {
-            // 본인 제외
-            let filteredParty = party.filter((element) => element !== userId);
-            // 중복값 제외
-            let uniqueParty = [...new Set(filteredParty)];
-            if (uniqueParty) {
+            const uniqueParty = [...new Set(party.filter((element) => element !== userId))];  // 본인 및 중복값 제외
+            if (this.isArrayNotEmpty(uniqueParty)) {
                 if (headCount <= uniqueParty.length) {
                     throw new BadRequestException(
                         '일행으로 추가할 사용자 수가 인원 수보다 많습니다.',
@@ -180,16 +140,12 @@ export class RecordService {
                     const member = await this.userService.findOneById(memberId);
                     if (!member) {
                         throw new NotFoundException(
-                            '일행이 존재하지 않습니다.',
+                            `일행 memberId:${memberId}는 존재하지 않습니다.`,
                             'NON_EXISTING_PARTY'
                         );
                     }
 
-                    const tag = this.recordRepository.createTag({
-                        user: member,
-                        record,
-                        isWriter: false
-                    });
+                    const tag = await Tag.create({ user: member, record, isWriter: false });
                     await this.recordRepository.saveTag(tag);
                 }
             }
@@ -201,7 +157,8 @@ export class RecordService {
     @Transactional()
     async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto, file: Express.Multer.File): Promise<CreateAndUpdateRecordResponseDto> {
         const { isSuccess, playDate, headCount, hintCount, playTime, note, party } = updateRecordRequestDto;
-        const s3File = file as any;
+        const s3File = file ? file as any : null;
+        const image = s3File ? s3File.location : null;
 
         const record = await this.recordRepository.findOneById(recordId);
         if (!record) {
@@ -219,26 +176,18 @@ export class RecordService {
             );
         }
 
-        const recordWriter = record.getWriter();
-        if (userId !== recordWriter.getId()) {
+        if (record.isNotWriter(userId)) {
             throw new ForbiddenException(
                 '기록을 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
             )
         }
 
-        record.isSuccess = isSuccess;
-        record.playDate = playDate;
-        record.headCount = headCount;
-        record.hintCount = hintCount;
-        record.playTime = playTime;
-        record.image = s3File.location;
-        record.note = note;
+        await record.updateRecord({ isSuccess, playDate, headCount, hintCount, playTime, image, note });
         await this.recordRepository.save(record);
 
-        let filteredParty = party.filter((element) => element !== userId);
-        let uniqueParty = [...new Set(filteredParty)];
-        if (uniqueParty) {
+        const uniqueParty = [...new Set(party.filter((element) => element !== userId))];
+        if (this.isArrayNotEmpty(uniqueParty)) {
             let countParty = (headCount !== undefined && headCount !== null) ? headCount : record.headCount;
             if (countParty <= uniqueParty.length) {
                 throw new BadRequestException(
@@ -247,8 +196,8 @@ export class RecordService {
                 )
             }
 
-            const result = await this.getTaggedUserIds(recordId);
-            let originalParty = result.filter((element) => element !== userId);
+            const tags = await this.recordRepository.getTaggedUsers(userId, recordId);
+            const originalParty = tags.map(tag => tag.getUser().getId());
 
             // 일행 추가
             for (const memberId of uniqueParty) {
@@ -261,11 +210,7 @@ export class RecordService {
                 }
 
                 if (!originalParty.includes(memberId)) {
-                    const tag = this.recordRepository.createTag({
-                        user: member,
-                        record,
-                        isWriter: false
-                    });
+                    const tag = await Tag.create({ user: member, record, isWriter: false });
                     await this.recordRepository.saveTag(tag);
                 }
             }
@@ -294,7 +239,7 @@ export class RecordService {
                         'NON_EXISTING_USER'
                     );
                 }
-                await this.recordRepository.softDeleteTag(deleteTag.id);
+                await this.recordRepository.softDeleteTag(deleteTag.getId());
             }
         }
 
@@ -325,7 +270,7 @@ export class RecordService {
                 'USER_FORBIDDEN')
         }
 
-        this.changeVisibility(tag);
+        tag.changeVisibility();
         await this.recordRepository.saveTag(tag);
     }
 
@@ -346,8 +291,7 @@ export class RecordService {
             );
         }
 
-        const recordWriter = record.getWriter();
-        if (userId !== recordWriter.getId()) {
+        if (record.isNotWriter(userId)) {
             throw new ForbiddenException(
                 '기록을 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'

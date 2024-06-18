@@ -35,7 +35,7 @@ export class TypeormReviewRepository implements ReviewRepository {
                     _id: userId
                 },
                 _record: {
-                    id: recordId
+                    _id: recordId
                 }
             }
         });
@@ -45,7 +45,7 @@ export class TypeormReviewRepository implements ReviewRepository {
         return await this.reviewRepository.count({
             where: {
                 _record: {
-                    id: recordId
+                    _id: recordId
                 }
             }
         });
@@ -59,7 +59,7 @@ export class TypeormReviewRepository implements ReviewRepository {
                         _id: themeId
                     },
                     _tags: {
-                        visibility: true
+                        _visibility: true
                     }
                 }
             },
@@ -77,7 +77,7 @@ export class TypeormReviewRepository implements ReviewRepository {
                         }
                     },
                     _tags: {
-                        visibility: true
+                        _visibility: true
                     }
                 }
             },
@@ -93,7 +93,7 @@ export class TypeormReviewRepository implements ReviewRepository {
                         _id: themeId
                     },
                     _tags: {
-                        visibility: true
+                        _visibility: true
                     }
                 }
             },
@@ -112,7 +112,7 @@ export class TypeormReviewRepository implements ReviewRepository {
                         _id: themeId
                     },
                     _tags: {
-                        visibility: true
+                        _visibility: true
                     }
                 }
             },

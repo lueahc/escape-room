@@ -1,7 +1,7 @@
 export type RecordPartial = Partial<Record<string, any>> & {
-    tags?: {
-        visibility?: boolean;
-        user?: {
+    _tags?: {
+        _visibility?: boolean;
+        _user?: {
             _id?: number;
         };
     };

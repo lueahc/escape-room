@@ -1,6 +1,6 @@
 import { TimestampEntity } from "src/timestamp.entity"
 import { User } from "src/user/domain/user.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Review } from "../../review/domain/review.entity";
 import { Theme } from "src/theme/domain/theme.entity";
 import { Tag } from "./tag.entity";
@@ -8,43 +8,60 @@ import { Tag } from "./tag.entity";
 @Entity()
 export class Record extends TimestampEntity {
     @PrimaryGeneratedColumn()
-    id: number;
+    _id: number;
 
-    @ManyToOne(() => User, (user) => user.records)
-    public writer: User;
+    @ManyToOne(() => User, (user) => user._records)
+    @JoinColumn({ name: 'writer_id' })
+    _writer: User;
 
-    @ManyToOne(() => Theme, (theme) => theme.records)
-    public theme: Theme;
-
-    @Column()
-    playDate: Date;
-
-    @Column()
-    isSuccess: boolean;
+    @ManyToOne(() => Theme, (theme) => theme._records)
+    @JoinColumn({ name: 'theme_id' })
+    _theme: Theme;
 
     @Column()
-    headCount: number;
+    private playDate: Date;
+
+    @Column()
+    private isSuccess: boolean;
+
+    @Column()
+    private headCount: number;
 
     @Column({ nullable: true })
-    hintCount: number;
+    private hintCount: number;
 
     @Column({ nullable: true })
-    playTime: number;
+    private playTime: number;
 
     @Column({ nullable: true })
-    image: string;
+    private image: string;
 
     @Column({ nullable: true })
-    note: string;
+    private note: string;
 
-    @OneToMany(() => Review, (review) => review.record)
-    public reviews: Review[];
+    @OneToMany(() => Review, (review) => review._record)
+    _reviews: Review[];
 
-    @OneToMany(() => Tag, (tag) => tag.record)
-    public tags: Tag[];
+    @OneToMany(() => Tag, (tag) => tag._record)
+    _tags: Tag[];
+
+    static async create(params: { user: User, theme: Theme, isSuccess: boolean, playDate: Date, headCount: number, hintCount: number, playTime: number, image: string, note: string }): Promise<Record> {
+        const { user, theme, isSuccess, playDate, headCount, hintCount, playTime, image, note } = params;
+        const record = new Record();
+        record._writer = user;
+        record._theme = theme;
+        record.isSuccess = isSuccess;
+        record.playDate = playDate;
+        record.headCount = headCount;
+        record.hintCount = hintCount;
+        record.playTime = playTime;
+        record.image = image;
+        record.note = note;
+        return record;
+    }
 
     public getId(): number {
-        return this.id;
+        return this._id;
     }
 
     public getPlayDate(): Date {
@@ -76,18 +93,37 @@ export class Record extends TimestampEntity {
     }
 
     public getWriter(): User {
-        return this.writer;
+        return this._writer;
     }
 
     public getTheme(): Theme {
-        return this.theme;
+        return this._theme;
     }
 
     public getReviews(): Review[] {
-        return this.reviews;
+        return this._reviews;
     }
 
     public getTags(): Tag[] {
-        return this.tags;
+        return this._tags;
+    }
+
+    public getCreatedAt(): Date {
+        return this.createdAt;
+    }
+
+    public isNotWriter(userId: number): boolean {
+        return userId !== this._writer.getId();
+    }
+
+    public updateRecord(params: { isSuccess: boolean, playDate: Date, headCount: number, hintCount: number, playTime: number, image: string, note: string }): void {
+        const { isSuccess, playDate, headCount, hintCount, playTime, image, note } = params;
+        this.isSuccess = isSuccess;
+        this.playDate = playDate;
+        this.headCount = headCount;
+        this.hintCount = hintCount;
+        this.playTime = playTime;
+        this.image = image;
+        this.note = note;
     }
 }

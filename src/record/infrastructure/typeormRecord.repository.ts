@@ -27,10 +27,6 @@ export class TypeormRecordRepository implements RecordRepository {
         await this.recordRepository.softDelete(id);
     }
 
-    createTag(tag: Partial<Tag>): Tag {
-        return this.tagRepository.create(tag);
-    }
-
     async saveTag(tag: Tag): Promise<Tag> {
         return await this.tagRepository.save(tag);
     }
@@ -39,164 +35,57 @@ export class TypeormRecordRepository implements RecordRepository {
         await this.tagRepository.softDelete(id);
     }
 
-    async getLogs(userId: number) {
-        return await this.recordRepository.createQueryBuilder('r')
-            .leftJoin('theme', 't', 'r.theme_id = t.id')
-            .leftJoin('store', 's', 't.store_id = s.id')
-            .leftJoin('tag', 't2', 't2.record_id = r.id')
-            .addSelect('r.id', 'id')
-            .addSelect('r.playDate', 'play_date')
-            .addSelect('s.name', 'store_name')
-            .addSelect('t.name', 'theme_name')
-            .addSelect('r.isSuccess', 'is_success')
-            .where('r.writer__id = :userId and t2.isWriter = true and t2.visibility = true', { userId })
-            .orWhere('t2.user__id = :userId and t2.isWriter = false and t2.visibility = true', { userId })
-            .orderBy('play_date', 'DESC')
-            .getRawMany();
-    }
-
     async findOneById(id: number) {
         return await this.recordRepository.findOne({
-            relations: ['writer'],
-            where: { id }
-        });
-    }
-
-    async getRecordInfo(id: number) {
-        return await this.recordRepository.findOne({
-            select: {
-                id: true,
-                writer: {
-                    _id: true,
-                    _nickname: true,
-                },
-                theme: {
-                    id: true,
-                    name: true,
-                    store: {
-                        id: true,
-                        name: true
-                    }
-                },
-                playDate: true,
-                isSuccess: true,
-                headCount: true,
-                hintCount: true,
-                playTime: true,
-                image: true,
-                note: true,
-                reviews: {
-                    id: true,
-                    writer: {
-                        _id: true,
-                        _nickname: true
-                    },
-                    content: true,
-                    rate: true,
-                    activity: true,
-                    story: true,
-                    dramatic: true,
-                    volume: true,
-                    problem: true,
-                    difficulty: true,
-                    horror: true,
-                    interior: true,
-                }
-            },
-            relations: [
-                'writer',
-                'theme.store',
-                'reviews.writer'
-            ],
-            where: { id }
+            relations: ['_writer', '_theme._store'],
+            where: { _id: id }
         });
     }
 
     async getOneTag(userId: number, recordId: number) {
         return await this.tagRepository.findOne({
-            relations: ['user', 'record'],
+            relations: ['_user', '_record'],
             where: {
-                user: { _id: userId },
-                record: { id: recordId }
+                _user: { _id: userId },
+                _record: { _id: recordId }
             }
         })
     }
 
-    async getTaggedUserIds(recordId: number): Promise<Tag[]> {
+    async getTaggedUsers(userId: number, recordId: number): Promise<Tag[]> {
         return await this.tagRepository.find({
-            select: {
-                user: {
-                    _id: true
-                }
-            },
-            relations: ['user'],
-            where: { record: { id: recordId } }
+            select: { _user: { _id: true, _nickname: true } },
+            relations: ['_user'],
+            where: {
+                _user: { _id: Not(userId) },
+                _record: { _id: recordId }
+            }
         })
     }
 
-    async getTaggedNicknames(userId: number, recordId: number): Promise<Tag[]> {
-        return await this.tagRepository.find({
-            select: {
-                user: {
-                    _nickname: true,
-                }
-            },
-            relations: ['user'],
-            where: {
-                user: { _id: Not(userId) },
-                record: { id: recordId }
-            }
-        })
+    async getRecordInfo(id: number) {
+        return await this.recordRepository.findOne({
+            relations: ['_writer', '_theme._store', '_reviews._writer'],
+            where: { _id: id }
+        });
     }
 
     async getRecordAndReviews(whereConditions: RecordPartial): Promise<Record[]> {
         return await this.recordRepository.find({
-            select: {
-                id: true,
-                writer: {
-                    _id: true,
-                    _nickname: true,
-                },
-                theme: {
-                    id: true,
-                    name: true,
-                    store: {
-                        id: true,
-                        name: true
-                    }
-                },
-                playDate: true,
-                isSuccess: true,
-                headCount: true,
-                hintCount: true,
-                playTime: true,
-                image: true,
-                note: true,
-                reviews: {
-                    id: true,
-                    writer: {
-                        _id: true,
-                        _nickname: true
-                    },
-                    content: true,
-                    rate: true,
-                    activity: true,
-                    story: true,
-                    dramatic: true,
-                    volume: true,
-                    problem: true,
-                    difficulty: true,
-                    horror: true,
-                    interior: true,
-                }
-            },
-            relations: [
-                'writer',
-                'theme.store',
-                'reviews.writer'
-            ],
+            relations: ['_writer', '_theme._store', '_reviews._writer', '_tags'],
             where: whereConditions,
-            order: { id: 'DESC' }
+            order: { _id: 'DESC' }
         });
+    }
+
+    async getLogs(userId: number): Promise<Record[]> {
+        return await this.recordRepository.createQueryBuilder('record')
+            .leftJoinAndSelect('record._theme', 'theme')
+            .leftJoinAndSelect('theme._store', 'store')
+            .leftJoinAndSelect('record._tags', 'tag')
+            .where('record.writer_id = :userId and tag.isWriter = true and tag._visibility = true', { userId })
+            .orWhere('tag.user_id = :userId and tag.isWriter = false and tag._visibility = true', { userId })
+            .orderBy('record.play_date', 'DESC')
+            .getMany();
     }
 }
