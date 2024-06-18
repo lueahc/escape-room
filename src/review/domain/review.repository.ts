@@ -1,7 +1,6 @@
 import { Review } from "./review.entity";
 
 export interface ReviewRepository {
-    create(review: Partial<Review>): Review;
     save(review: Review): Promise<Review>;
     softDelete(id: number): Promise<void>;
     findOneById(id: number);

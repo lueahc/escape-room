@@ -6,6 +6,7 @@ import { GetVisibleReviewsResponseDto } from './dto/getVisibleReviews.response.d
 import { REVIEW_REPOSITORY } from 'src/inject.constant';
 import { ReviewRepository } from './domain/review.repository';
 import { UserService } from 'src/user/user.service';
+import { Review } from './domain/review.entity';
 
 @Injectable()
 export class ReviewService {
@@ -34,10 +35,10 @@ export class ReviewService {
         return !!review;
     }
 
-    async mapReviewsToResponseDto(reviews) {
-        return await reviews.map((review) => {
+    async mapReviewsToResponseDto(reviews: Review[]): Promise<GetVisibleReviewsResponseDto[]> {
+        return await Promise.all(reviews.map(async (review) => {
             return new GetVisibleReviewsResponseDto(review);
-        });
+        }));
     }
 
     async getVisibleReviewsInTheme(themeId: number): Promise<GetVisibleReviewsResponseDto[]> {
@@ -84,8 +85,8 @@ export class ReviewService {
             );
         }
 
-        const review = this.reviewRepository.create({
-            writer: user,
+        const review = await Review.create({
+            user,
             record,
             content,
             rate,
@@ -102,8 +103,6 @@ export class ReviewService {
     }
 
     async updateReview(userId: number, reviewId: number, updateReviewRequestDto: UpdateReviewRequestDto): Promise<void> {
-        const { content, rate, activity, story, dramatic, volume, problem, difficulty, horror, interior } = updateReviewRequestDto;
-
         const review = await this.reviewRepository.findOneById(reviewId);
         if (!review) {
             throw new NotFoundException(
@@ -120,24 +119,14 @@ export class ReviewService {
             );
         }
 
-        const reviewWriter = review.getWriter();
-        if (userId !== reviewWriter.getId()) {
+        if (review.isNotWriter(userId)) {
             throw new ForbiddenException(
                 '리뷰를 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'
             )
         }
 
-        review.content = content;
-        review.rate = rate;
-        review.activity = activity;
-        review.story = story;
-        review.dramatic = dramatic;
-        review.volume = volume;
-        review.problem = problem;
-        review.difficulty = difficulty;
-        review.horror = horror;
-        review.interior = interior;
+        await review.updateReview(updateReviewRequestDto);
         await this.reviewRepository.save(review);
     }
 
@@ -158,8 +147,7 @@ export class ReviewService {
             );
         }
 
-        const reviewWriter = review.getWriter();
-        if (userId !== reviewWriter.getId()) {
+        if (review.isNotWriter(userId)) {
             throw new ForbiddenException(
                 '리뷰를 등록한 사용자가 아닙니다.',
                 'USER_WRITER_DISCORDANCE'

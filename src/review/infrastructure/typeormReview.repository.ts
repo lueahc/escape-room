@@ -11,10 +11,6 @@ export class TypeormReviewRepository implements ReviewRepository {
         private readonly reviewRepository: Repository<Review>,
     ) { }
 
-    create(review: Partial<Review>): Review {
-        return this.reviewRepository.create(review);
-    }
-
     async save(review: Review): Promise<Review> {
         return await this.reviewRepository.save(review);
     }
@@ -25,19 +21,20 @@ export class TypeormReviewRepository implements ReviewRepository {
 
     async findOneById(id: number) {
         return await this.reviewRepository.findOne({
-            relations: ['writer'],
-            where: { id }
+            where: {
+                _id: id
+            },
+            relations: ['_writer']
         });
     }
 
     async findOneByUserIdAndRecordId(userId: number, recordId: number) {
         return await this.reviewRepository.findOne({
-            relations: ['writer'],
             where: {
-                writer: {
+                _writer: {
                     _id: userId
                 },
-                record: {
+                _record: {
                     id: recordId
                 }
             }
@@ -45,59 +42,85 @@ export class TypeormReviewRepository implements ReviewRepository {
     }
 
     async countReviewsInRecord(recordId: number): Promise<number> {
-        return await this.reviewRepository
-            .createQueryBuilder('review')
-            .where('review.record_id = :recordId', { recordId })
-            .getCount();
+        return await this.reviewRepository.count({
+            where: {
+                _record: {
+                    id: recordId
+                }
+            }
+        });
     }
 
     async countVisibleReviewsInTheme(themeId: number): Promise<number> {
-        return await this.reviewRepository.createQueryBuilder('r')
-            .leftJoin('record', 'r2', 'r.record_id = r2.id')
-            .leftJoin('tag', 't', 't.record_id = r.record_id and r.writer__id = t.user__id')
-            .addSelect('r.id', 'id')
-            .where('r2.theme_id = :themeId and t.visibility = true', { themeId })
-            .getCount();
+        return await this.reviewRepository.count({
+            where: {
+                _record: {
+                    _theme: {
+                        _id: themeId
+                    },
+                    _tags: {
+                        visibility: true
+                    }
+                }
+            },
+            relations: ['_record._theme', '_record._tags']
+        });
     }
 
     async countVisibleReviewsInStore(storeId: number): Promise<number> {
-        return await this.reviewRepository.createQueryBuilder('r')
-            .leftJoin('record', 'r2', 'r.record_id = r2.id')
-            .leftJoin('theme', 't', 'r2.theme_id = t.id')
-            .leftJoin('tag', 't2', 't2.record_id = r.record_id and r.writer__id = t2.user__id')
-            .addSelect('r.id', 'id')
-            .where('t.store_id = :storeId and t2.visibility = true', { storeId })
-            .getCount();
+        return await this.reviewRepository.count({
+            where: {
+                _record: {
+                    _theme: {
+                        _store: {
+                            _id: storeId
+                        }
+                    },
+                    _tags: {
+                        visibility: true
+                    }
+                }
+            },
+            relations: ['_record._theme._store', '_record._tags']
+        });
     }
 
     async getVisibleReviewsInTheme(themeId: number) {
-        return await this.reviewRepository.createQueryBuilder('r')
-            .leftJoinAndSelect('record', 'r2', 'r.record_id = r2.id')
-            .leftJoinAndSelect('user', 'u', 'u.id = r.writer__id')
-            .leftJoin('theme', 't', 'r2.theme_id = t.id')
-            .leftJoin('store', 's', 't.store_id = s.id')
-            .leftJoinAndSelect('tag', 't2', 't2.record_id = r.record_id and r.writer__id = t2.user__id')
-            .addSelect('u._nickname', 'nickname')
-            .addSelect('s.name', 'store_name')
-            .addSelect('t.name', 'theme_name')
-            .where('t2.visibility = true and t.id = :themeId', { themeId })
-            .orderBy('r.created_at', 'DESC')
-            .getRawMany();
+        return await this.reviewRepository.find({
+            where: {
+                _record: {
+                    _theme: {
+                        _id: themeId
+                    },
+                    _tags: {
+                        visibility: true
+                    }
+                }
+            },
+            relations: ['_record._theme._store', '_writer', '_record._tags'],
+            order: {
+                createdAt: 'DESC'
+            }
+        });
     }
 
     async getThreeVisibleReviewsInTheme(themeId: number) {
-        return await this.reviewRepository.createQueryBuilder('r')
-            .leftJoinAndSelect('record', 'r2', 'r.record_id = r2.id')
-            .leftJoinAndSelect('user', 'u', 'u.id = r.writer__id')
-            .leftJoin('theme', 't', 'r2.theme_id = t.id')
-            .leftJoin('store', 's', 't.store_id = s.id')
-            .leftJoinAndSelect('tag', 't2', 't2.record_id = r.record_id and r.writer__id = t2.user__id')
-            .addSelect('u._nickname', 'nickname')
-            .addSelect('s.name', 'store_name')
-            .addSelect('t.name', 'theme_name')
-            .where('t2.visibility = true and t.id = :themeId', { themeId })
-            .orderBy('r.created_at', 'DESC')
-            .limit(3)
-            .getRawMany();
+        return await this.reviewRepository.find({
+            where: {
+                _record: {
+                    _theme: {
+                        _id: themeId
+                    },
+                    _tags: {
+                        visibility: true
+                    }
+                }
+            },
+            relations: ['_record._theme._store', '_writer', '_record._tags'],
+            order: {
+                createdAt: 'DESC'
+            },
+            take: 3
+        });
     }
 }
