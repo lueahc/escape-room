@@ -39,7 +39,7 @@ export class RecordService {
         return !(arr.length === 1 && arr[0] === '');
     }
 
-    async mapReviewsToResponseDto(record: Record): Promise<GetOneRecordResponseDto> {
+    private async mapReviewsToResponseDto(record: Record): Promise<GetOneRecordResponseDto> {
         const reviews = await Promise.all(record.getReviews().map(async (review) => {
             return new GetRecordReviewsResponseDto(review);
         }));
@@ -101,8 +101,7 @@ export class RecordService {
     @Transactional()
     async createRecord(userId: number, createRecordRequestDto: CreateRecordRequestDto, file: Express.Multer.File): Promise<CreateAndUpdateRecordResponseDto> {
         const { themeId, isSuccess, playDate, headCount, hintCount, playTime, note, party } = createRecordRequestDto;
-        const s3File = file ? file as any : null;
-        const image = s3File ? s3File.location : null;
+        const image = file ? (file as any).location : null;
 
         const user = await this.userService.findOneById(userId);
         if (!user) {
@@ -157,8 +156,7 @@ export class RecordService {
     @Transactional()
     async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto, file: Express.Multer.File): Promise<CreateAndUpdateRecordResponseDto> {
         const { isSuccess, playDate, headCount, hintCount, playTime, note, party } = updateRecordRequestDto;
-        const s3File = file ? file as any : null;
-        const image = s3File ? s3File.location : null;
+        const image = file ? (file as any).location : null;
 
         const record = await this.recordRepository.findOneById(recordId);
         if (!record) {
@@ -188,7 +186,7 @@ export class RecordService {
 
         const uniqueParty = [...new Set(party.filter((element) => element !== userId))];
         if (this.isArrayNotEmpty(uniqueParty)) {
-            let countParty = (headCount !== undefined && headCount !== null) ? headCount : record.headCount;
+            let countParty = (headCount !== undefined && headCount !== null) ? headCount : record.getHeadCount();
             if (countParty <= uniqueParty.length) {
                 throw new BadRequestException(
                     '일행으로 추가할 사용자 수가 인원 수보다 많습니다.',

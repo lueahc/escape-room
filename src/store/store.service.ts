@@ -17,7 +17,7 @@ export class StoreService {
         private readonly themeService: ThemeService
     ) { }
 
-    async mapStoresToResponseDto(stores: Store[]): Promise<GetStoresListResponseDto[]> {
+    private async mapStoresToResponseDto(stores: Store[]): Promise<GetStoresListResponseDto[]> {
         return await Promise.all(stores.map(async (store) => {
             const reviewCount = await this.reviewService.countVisibleReviewsInStore(store.getId());
             return new GetStoresListResponseDto({ store, reviewCount });

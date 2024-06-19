@@ -35,7 +35,7 @@ export class ReviewService {
         return !!review;
     }
 
-    async mapReviewsToResponseDto(reviews: Review[]): Promise<GetVisibleReviewsResponseDto[]> {
+    private async mapReviewsToResponseDto(reviews: Review[]): Promise<GetVisibleReviewsResponseDto[]> {
         return await Promise.all(reviews.map(async (review) => {
             return new GetVisibleReviewsResponseDto(review);
         }));

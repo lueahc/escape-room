@@ -20,7 +20,7 @@ export class ThemeService {
         return await this.themeRepository.findOneById(id);
     }
 
-    async mapThemesToResponseDto(themes: Theme[]): Promise<GetThemesListResponseDto[]> {
+    private async mapThemesToResponseDto(themes: Theme[]): Promise<GetThemesListResponseDto[]> {
         return await Promise.all(themes.map(async (theme) => {
             const reviewCount = await this.reviewService.countVisibleReviewsInTheme(theme.getId());
             return new GetThemesListResponseDto({ theme, reviewCount });
