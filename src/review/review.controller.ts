@@ -40,7 +40,7 @@ export class ReviewController {
     @ApiSecurity('AdminAuth')
     deleteReview(
         @User('_id') userId: number,
-        @Param('reviewId', ParseIntPipe) reviewId: number) {
+        @Param('reviewId', ParseIntPipe) reviewId: number): Promise<void> {
         return this.reviewService.deleteReview(userId, reviewId);
     }
 }

@@ -16,7 +16,7 @@ export class ThemeService {
         private readonly reviewService: ReviewService
     ) { }
 
-    async findOneById(id: number) {
+    async findOneById(id: number): Promise<Theme | null> {
         return await this.themeRepository.findOneById(id);
     }
 

@@ -16,11 +16,11 @@ export class UserService {
         private readonly authService: AuthService,
     ) { }
 
-    async findOneById(id: number) {
+    async findOneById(id: number): Promise<User | null> {
         return await this.userRepository.findOneById(id);
     }
 
-    async hashPassword(password: string) {
+    async hashPassword(password: string): Promise<string> {
         const salt = await bcrypt.genSalt();
         return await bcrypt.hash(password, salt);
     }

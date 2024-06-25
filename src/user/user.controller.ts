@@ -32,7 +32,7 @@ export class UserController {
     @ApiSecurity('AdminAuth')
     updateInfo(
         @User('_id') userId: number,
-        @Body() updateInfoRequestDto: UpdateInfoRequestDto) {
+        @Body() updateInfoRequestDto: UpdateInfoRequestDto): Promise<void> {
         return this.userService.updateInfo(userId, updateInfoRequestDto);
     }
 
