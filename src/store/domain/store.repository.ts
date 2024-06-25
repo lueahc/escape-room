@@ -5,5 +5,5 @@ export interface StoreRepository {
     findAll(): Promise<Store[]>;
     findByLocation(location: LocationEnum): Promise<Store[]>;
     findByKeyword(keyword: string): Promise<Store[]>;
-    findOneById(id: number);
+    findOneById(id: number): Promise<Store | null>;
 }

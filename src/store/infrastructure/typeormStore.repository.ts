@@ -28,7 +28,7 @@ export class TypeormStoreRepository implements StoreRepository {
         });
     }
 
-    async findOneById(id: number) {
+    async findOneById(id: number): Promise<Store | null> {
         return await this.storeRepository.findOne({
             where: { _id: id }
         });

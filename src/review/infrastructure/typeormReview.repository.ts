@@ -19,7 +19,7 @@ export class TypeormReviewRepository implements ReviewRepository {
         await this.reviewRepository.softDelete(id);
     }
 
-    async findOneById(id: number) {
+    async findOneById(id: number): Promise<Review | null> {
         return await this.reviewRepository.findOne({
             where: {
                 _id: id
@@ -28,7 +28,7 @@ export class TypeormReviewRepository implements ReviewRepository {
         });
     }
 
-    async findOneByUserIdAndRecordId(userId: number, recordId: number) {
+    async findOneByUserIdAndRecordId(userId: number, recordId: number): Promise<Review | null> {
         return await this.reviewRepository.findOne({
             where: {
                 _writer: {
@@ -85,7 +85,7 @@ export class TypeormReviewRepository implements ReviewRepository {
         });
     }
 
-    async getVisibleReviewsInTheme(themeId: number) {
+    async getVisibleReviewsInTheme(themeId: number): Promise<Review[]> {
         return await this.reviewRepository.find({
             where: {
                 _record: {
@@ -104,7 +104,7 @@ export class TypeormReviewRepository implements ReviewRepository {
         });
     }
 
-    async getThreeVisibleReviewsInTheme(themeId: number) {
+    async getThreeVisibleReviewsInTheme(themeId: number): Promise<Review[]> {
         return await this.reviewRepository.find({
             where: {
                 _record: {

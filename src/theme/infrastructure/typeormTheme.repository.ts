@@ -12,7 +12,7 @@ export class TypeormThemeRepository implements ThemeRepository {
         private readonly themeRepository: Repository<Theme>,
     ) { }
 
-    async findOneById(id: number) {
+    async findOneById(id: number): Promise<Theme | null> {
         return await this.themeRepository.findOne({
             where: {
                 _id: id

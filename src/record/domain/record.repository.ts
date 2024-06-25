@@ -8,10 +8,10 @@ export interface RecordRepository {
     softDelete(id: number): Promise<void>;
     saveTag(tag: Tag): Promise<Tag>;
     softDeleteTag(id: number): Promise<void>;
-    findOneById(id: number);
-    getOneTag(userId: number, recordId: number);
+    findOneById(id: number): Promise<Record | null>;
+    getOneTag(userId: number, recordId: number): Promise<Tag | null>;
     getTaggedUsers(userId: number, recordId: number): Promise<Tag[]>;
-    getRecordInfo(id: number);
+    getRecordInfo(id: number): Promise<Record | null>;
     getRecordAndReviews(whereConditions: RecordPartial): Promise<Record[]>;
     getLogs(userId: number): Promise<Record[]>;
 }

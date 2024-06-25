@@ -35,14 +35,14 @@ export class TypeormRecordRepository implements RecordRepository {
         await this.tagRepository.softDelete(id);
     }
 
-    async findOneById(id: number) {
+    async findOneById(id: number): Promise<Record | null> {
         return await this.recordRepository.findOne({
             relations: ['_writer', '_theme._store'],
             where: { _id: id }
         });
     }
 
-    async getOneTag(userId: number, recordId: number) {
+    async getOneTag(userId: number, recordId: number): Promise<Tag | null> {
         return await this.tagRepository.findOne({
             relations: ['_user', '_record'],
             where: {
@@ -63,7 +63,7 @@ export class TypeormRecordRepository implements RecordRepository {
         })
     }
 
-    async getRecordInfo(id: number) {
+    async getRecordInfo(id: number): Promise<Record | null> {
         return await this.recordRepository.findOne({
             relations: ['_writer', '_theme._store', '_reviews._writer'],
             where: { _id: id }

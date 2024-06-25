@@ -15,7 +15,7 @@ export class TypeormUserRepository implements UserRepository {
         return await this.userRepository.save(user);
     }
 
-    async findOneById(id: number) {
+    async findOneById(id: number): Promise<User | null> {
         return await this.userRepository.findOne({
             where: {
                 _id: id
@@ -23,7 +23,7 @@ export class TypeormUserRepository implements UserRepository {
         });
     }
 
-    async findOneByEmail(email: string) {
+    async findOneByEmail(email: string): Promise<User | null> {
         return await this.userRepository.findOne({
             where: {
                 _email: email
@@ -31,7 +31,7 @@ export class TypeormUserRepository implements UserRepository {
         });
     }
 
-    async findOneByNickname(nickname: string) {
+    async findOneByNickname(nickname: string): Promise<User | null> {
         return await this.userRepository.findOne({
             where: {
                 _nickname: nickname
