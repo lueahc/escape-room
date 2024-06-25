@@ -45,22 +45,6 @@ export class Record extends TimestampEntity {
     @OneToMany(() => Tag, (tag) => tag._record)
     _tags: Tag[];
 
-    // constructor(params: { user: User, theme: Theme, isSuccess: number, playDate: Date, headCount: number, hintCount: number, playTime: number, image: string, note: string }) {
-    //     super();
-    //     if (params) {
-    //         const { user, theme, isSuccess, playDate, headCount, hintCount, playTime, image, note } = params;
-    //         this._writer = user;
-    //         this._theme = theme;
-    //         this.isSuccess = isSuccess;
-    //         this.playDate = playDate;
-    //         this.headCount = headCount;
-    //         this.hintCount = hintCount;
-    //         this.playTime = playTime;
-    //         this.image = image;
-    //         this.note = note;
-    //     }
-    // }
-
     static async create(params: { user: User, theme: Theme, isSuccess: boolean, playDate: Date, headCount: number, hintCount: number, playTime: number, image: string, note: string }): Promise<Record> {
         const { user, theme, isSuccess, playDate, headCount, hintCount, playTime, image, note } = params;
         const record = new Record();

@@ -4,7 +4,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Not, Repository } from "typeorm";
 import { RecordRepository } from "../domain/record.repository";
 import { Tag } from "../domain/tag.entity";
-import { RecordPartial } from "../record.types";
 
 @Injectable()
 export class TypeormRecordRepository implements RecordRepository {
@@ -70,10 +69,40 @@ export class TypeormRecordRepository implements RecordRepository {
         });
     }
 
-    async getRecordAndReviews(whereConditions: RecordPartial): Promise<Record[]> {
+    async findVisibleRecords(userId: number): Promise<Record[]> {
         return await this.recordRepository.find({
             relations: ['_writer', '_theme._store', '_reviews._writer', '_tags'],
-            where: whereConditions,
+            where: {
+                _tags: {
+                    _visibility: true,
+                    _user: { _id: userId }
+                }
+            },
+            order: { _id: 'DESC' }
+        });
+    }
+
+    async findHiddenRecords(userId: number): Promise<Record[]> {
+        return await this.recordRepository.find({
+            relations: ['_writer', '_theme._store', '_reviews._writer', '_tags'],
+            where: {
+                _tags: {
+                    _visibility: false,
+                    _user: { _id: userId }
+                }
+            },
+            order: { _id: 'DESC' }
+        });
+    }
+
+    async findAllRecords(userId: number): Promise<Record[]> {
+        return await this.recordRepository.find({
+            relations: ['_writer', '_theme._store', '_reviews._writer', '_tags'],
+            where: {
+                _tags: {
+                    _user: { _id: userId }
+                }
+            },
             order: { _id: 'DESC' }
         });
     }

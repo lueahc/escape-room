@@ -1,7 +1,7 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from "@nestjs/common";
 import { Tag } from "./domain/tag.entity";
 import { UserService } from "src/user/user.service";
-import { RECORD_REPOSITORY } from "src/inject.constant";
+import { RECORD_REPOSITORY } from "src/common/inject.constant";
 import { RecordRepository } from "./domain/record.repository";
 import { Record } from "./domain/record.entity";
 import { User } from "src/user/domain/user.entity";
@@ -13,6 +13,7 @@ export class TagPartyService {
         @Inject(RECORD_REPOSITORY)
         private readonly recordRepository: RecordRepository,
         private readonly userService: UserService,
+        @Inject(forwardRef(() => ReviewService))
         private readonly reviewService: ReviewService
     ) { }
 
@@ -20,7 +21,7 @@ export class TagPartyService {
         return [...new Set(party.filter((element) => element !== userId))]; // 본인 및 중복값 제외
     }
 
-    private isArrayNotEmpty(arr) {
+    private isArrayNotEmpty(arr): boolean {
         return !(arr.length === 1 && arr[0] === '');
     }
 
@@ -48,12 +49,12 @@ export class TagPartyService {
         return member;
     }
 
-    private async createAndSaveTag(member: User, record: Record) {
+    private async createAndSaveTag(member: User, record: Record): Promise<void> {
         const tag = await Tag.create({ user: member, record, isWriter: false });
         await this.recordRepository.saveTag(tag);
     }
 
-    private getFinalHeadCount(headCount: number, record: Record) {
+    private getFinalHeadCount(headCount: number, record: Record): number {
         return headCount ?? record.getHeadCount();
     }
 
@@ -87,7 +88,7 @@ export class TagPartyService {
         await this.recordRepository.softDeleteTag(deleteTag.getId());
     }
 
-    async createTags(party, userId: number, headCount: number, record: Record) {
+    async createTags(party, userId: number, headCount: number, record: Record): Promise<void> {
         if (party) {
             const uniqueParty = this.setPartyUnique(party, userId);
             if (this.isArrayNotEmpty(uniqueParty)) {
@@ -100,7 +101,7 @@ export class TagPartyService {
         }
     }
 
-    async updateTags(party, userId: number, headCount: number, record: Record) {
+    async updateTags(party, userId: number, headCount: number, record: Record): Promise<void> {
         if (party) {
             const uniqueParty = this.setPartyUnique(party, userId);
             if (this.isArrayNotEmpty(uniqueParty)) {

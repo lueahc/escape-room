@@ -1,5 +1,4 @@
 import { Tag } from "../domain/tag.entity";
-import { RecordPartial } from "../record.types";
 import { Record } from "./record.entity";
 
 export interface RecordRepository {
@@ -12,6 +11,8 @@ export interface RecordRepository {
     getOneTag(userId: number, recordId: number): Promise<Tag | null>;
     getTaggedUsers(userId: number, recordId: number): Promise<Tag[]>;
     getRecordInfo(id: number): Promise<Record | null>;
-    getRecordAndReviews(whereConditions: RecordPartial): Promise<Record[]>;
+    findVisibleRecords(userId: number): Promise<Record[]>;
+    findHiddenRecords(userId: number): Promise<Record[]>;
+    findAllRecords(userId: number): Promise<Record[]>;
     getLogs(userId: number): Promise<Record[]>;
 }
