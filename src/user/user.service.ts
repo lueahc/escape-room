@@ -117,7 +117,7 @@ export class UserService {
 
         if (password) {
             const hashedPassword = await this.hashPassword(password);
-            await user.updatePassword(hashedPassword);
+            user.updatePassword(hashedPassword);
         }
 
         if (nickname) {
@@ -129,7 +129,7 @@ export class UserService {
                 );
             }
 
-            await user.updateNickname(nickname);
+            user.updateNickname(nickname);
         }
 
         await this.userRepository.save(user);

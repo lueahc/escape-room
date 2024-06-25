@@ -113,7 +113,7 @@ export class ReviewService {
             )
         }
 
-        await review.updateReview(updateReviewRequestDto);
+        review.updateReview(updateReviewRequestDto);
         await this.reviewRepository.save(review);
     }
 
