@@ -1,4 +1,6 @@
 export interface EnvironmentVariable {
+    NODE_ENV: string;
+    PORT: number;
     DB_TYPE: string;
     DB_HOST: string;
     DB_PORT: number;
@@ -12,4 +14,6 @@ export interface EnvironmentVariable {
     AWS_S3_ACCESS_KEY: string;
     AWS_S3_SECRET_ACCESS_KEY: string;
     AWS_S3_BUCKET: string;
+    SWAGGER_USER: string;
+    SWAGGER_PWD: string;
 }
