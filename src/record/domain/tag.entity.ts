@@ -1,4 +1,4 @@
-import { TimestampEntity } from "src/timestamp.entity"
+import { TimestampEntity } from "src/common/timestamp.entity"
 import { User } from "src/user/domain/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Record } from "./record.entity";

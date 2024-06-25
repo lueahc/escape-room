@@ -8,7 +8,7 @@ import { ReviewService } from 'src/review/review.service';
 import { GetLogsResponseDto } from './dto/getLogs.response.dto';
 import { RecordPartial } from './record.types';
 import { CreateAndUpdateRecordResponseDto } from './dto/createAndUpdateRecord.response.dto';
-import { RECORD_REPOSITORY } from 'src/inject.constant';
+import { RECORD_REPOSITORY } from 'src/common/inject.constant';
 import { RecordRepository } from './domain/record.repository';
 import { ThemeService } from 'src/theme/theme.service';
 import { UserService } from 'src/user/user.service';
@@ -119,7 +119,8 @@ export class RecordService {
             );
         }
 
-        const record = await Record.create({ user, theme, isSuccess, playDate, headCount, hintCount, playTime, image, note })
+        const record = await Record.create({ user, theme, isSuccess, playDate, headCount, hintCount, playTime, image, note });
+        //const record = new Record({ user, theme, isSuccess, playDate, headCount, hintCount, playTime, image, note });
         await this.recordRepository.save(record);
 
         const tag = await Tag.create({ user, record, isWriter: true });

@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { SignInRequestDto } from './dto/signIn.request.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { UpdateInfoRequestDto } from './dto/updateInfo.request.dto';
-import { USER_REPOSITORY } from 'src/inject.constant';
+import { USER_REPOSITORY } from 'src/common/inject.constant';
 import { UserRepository } from './domain/user.repository';
 import { User } from './domain/user.entity';
 

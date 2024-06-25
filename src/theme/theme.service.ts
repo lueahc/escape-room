@@ -4,7 +4,7 @@ import { GetThemesListResponseDto } from './dto/getThemesList.response.dto';
 import { ReviewService } from 'src/review/review.service';
 import { GetOneThemeResponseDto } from './dto/getOneTheme.response.dto';
 import { GetVisibleReviewsResponseDto } from 'src/review/dto/getVisibleReviews.response.dto';
-import { THEME_REPOSITORY } from 'src/inject.constant';
+import { THEME_REPOSITORY } from 'src/common/inject.constant';
 import { ThemeRepository } from './domain/theme.repository';
 import { Theme } from './domain/theme.entity';
 

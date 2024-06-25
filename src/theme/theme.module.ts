@@ -4,7 +4,7 @@ import { ThemeService } from './theme.service';
 import { Theme } from './domain/theme.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReviewModule } from 'src/review/review.module';
-import { THEME_REPOSITORY } from 'src/inject.constant';
+import { THEME_REPOSITORY } from 'src/common/inject.constant';
 import { TypeormThemeRepository } from './infrastructure/typeormTheme.repository';
 
 @Module({

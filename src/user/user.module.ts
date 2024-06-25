@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './domain/user.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { TypeormUserRepository } from './infrastructure/typeormUser.repository';
-import { USER_REPOSITORY } from 'src/inject.constant';
+import { USER_REPOSITORY } from 'src/common/inject.constant';
 
 @Module({
   imports: [

@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Review } from './domain/review.entity';
 import { UserModule } from 'src/user/user.module';
 import { RecordModule } from 'src/record/record.module';
-import { REVIEW_REPOSITORY } from 'src/inject.constant';
+import { REVIEW_REPOSITORY } from 'src/common/inject.constant';
 import { TypeormReviewRepository } from './infrastructure/typeormReview.repository';
 
 @Module({

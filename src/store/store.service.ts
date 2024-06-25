@@ -4,7 +4,7 @@ import { GetStoresListResponseDto } from './dto/getStoresList.response.dto';
 import { ReviewService } from 'src/review/review.service';
 import { ThemeService } from 'src/theme/theme.service';
 import { GetOneStoreResponseDto } from './dto/getOneStore.response.dto';
-import { STORE_REPOSITORY } from 'src/inject.constant';
+import { STORE_REPOSITORY } from 'src/common/inject.constant';
 import { StoreRepository } from './domain/store.repository';
 import { Store } from './domain/store.entity';
 

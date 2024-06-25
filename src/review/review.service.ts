@@ -3,7 +3,7 @@ import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
 import { CreateReviewRequestDto } from './dto/createReview.request.dto';
 import { RecordService } from 'src/record/record.service';
 import { GetVisibleReviewsResponseDto } from './dto/getVisibleReviews.response.dto';
-import { REVIEW_REPOSITORY } from 'src/inject.constant';
+import { REVIEW_REPOSITORY } from 'src/common/inject.constant';
 import { ReviewRepository } from './domain/review.repository';
 import { UserService } from 'src/user/user.service';
 import { Review } from './domain/review.entity';

@@ -1,4 +1,4 @@
-import { TimestampEntity } from "src/timestamp.entity"
+import { TimestampEntity } from "src/common/timestamp.entity"
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Record } from "src/record/domain/record.entity";
 import { Review } from "src/review/domain/review.entity";
