@@ -9,20 +9,6 @@ import { EnvironmentVariable } from './environmentVariable.interface';
 @Module({
     imports: [
         TypeOrmModule.forRootAsync({
-            // useFactory: () => {
-            //     return {
-            //         type: process.env.DB_TYPE as any,
-            //         host: process.env.DB_HOST,
-            //         port: process.env.DB_PORT,
-            //         username: process.env.DB_USERNAME,
-            //         password: process.env.DB_PASSWORD,
-            //         database: process.env.DB_DATABASE,
-            //         autoLoadEntities: true,
-            //         synchronize: true,
-            //         logging: false,
-            //         namingStrategy: new SnakeNamingStrategy(),
-            //     };
-            // },
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (configService: ConfigService<EnvironmentVariable>) => {

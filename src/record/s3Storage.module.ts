@@ -3,13 +3,14 @@ import { MulterModule } from '@nestjs/platform-express'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3'
 import * as multerS3 from 'multer-s3'
+import { EnvironmentVariable } from 'src/config/environmentVariable.interface'
 
 @Module({
     imports: [
         MulterModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
-            useFactory: (configService: ConfigService) => ({
+            useFactory: (configService: ConfigService<EnvironmentVariable>) => ({
                 storage: createS3Storage(configService),
                 // limits: {
                 //     fileSize: 1024 * 1024 * 5, // 5 MB
@@ -26,7 +27,7 @@ import * as multerS3 from 'multer-s3'
 
 export class S3StorageModule { }
 
-function createS3Storage(configService: ConfigService) {
+function createS3Storage(configService: ConfigService<EnvironmentVariable>) {
     const s3ClientConfig: S3ClientConfig = {
         region: configService.get<string>('AWS_S3_REGION'),
         credentials: {
