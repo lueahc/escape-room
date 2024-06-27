@@ -1,5 +1,6 @@
 import { LocationEnum } from "src/store/location.enum";
 import { GetThemesListResponseDto } from "src/theme/dto/getThemesList.response.dto";
+import { Store } from "../domain/store.entity";
 
 export class GetOneStoreResponseDto {
     id: number;
@@ -12,18 +13,18 @@ export class GetOneStoreResponseDto {
     themes: GetThemesListResponseDto[];
 
     constructor(params: {
-        store: {
-            id: number; name: string; location: LocationEnum; address: string; phoneNo: string; homepageUrl: string;
-        };
-        reviewCount: number; themes: GetThemesListResponseDto[];
+        store: Store;
+        reviewCount: number;
+        themes: GetThemesListResponseDto[];
     }) {
-        this.id = params.store.id;
-        this.name = params.store.name;
-        this.location = params.store.location;
-        this.address = params.store.address;
-        this.phoneNo = params.store.phoneNo;
-        this.homepageUrl = params.store.homepageUrl;
-        this.reviewCount = params.reviewCount;
-        this.themes = params.themes;
+        const { store, reviewCount, themes } = params;
+        this.id = store.getId();
+        this.name = store.getName();
+        this.location = store.getLocation();
+        this.address = store.getAddress();
+        this.phoneNo = store.getPhoneNo();
+        this.homepageUrl = store.getHomepageUrl();
+        this.reviewCount = reviewCount;
+        this.themes = themes;
     }
 }

@@ -1,4 +1,5 @@
 import { LocationEnum } from "src/store/location.enum";
+import { Store } from "../domain/store.entity";
 
 export class GetStoresListResponseDto {
     id: number;
@@ -7,14 +8,13 @@ export class GetStoresListResponseDto {
     reviewCount: number;
 
     constructor(params: {
-        store: {
-            id: number; name: string; location: LocationEnum;
-        };
+        store: Store;
         reviewCount: number;
     }) {
-        this.id = params.store.id;
-        this.name = params.store.name;
-        this.location = params.store.location;
-        this.reviewCount = params.reviewCount;
+        const { store, reviewCount } = params;
+        this.id = store.getId();
+        this.name = store.getName();
+        this.location = store.getLocation();
+        this.reviewCount = reviewCount;
     }
 }

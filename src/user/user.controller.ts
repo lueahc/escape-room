@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { SignUpRequestDto } from './dto/signUp.request.dto';
 import { SignInRequestDto } from './dto/signIn.request.dto';
@@ -6,7 +6,6 @@ import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
 import { UpdateInfoRequestDto } from './dto/updateInfo.request.dto';
 import { User } from './user.decorator';
 import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { SignUpResponseDto } from './dto/signUp.response.dto';
 
 @Controller('user')
 @ApiTags('user API')
@@ -16,9 +15,8 @@ export class UserController {
     ) { }
 
     @Post('/signUp')
-    @HttpCode(201)
     @ApiOperation({ summary: '회원가입 API', description: '회원을 생성함' })
-    signUp(@Body() signUpRequestDto: SignUpRequestDto): Promise<SignUpResponseDto> {
+    signUp(@Body() signUpRequestDto: SignUpRequestDto) {
         return this.userService.signUp(signUpRequestDto);
     }
 
@@ -33,7 +31,7 @@ export class UserController {
     @ApiOperation({ summary: '회원 정보 수정 API', description: '회원의 정보를 수정함' })
     @ApiSecurity('AdminAuth')
     updateInfo(
-        @User('id') userId: number,
+        @User('_id') userId: number,
         @Body() updateInfoRequestDto: UpdateInfoRequestDto): Promise<void> {
         return this.userService.updateInfo(userId, updateInfoRequestDto);
     }
@@ -43,7 +41,7 @@ export class UserController {
     @ApiOperation({ summary: '회원 검색 API', description: '닉네임으로 회원을 검색함' })
     @ApiSecurity('AdminAuth')
     searchUser(
-        @User('id') userId: number,
+        @User('_id') userId: number,
         @Query('nickname') nickname: string) {
         return this.userService.searchUser(userId, nickname);
     }

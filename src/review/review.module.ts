@@ -1,18 +1,24 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ReviewController } from './review.controller';
 import { ReviewService } from './review.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Review } from './review.entity';
+import { Review } from './domain/review.entity';
 import { UserModule } from 'src/user/user.module';
 import { RecordModule } from 'src/record/record.module';
+import { REVIEW_REPOSITORY } from 'src/common/inject.constant';
+import { TypeormReviewRepository } from './infrastructure/typeormReview.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Review]),
     UserModule,
-    RecordModule],
+    RecordModule
+  ],
   controllers: [ReviewController],
-  providers: [ReviewService],
+  providers: [
+    ReviewService,
+    { provide: REVIEW_REPOSITORY, useClass: TypeormReviewRepository },
+  ],
   exports: [ReviewService]
 })
 export class ReviewModule { }

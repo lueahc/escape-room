@@ -1,48 +1,32 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './user.entity';
-import { Repository } from 'typeorm';
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { SignUpRequestDto } from './dto/signUp.request.dto';
 import * as bcrypt from 'bcrypt';
 import { SignInRequestDto } from './dto/signIn.request.dto';
 import { AuthService } from 'src/auth/auth.service';
-import { SignUpResponseDto } from './dto/signUp.response.dto';
 import { UpdateInfoRequestDto } from './dto/updateInfo.request.dto';
+import { USER_REPOSITORY } from 'src/common/inject.constant';
+import { UserRepository } from './domain/user.repository';
+import { User } from './domain/user.entity';
 
 @Injectable()
 export class UserService {
     constructor(
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
+        @Inject(USER_REPOSITORY)
+        private readonly userRepository: UserRepository,
         private readonly authService: AuthService,
     ) { }
 
-    async findOneById(id: number) {
-        return await this.userRepository.findOne({
-            where: {
-                id
-            },
-        });
+    async findOneById(id: number): Promise<User | null> {
+        return await this.userRepository.findOneById(id);
     }
 
-    async findOneByEmail(email: string) {
-        return await this.userRepository.findOne({
-            where: {
-                email
-            },
-        });
-    }
-
-    async findOneByNickname(nickname: string) {
-        return await this.userRepository.findOne({
-            where: {
-                nickname
-            },
-        });
+    async hashPassword(password: string): Promise<string> {
+        const salt = await bcrypt.genSalt();
+        return await bcrypt.hash(password, salt);
     }
 
     async searchUser(userId: number, nickname: string) {
-        const user = await this.findOneByNickname(nickname);
+        const user = await this.userRepository.findOneByNickname(nickname);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -50,7 +34,7 @@ export class UserService {
             );
         }
 
-        if (user.id === userId) {
+        if (user.getId() === userId) {
             throw new NotFoundException(
                 '본인은 등록할 수 없습니다.',
                 'NOT_ALLOWED_TO_TAG_ONESELF'
@@ -58,15 +42,15 @@ export class UserService {
         }
 
         return {
-            userId: user.id,
-            userNickname: user.nickname
+            userId: user.getId(),
+            userNickname: user.getNickname()
         }
     }
 
-    async signUp(signUpRequestDto: SignUpRequestDto): Promise<SignUpResponseDto> {
+    async signUp(signUpRequestDto: SignUpRequestDto) {
         const { email, password, nickname } = signUpRequestDto;
 
-        const existUser = await this.findOneByEmail(email);
+        const existUser = await this.userRepository.findOneByEmail(email);
         if (existUser) {
             throw new ConflictException(
                 '이미 존재하는 이메일입니다.',
@@ -74,7 +58,7 @@ export class UserService {
             );
         }
 
-        const existNickname = await this.findOneByNickname(nickname);
+        const existNickname = await this.userRepository.findOneByNickname(nickname);
         if (existNickname) {
             throw new ConflictException(
                 '이미 존재하는 닉네임입니다.',
@@ -82,19 +66,22 @@ export class UserService {
             );
         }
 
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        const user = this.userRepository.create({ email, password: hashedPassword, nickname });
+        const hashedPassword = await this.hashPassword(password);
+        const user = await User.create({ email, password: hashedPassword, nickname });
         const createdUser = await this.userRepository.save(user);
 
-        return new SignUpResponseDto(createdUser);
+        return {
+            userId: createdUser.getId(),
+            userEmail: createdUser.getEmail(),
+            userNickname: createdUser.getNickname(),
+            createdAt: createdUser.getCreatedAt()
+        }
     }
 
     async signIn(signInRequestDto: SignInRequestDto) {
         const { email, password } = signInRequestDto;
 
-        const user = await this.findOneByEmail(email);
+        const user = await this.userRepository.findOneByEmail(email);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -102,7 +89,7 @@ export class UserService {
             );
         }
 
-        const isMatched = await bcrypt.compare(password, user.password);
+        const isMatched = await bcrypt.compare(password, user.getPassword());
         if (!isMatched) {
             throw new BadRequestException(
                 '비밀번호가 일치하지 않습니다.',
@@ -111,16 +98,14 @@ export class UserService {
         }
 
         const accessToken = this.authService.signWithJwt({
-            userId: user.id,
+            userId: user.getId(),
         });
 
-        return {
-            accessToken,
-        };
+        return { accessToken };
     }
 
     async updateInfo(userId: number, updateInfoRequestDto: UpdateInfoRequestDto): Promise<void> {
-        const user = await this.findOneById(userId);
+        const user = await this.userRepository.findOneById(userId);
         if (!user) {
             throw new NotFoundException(
                 '사용자가 존재하지 않습니다.',
@@ -131,14 +116,12 @@ export class UserService {
         const { password, nickname } = updateInfoRequestDto;
 
         if (password) {
-            const salt = await bcrypt.genSalt();
-            const hashedPassword = await bcrypt.hash(password, salt);
-
-            user.password = hashedPassword;
+            const hashedPassword = await this.hashPassword(password);
+            user.updatePassword(hashedPassword);
         }
 
         if (nickname) {
-            const existNickname = await this.findOneByNickname(nickname);
+            const existNickname = await this.userRepository.findOneByNickname(nickname);
             if (existNickname) {
                 throw new ConflictException(
                     '이미 존재하는 닉네임입니다.',
@@ -146,7 +129,7 @@ export class UserService {
                 );
             }
 
-            user.nickname = nickname;
+            user.updateNickname(nickname);
         }
 
         await this.userRepository.save(user);
