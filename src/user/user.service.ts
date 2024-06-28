@@ -35,7 +35,7 @@ export class UserService {
         }
 
         if (user.getId() === userId) {
-            throw new NotFoundException(
+            throw new BadRequestException(
                 '본인은 등록할 수 없습니다.',
                 'NOT_ALLOWED_TO_TAG_ONESELF'
             );
