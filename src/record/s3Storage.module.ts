@@ -3,7 +3,7 @@ import { MulterModule } from '@nestjs/platform-express'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3'
 import * as multerS3 from 'multer-s3'
-import { EnvironmentVariable } from 'src/config/environmentVariable.interface'
+import { EnvironmentVariable } from '../config/environmentVariable.interface'
 
 @Module({
     imports: [

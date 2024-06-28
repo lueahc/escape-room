@@ -1,11 +1,11 @@
 import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from "@nestjs/common";
 import { Tag } from "./domain/tag.entity";
-import { UserService } from "src/user/user.service";
-import { RECORD_REPOSITORY } from "src/common/inject.constant";
+import { UserService } from "../user/user.service";
+import { RECORD_REPOSITORY } from "../common/inject.constant";
 import { RecordRepository } from "./domain/record.repository";
 import { Record } from "./domain/record.entity";
-import { User } from "src/user/domain/user.entity";
-import { ReviewService } from "src/review/review.service";
+import { User } from "../user/domain/user.entity";
+import { ReviewService } from "../review/review.service";
 
 @Injectable()
 export class TagPartyService {

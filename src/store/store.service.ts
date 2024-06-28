@@ -1,10 +1,10 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { LocationEnum } from './location.enum';
 import { GetStoresListResponseDto } from './dto/getStoresList.response.dto';
-import { ReviewService } from 'src/review/review.service';
-import { ThemeService } from 'src/theme/theme.service';
+import { ReviewService } from '../review/review.service';
+import { ThemeService } from '../theme/theme.service';
 import { GetOneStoreResponseDto } from './dto/getOneStore.response.dto';
-import { STORE_REPOSITORY } from 'src/common/inject.constant';
+import { STORE_REPOSITORY } from '../common/inject.constant';
 import { StoreRepository } from './domain/store.repository';
 import { Store } from './domain/store.entity';
 

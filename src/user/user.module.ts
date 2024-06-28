@@ -3,9 +3,9 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './domain/user.entity';
-import { AuthModule } from 'src/auth/auth.module';
+import { AuthModule } from '../auth/auth.module';
 import { TypeormUserRepository } from './infrastructure/typeormUser.repository';
-import { USER_REPOSITORY } from 'src/common/inject.constant';
+import { USER_REPOSITORY } from '../common/inject.constant';
 
 @Module({
   imports: [

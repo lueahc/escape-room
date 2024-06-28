@@ -3,10 +3,10 @@ import { StoreController } from './store.controller';
 import { StoreService } from './store.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Store } from './domain/store.entity';
-import { ReviewModule } from 'src/review/review.module';
-import { ThemeModule } from 'src/theme/theme.module';
+import { ReviewModule } from '../review/review.module';
+import { ThemeModule } from '../theme/theme.module';
 import { TypeormStoreRepository } from './infrastructure/typeormStore.repository';
-import { STORE_REPOSITORY } from 'src/common/inject.constant';
+import { STORE_REPOSITORY } from '../common/inject.constant';
 
 @Module({
   imports: [

@@ -3,9 +3,9 @@ import { ReviewController } from './review.controller';
 import { ReviewService } from './review.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Review } from './domain/review.entity';
-import { UserModule } from 'src/user/user.module';
-import { RecordModule } from 'src/record/record.module';
-import { REVIEW_REPOSITORY } from 'src/common/inject.constant';
+import { UserModule } from '../user/user.module';
+import { RecordModule } from '../record/record.module';
+import { REVIEW_REPOSITORY } from '../common/inject.constant';
 import { TypeormReviewRepository } from './infrastructure/typeormReview.repository';
 
 @Module({

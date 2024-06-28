@@ -1,6 +1,6 @@
-import { TimestampEntity } from "src/common/timestamp.entity"
+import { TimestampEntity } from "../../common/timestamp.entity"
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Theme } from "src/theme/domain/theme.entity";
+import { Theme } from "../../theme/domain/theme.entity";
 import { LocationEnum } from "../location.enum";
 
 @Entity()

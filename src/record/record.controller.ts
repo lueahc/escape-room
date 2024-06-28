@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { RecordService } from './record.service';
-import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
+import { JwtAuthGuard } from '../jwt/jwt.auth.guard';
 import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
 import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
-import { User } from 'src/user/user.decorator';
+import { User } from '../user/user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { GetLogsResponseDto } from './dto/getLogs.response.dto';
