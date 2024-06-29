@@ -52,7 +52,7 @@ describe('RecordRepository', () => {
     });
 
     describe('findOneBy()', () => {
-        let savedUser;
+        let savedUser: User;
         beforeEach(async () => {
             const user = await User.create({
                 email: 'test@test.com',
