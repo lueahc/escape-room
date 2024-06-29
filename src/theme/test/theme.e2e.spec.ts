@@ -18,7 +18,7 @@ describe('ThemeController (E2E)', () => {
     let app: INestApplication;
     let dataSource: DataSource;
     let themeRepository: ThemeRepository;
-    let storeRepository: StoreRepository
+    let storeRepository: StoreRepository;
 
     beforeAll(async () => {
         initializeTransactionalContext();
