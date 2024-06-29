@@ -42,9 +42,9 @@ describe('UserController (E2E)', () => {
             const response = await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
-                    email: "test@test.com",
-                    password: "test1234",
-                    nickname: "tester"
+                    email: 'test@test.com',
+                    password: 'test1234',
+                    nickname: 'tester'
                 });
 
             // then: 결과와 기대값 비교
@@ -58,18 +58,18 @@ describe('UserController (E2E)', () => {
             await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
-                    email: "test@test.com",
-                    password: "test1234",
-                    nickname: "tester1"
+                    email: 'test@test.com',
+                    password: 'test1234',
+                    nickname: 'tester1'
                 });
 
             // when
             const response = await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
-                    email: "test@test.com",
-                    password: "test1234",
-                    nickname: "tester2"
+                    email: 'test@test.com',
+                    password: 'test1234',
+                    nickname: 'tester2'
                 });
 
             // then
@@ -81,18 +81,18 @@ describe('UserController (E2E)', () => {
             await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
-                    email: "test1@test.com",
-                    password: "test1234",
-                    nickname: "tester"
+                    email: 'test1@test.com',
+                    password: 'test1234',
+                    nickname: 'tester'
                 });
 
             // when
             const response = await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
-                    email: "test2@test.com",
-                    password: "test1234",
-                    nickname: "tester"
+                    email: 'test2@test.com',
+                    password: 'test1234',
+                    nickname: 'tester'
                 });
 
             // then
@@ -105,9 +105,9 @@ describe('UserController (E2E)', () => {
             await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
-                    email: "test1@test.com",
-                    password: "test1234",
-                    nickname: "tester1"
+                    email: 'test1@test.com',
+                    password: 'test1234',
+                    nickname: 'tester1'
                 });
         });
 
@@ -115,8 +115,8 @@ describe('UserController (E2E)', () => {
             const response = await request(app.getHttpServer())
                 .post('/user/signIn')
                 .send({
-                    email: "test1@test.com",
-                    password: "test1234",
+                    email: 'test1@test.com',
+                    password: 'test1234'
                 });
 
             expect(response.status).toBe(200);
@@ -127,8 +127,8 @@ describe('UserController (E2E)', () => {
             const response = await request(app.getHttpServer())
                 .post('/user/signIn')
                 .send({
-                    email: "test2@test.com",
-                    password: "test1234",
+                    email: 'test2@test.com',
+                    password: 'test1234'
                 });
 
             expect(response.status).toBe(404);
@@ -138,8 +138,8 @@ describe('UserController (E2E)', () => {
             const response = await request(app.getHttpServer())
                 .post('/user/signIn')
                 .send({
-                    email: "test1@test.com",
-                    password: "test12345",
+                    email: 'test1@test.com',
+                    password: 'test12345'
                 });
 
             expect(response.status).toBe(400);
@@ -150,9 +150,9 @@ describe('UserController (E2E)', () => {
             await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
-                    email: "test1@test.com",
-                    password: "test1234",
-                    nickname: "tester1"
+                    email: 'test1@test.com',
+                    password: 'test1234',
+                    nickname: 'tester1'
                 });
         });
 
@@ -160,8 +160,8 @@ describe('UserController (E2E)', () => {
             const loginResponse = await request(app.getHttpServer())
                 .post('/user/signIn')
                 .send({
-                    email: "test1@test.com",
-                    password: "test1234",
+                    email: 'test1@test.com',
+                    password: 'test1234'
                 });
             const accessToken = loginResponse.body.accessToken;
 
@@ -169,15 +169,15 @@ describe('UserController (E2E)', () => {
                 .patch('/user/info')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .send({
-                    password: "test12345",
-                    nickname: "tester2"
+                    password: 'test12345',
+                    nickname: 'tester2'
                 });
 
             const updatedResponse = await request(app.getHttpServer())
                 .post('/user/signIn')
                 .send({
-                    email: "test1@test.com",
-                    password: "test12345",
+                    email: 'test1@test.com',
+                    password: 'test12345'
                 });
 
             expect(response.status).toBe(204);
@@ -191,16 +191,16 @@ describe('UserController (E2E)', () => {
             await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
-                    email: "test2@test.com",
-                    password: "test1234",
-                    nickname: "tester2"
+                    email: 'test2@test.com',
+                    password: 'test1234',
+                    nickname: 'tester2'
                 });
 
             const loginResponse = await request(app.getHttpServer())
                 .post('/user/signIn')
                 .send({
-                    email: "test1@test.com",
-                    password: "test1234",
+                    email: 'test1@test.com',
+                    password: 'test1234'
                 });
             const accessToken = loginResponse.body.accessToken;
 
@@ -208,7 +208,7 @@ describe('UserController (E2E)', () => {
                 .patch('/user/info')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .send({
-                    nickname: "tester2"
+                    nickname: 'tester2'
                 });
 
             expect(response.status).toBe(409);
@@ -222,16 +222,16 @@ describe('UserController (E2E)', () => {
             await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
-                    email: "test1@test.com",
-                    password: "test1234",
-                    nickname: "tester1"
+                    email: 'test1@test.com',
+                    password: 'test1234',
+                    nickname: 'tester1'
                 });
 
             const loginResponse = await request(app.getHttpServer())
                 .post('/user/signIn')
                 .send({
-                    email: "test1@test.com",
-                    password: "test1234",
+                    email: 'test1@test.com',
+                    password: 'test1234'
                 });
             accessToken = loginResponse.body.accessToken;
         });
@@ -240,9 +240,9 @@ describe('UserController (E2E)', () => {
             await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
-                    email: "test2@test.com",
-                    password: "test1234",
-                    nickname: "tester2"
+                    email: 'test2@test.com',
+                    password: 'test1234',
+                    nickname: 'tester2'
                 });
 
             const response = await request(app.getHttpServer())

@@ -39,6 +39,22 @@ export class Theme extends TimestampEntity {
     @OneToMany(() => Record, (record) => record._theme)
     _records: Record[];
 
+    constructor(params: { name: string, image: string, plot: string, genre: string, time: number, level: number, price: number, note: string, store: Store }) {
+        super();
+        if (params) {
+            const { name, image, plot, genre, time, level, price, note, store } = params;
+            this._name = name;
+            this.image = image;
+            this.plot = plot;
+            this.genre = genre;
+            this.time = time;
+            this.level = level;
+            this.price = price;
+            this.note = note;
+            this._store = store;
+        }
+    }
+
     public getId(): number {
         return this._id;
     }

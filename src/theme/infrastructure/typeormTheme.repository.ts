@@ -12,6 +12,10 @@ export class TypeormThemeRepository implements ThemeRepository {
         private readonly themeRepository: Repository<Theme>,
     ) { }
 
+    async save(theme: Theme): Promise<Theme> {
+        return await this.themeRepository.save(theme);
+    }
+
     async findOneById(id: number): Promise<Theme | null> {
         return await this.themeRepository.findOne({
             where: {

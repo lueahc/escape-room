@@ -12,6 +12,10 @@ export class TypeormStoreRepository implements StoreRepository {
         private readonly storeRepository: Repository<Store>,
     ) { }
 
+    async save(store: Store): Promise<Store> {
+        return await this.storeRepository.save(store);
+    }
+
     async findAll(): Promise<Store[]> {
         return await this.storeRepository.find();
     }
