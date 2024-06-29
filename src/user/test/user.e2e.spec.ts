@@ -49,7 +49,7 @@ describe('UserController (E2E)', () => {
 
             // then: 결과와 기대값 비교
             expect(response.status).toBe(201);
-            const user = await userRepository.findOneByEmail("test@test.com");
+            const user = await userRepository.findOneByEmail('test@test.com');
             expect(user).toBeDefined();
         });
 
@@ -182,8 +182,8 @@ describe('UserController (E2E)', () => {
 
             expect(response.status).toBe(204);
             expect(updatedResponse.status).toBe(200);
-            const user = await userRepository.findOneByEmail("test1@test.com");
-            expect(user?.getNickname()).toBe("tester2");
+            const user = await userRepository.findOneByEmail('test1@test.com');
+            expect(user?.getNickname()).toBe('tester2');
 
         });
 

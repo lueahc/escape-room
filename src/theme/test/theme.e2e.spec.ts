@@ -195,16 +195,14 @@ describe('ThemeController (E2E)', () => {
             expect(response.body).toHaveProperty('storeHomePageUrl');
             expect(response.body).toHaveProperty('storeReviewCount');
             expect(response.body).toHaveProperty('reviews');
-            if (response.body.reviews.length !== 0) {
-                for (const review of response.body.reviews) {
-                    expect(review).toHaveProperty('id');
-                    expect(review).toHaveProperty('nickname');
-                    expect(review).toHaveProperty('storeName');
-                    expect(review).toHaveProperty('themeName');
-                    expect(review).toHaveProperty('playDate');
-                    expect(review).toHaveProperty('isSuccess');
-                    expect(review).toHaveProperty('headCount');
-                }
+            for (const review of response.body.reviews) {
+                expect(review).toHaveProperty('id');
+                expect(review).toHaveProperty('nickname');
+                expect(review).toHaveProperty('storeName');
+                expect(review).toHaveProperty('themeName');
+                expect(review).toHaveProperty('playDate');
+                expect(review).toHaveProperty('isSuccess');
+                expect(review).toHaveProperty('headCount');
             }
         });
         it('존재하지 않는 테마 정보를 조회하면 404 에러가 발생한다.', async () => {
@@ -254,16 +252,14 @@ describe('ThemeController (E2E)', () => {
                 .get('/theme/1/review');
 
             expect(response.status).toBe(200);
-            if (response.body.length !== 0) {
-                for (const review of response.body) {
-                    expect(review).toHaveProperty('id');
-                    expect(review).toHaveProperty('nickname');
-                    expect(review).toHaveProperty('storeName');
-                    expect(review).toHaveProperty('themeName');
-                    expect(review).toHaveProperty('playDate');
-                    expect(review).toHaveProperty('isSuccess');
-                    expect(review).toHaveProperty('headCount');
-                }
+            for (const review of response.body) {
+                expect(review).toHaveProperty('id');
+                expect(review).toHaveProperty('nickname');
+                expect(review).toHaveProperty('storeName');
+                expect(review).toHaveProperty('themeName');
+                expect(review).toHaveProperty('playDate');
+                expect(review).toHaveProperty('isSuccess');
+                expect(review).toHaveProperty('headCount');
             }
         });
     });
