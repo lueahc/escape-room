@@ -13,7 +13,7 @@ import { ThemeRepository } from '../domain/theme.repository';
 import { StoreRepository } from '../../store/domain/store.repository';
 import { STORE_REPOSITORY, THEME_REPOSITORY } from '../../common/inject.constant';
 
-describe('RecordRepository', () => {
+describe('ThemeRepository', () => {
     let app: INestApplication;
     let dataSource: DataSource;
     let themeRepository: ThemeRepository;

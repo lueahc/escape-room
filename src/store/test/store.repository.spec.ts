@@ -4,14 +4,14 @@ dotenv.config({ path: path.resolve('.local.env') });
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from "@nestjs/common";
 import { AppModule } from "../../app.module";
-import { DataSource, Like } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import { Store } from '../domain/store.entity';
 import { LocationEnum } from '../../store/location.enum';
 import { StoreRepository } from '../domain/store.repository';
 import { STORE_REPOSITORY } from '../../common/inject.constant';
 
-describe('RecordRepository', () => {
+describe('StoreRepository', () => {
     let app: INestApplication;
     let dataSource: DataSource;
     let storeRepository: StoreRepository;

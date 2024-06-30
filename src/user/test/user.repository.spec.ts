@@ -10,7 +10,7 @@ import { User } from '../domain/user.entity';
 import { UserRepository } from '../domain/user.repository';
 import { USER_REPOSITORY } from '../../common/inject.constant';
 
-describe('RecordRepository', () => {
+describe('UserRepository', () => {
     let app: INestApplication;
     let dataSource: DataSource;
     let userRepository: UserRepository;
@@ -51,7 +51,7 @@ describe('RecordRepository', () => {
         });
     });
 
-    describe('findOneBy()', () => {
+    describe('findOne()', () => {
         let savedUser: User;
         beforeEach(async () => {
             const user = await User.create({
