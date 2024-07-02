@@ -31,6 +31,7 @@ import * as Joi from 'joi';
                 AWS_S3_BUCKET: Joi.string().required(),
                 SWAGGER_USER: Joi.string().required(),
                 SWAGGER_PWD: Joi.string().required(),
+                SLACK_WEBHOOK_URL: Joi.string().required(),
             }),
         }),
     ],

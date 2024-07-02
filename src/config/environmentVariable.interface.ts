@@ -16,4 +16,5 @@ export interface EnvironmentVariable {
     AWS_S3_BUCKET: string;
     SWAGGER_USER: string;
     SWAGGER_PWD: string;
+    SLACK_WEBHOOK_URL: string;
 }
