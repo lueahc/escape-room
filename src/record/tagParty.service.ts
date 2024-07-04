@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from "@nestjs/common";
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, forwardRef } from "@nestjs/common";
 import { Tag } from "./domain/tag.entity";
 import { UserService } from "../user/user.service";
 import { RECORD_REPOSITORY } from "../common/inject.constant";
@@ -70,7 +70,7 @@ export class TagPartyService {
     private async hasWrittenReviews(memberId: number, recordId: number): Promise<void> {
         const hasWrittenReview = await this.reviewService.hasWrittenReview(memberId, recordId);
         if (hasWrittenReview) {
-            throw new NotFoundException(
+            throw new ConflictException(
                 `일행 memberId:${memberId}는 이미 작성한 리뷰가 있습니다.`,
                 'EXISTING_REVIEW'
             );
