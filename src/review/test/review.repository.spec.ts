@@ -208,7 +208,7 @@ describe('ReviewRepository', () => {
 
     describe('getVisibleReviewsInTheme()', () => {
         it('테마의 공개 리뷰 전체를 반환한다.', async () => {
-            const review = await reviewRepository.save(await Review.create({
+            await reviewRepository.save(await Review.create({
                 user,
                 record,
                 content: 'content',
