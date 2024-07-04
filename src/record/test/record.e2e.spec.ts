@@ -414,7 +414,7 @@ describe('RecordController (E2E)', () => {
             expect(response.status).toBe(404);
         });
 
-        it.only('삭제하려는 일행이 이미 작성한 리뷰가 있으면 409 에러가 발생한다.', async () => {
+        it('삭제하려는 일행이 이미 작성한 리뷰가 있으면 409 에러가 발생한다.', async () => {
             await request(app.getHttpServer())
                 .post('/user/signUp')
                 .send({
