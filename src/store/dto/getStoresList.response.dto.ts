@@ -1,4 +1,4 @@
-import { LocationEnum } from "src/store/location.enum";
+import { LocationEnum } from "../../store/location.enum";
 import { Store } from "../domain/store.entity";
 
 export class GetStoresListResponseDto {

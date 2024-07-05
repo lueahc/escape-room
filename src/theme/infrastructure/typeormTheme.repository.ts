@@ -3,7 +3,7 @@ import { Like, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Theme } from "../domain/theme.entity";
 import { ThemeRepository } from "../domain/theme.repository";
-import { LocationEnum } from "src/store/location.enum";
+import { LocationEnum } from "../../store/location.enum";
 
 @Injectable()
 export class TypeormThemeRepository implements ThemeRepository {
@@ -11,6 +11,10 @@ export class TypeormThemeRepository implements ThemeRepository {
         @InjectRepository(Theme)
         private readonly themeRepository: Repository<Theme>,
     ) { }
+
+    async save(theme: Theme): Promise<Theme> {
+        return await this.themeRepository.save(theme);
+    }
 
     async findOneById(id: number): Promise<Theme | null> {
         return await this.themeRepository.findOne({

@@ -1,7 +1,8 @@
-import { LocationEnum } from "src/store/location.enum";
+import { LocationEnum } from "../../store/location.enum";
 import { Theme } from "./theme.entity";
 
 export interface ThemeRepository {
+    save(theme: Theme): Promise<Theme>;
     findOneById(id: number): Promise<Theme | null>;
     findAll(): Promise<Theme[]>;
     findByLocation(location: LocationEnum): Promise<Theme[]>;

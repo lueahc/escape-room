@@ -2,9 +2,9 @@ import { BadRequestException, ConflictException, Inject, Injectable, NotFoundExc
 import { SignUpRequestDto } from './dto/signUp.request.dto';
 import * as bcrypt from 'bcrypt';
 import { SignInRequestDto } from './dto/signIn.request.dto';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { UpdateInfoRequestDto } from './dto/updateInfo.request.dto';
-import { USER_REPOSITORY } from 'src/common/inject.constant';
+import { USER_REPOSITORY } from '../common/inject.constant';
 import { UserRepository } from './domain/user.repository';
 import { User } from './domain/user.entity';
 
@@ -35,7 +35,7 @@ export class UserService {
         }
 
         if (user.getId() === userId) {
-            throw new NotFoundException(
+            throw new BadRequestException(
                 '본인은 등록할 수 없습니다.',
                 'NOT_ALLOWED_TO_TAG_ONESELF'
             );

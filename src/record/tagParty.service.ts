@@ -1,11 +1,11 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from "@nestjs/common";
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, forwardRef } from "@nestjs/common";
 import { Tag } from "./domain/tag.entity";
-import { UserService } from "src/user/user.service";
-import { RECORD_REPOSITORY } from "src/common/inject.constant";
+import { UserService } from "../user/user.service";
+import { RECORD_REPOSITORY } from "../common/inject.constant";
 import { RecordRepository } from "./domain/record.repository";
 import { Record } from "./domain/record.entity";
-import { User } from "src/user/domain/user.entity";
-import { ReviewService } from "src/review/review.service";
+import { User } from "../user/domain/user.entity";
+import { ReviewService } from "../review/review.service";
 
 @Injectable()
 export class TagPartyService {
@@ -70,7 +70,7 @@ export class TagPartyService {
     private async hasWrittenReviews(memberId: number, recordId: number): Promise<void> {
         const hasWrittenReview = await this.reviewService.hasWrittenReview(memberId, recordId);
         if (hasWrittenReview) {
-            throw new NotFoundException(
+            throw new ConflictException(
                 `일행 memberId:${memberId}는 이미 작성한 리뷰가 있습니다.`,
                 'EXISTING_REVIEW'
             );
@@ -102,28 +102,44 @@ export class TagPartyService {
     }
 
     async updateTags(party, userId: number, headCount: number, record: Record): Promise<void> {
-        if (party) {
+        const recordId = record.getId();
+        if (!party) {
+            await this.removeOriginalPartyTags(userId, recordId);
+        } else {
             const uniqueParty = this.setPartyUnique(party, userId);
             if (this.isArrayNotEmpty(uniqueParty)) {
                 const finalHeadCount = this.getFinalHeadCount(headCount, record);
                 this.validatePartyNumber(uniqueParty, finalHeadCount);
 
-                // 일행 추가
-                const originalParty = await this.getOriginalTaggedMembers(userId, record.getId());
-                for (const memberId of uniqueParty) {
-                    const member = await this.validateMember(memberId);
-                    if (!originalParty.includes(memberId)) {
-                        await this.createAndSaveTag(member, record);
-                    }
-                }
-
-                // 일행 삭제
-                const filteredParty = await this.getUntaggedMembers(uniqueParty, originalParty);
-                for (const memberId of filteredParty) {
-                    await this.hasWrittenReviews(memberId, record.getId());
-                    await this.deleteTagWhenNoReviews(memberId, record.getId());
-                }
+                const originalParty = await this.getOriginalTaggedMembers(userId, recordId);
+                await this.addNewTags(uniqueParty, originalParty, record);
+                await this.removeUnusedTags(uniqueParty, originalParty, recordId);
             }
+        }
+    }
+
+    private async removeOriginalPartyTags(userId: number, recordId: number): Promise<void> {
+        const originalParty = await this.getOriginalTaggedMembers(userId, recordId);
+        for (const memberId of originalParty) {
+            await this.hasWrittenReviews(memberId, recordId);
+            await this.deleteTagWhenNoReviews(memberId, recordId);
+        }
+    }
+
+    private async addNewTags(uniqueParty: number[], originalParty: number[], record: Record): Promise<void> {
+        for (const memberId of uniqueParty) {
+            const member = await this.validateMember(memberId);
+            if (!originalParty.includes(memberId)) {
+                await this.createAndSaveTag(member, record);
+            }
+        }
+    }
+
+    private async removeUnusedTags(uniqueParty: number[], originalParty: number[], recordId: number): Promise<void> {
+        const filteredParty = await this.getUntaggedMembers(uniqueParty, originalParty);
+        for (const memberId of filteredParty) {
+            await this.hasWrittenReviews(memberId, recordId);
+            await this.deleteTagWhenNoReviews(memberId, recordId);
         }
     }
 }

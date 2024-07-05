@@ -8,27 +8,24 @@ import { HttpExceptionFilter } from './logger/httpException.filter';
 import createSwagger from './config/swaggerConfig';
 import * as expressBasicAuth from 'express-basic-auth';
 import { SlackService } from 'nestjs-slack';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   initializeTransactionalContext();
-
-  const app = await NestFactory.create(AppModule, { logger: WinstonLogger });
+  const app = await NestFactory.create(AppModule);
   const slackService = app.get(SlackService);
-  app.useGlobalFilters(new HttpExceptionFilter(WinstonLogger, slackService));
-
-  app.use(
-    ['/api'],
-    expressBasicAuth({
-      challenge: true,
-      users: { [process.env.SWAGGER_USER as string]: process.env.SWAGGER_PWD as string },
-    }),
-  );
-  createSwagger(app);
-
+  const configService = app.get(ConfigService);
+  const logger = await WinstonLogger(configService);
+  const swaggerUser = configService.get<string>('SWAGGER_USER') as string;
+  const swaggerPwd = configService.get<string>('SWAGGER_PWD') as string;
+  const port = configService.get<number>('PORT') || 3000;
+  app.useGlobalFilters(new HttpExceptionFilter(logger, slackService));
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.enableCors();
-  await app.listen(process.env.PORT || 3000);
+  app.use(['/api'], expressBasicAuth({ challenge: true, users: { [swaggerUser]: swaggerPwd } }));
+  createSwagger(app);
+  await app.listen(port);
 }
 bootstrap();

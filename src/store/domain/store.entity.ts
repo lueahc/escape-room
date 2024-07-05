@@ -1,6 +1,6 @@
-import { TimestampEntity } from "src/common/timestamp.entity"
+import { TimestampEntity } from "../../common/timestamp.entity"
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Theme } from "src/theme/domain/theme.entity";
+import { Theme } from "../../theme/domain/theme.entity";
 import { LocationEnum } from "../location.enum";
 
 @Entity()
@@ -25,6 +25,18 @@ export class Store extends TimestampEntity {
 
     @OneToMany(() => Theme, (theme) => theme._store)
     _themes: Theme[];
+
+    constructor(params: { name: string, location: LocationEnum, address: string, phoneNo: string, homepageUrl: string }) {
+        super();
+        if (params) {
+            const { name, location, address, phoneNo, homepageUrl } = params;
+            this._name = name;
+            this._location = location;
+            this.address = address;
+            this.phoneNo = phoneNo;
+            this.homepageUrl = homepageUrl;
+        }
+    }
 
     public getId(): number {
         return this._id;

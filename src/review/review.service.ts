@@ -1,11 +1,11 @@
 import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
 import { CreateReviewRequestDto } from './dto/createReview.request.dto';
-import { RecordService } from 'src/record/record.service';
+import { RecordService } from '../record/record.service';
 import { GetVisibleReviewsResponseDto } from './dto/getVisibleReviews.response.dto';
-import { REVIEW_REPOSITORY } from 'src/common/inject.constant';
+import { REVIEW_REPOSITORY } from '../common/inject.constant';
 import { ReviewRepository } from './domain/review.repository';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { Review } from './domain/review.entity';
 
 @Injectable()

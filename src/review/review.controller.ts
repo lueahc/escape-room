@@ -1,8 +1,8 @@
-import { Body, Controller, Delete, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { ReviewService } from './review.service';
-import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
+import { JwtAuthGuard } from '../jwt/jwt.auth.guard';
 import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
-import { User } from 'src/user/user.decorator';
+import { User } from '../user/user.decorator';
 import { CreateReviewRequestDto } from './dto/createReview.request.dto';
 import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 
@@ -35,6 +35,7 @@ export class ReviewController {
     }
 
     @Delete('/:reviewId')
+    @HttpCode(204)
     @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: '리뷰 삭제 API', description: '리뷰를 삭제함' })
     @ApiSecurity('AdminAuth')

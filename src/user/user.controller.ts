@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { SignUpRequestDto } from './dto/signUp.request.dto';
 import { SignInRequestDto } from './dto/signIn.request.dto';
-import { JwtAuthGuard } from 'src/jwt/jwt.auth.guard';
+import { JwtAuthGuard } from '../jwt/jwt.auth.guard';
 import { UpdateInfoRequestDto } from './dto/updateInfo.request.dto';
 import { User } from './user.decorator';
 import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
@@ -21,12 +21,14 @@ export class UserController {
     }
 
     @Post('/signIn')
+    @HttpCode(200)
     @ApiOperation({ summary: '로그인 API' })
     signIn(@Body() signInRequestDto: SignInRequestDto) {
         return this.userService.signIn(signInRequestDto);
     }
 
     @Patch('/info')
+    @HttpCode(204)
     @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: '회원 정보 수정 API', description: '회원의 정보를 수정함' })
     @ApiSecurity('AdminAuth')
