@@ -82,8 +82,9 @@ export class RecordService {
 
     @Transactional()
     async createRecord(userId: number, createRecordRequestDto: CreateRecordRequestDto, file: Express.Multer.File): Promise<CreateAndUpdateRecordResponseDto> {
-        const { themeId, isSuccess, playDate, headCount, hintCount, playTime, note, party } = createRecordRequestDto;
+        const { themeId, isSuccessStr, playDate, headCount, hintCount, playTime, note, party } = createRecordRequestDto;
         const image = file ? (file as any).location : null;
+        const isSuccess = isSuccessStr == 'true' ? true : false;
 
         const user = await this.userService.findOneById(userId);
         if (!user) {
@@ -112,8 +113,9 @@ export class RecordService {
 
     @Transactional()
     async updateRecord(userId: number, recordId: number, updateRecordRequestDto: UpdateRecordRequestDto, file: Express.Multer.File): Promise<CreateAndUpdateRecordResponseDto> {
-        const { isSuccess, playDate, headCount, hintCount, playTime, note, party } = updateRecordRequestDto;
+        const { isSuccessStr, playDate, headCount, hintCount, playTime, note, party } = updateRecordRequestDto;
         const image = file ? (file as any).location : null;
+        const isSuccess = isSuccessStr == 'true' ? true : false;
 
         const record = await this.recordRepository.findOneById(recordId);
         if (!record) {
