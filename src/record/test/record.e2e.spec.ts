@@ -84,7 +84,7 @@ describe('RecordController (E2E)', () => {
                 .post('/record')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .field('themeId', 1)
-                .field('isSuccess', true)
+                .field('isSuccess', 'true')
                 .field('playDate', '2024-01-01')
                 .field('headCount', 4);
 
@@ -118,21 +118,21 @@ describe('RecordController (E2E)', () => {
                 .post('/record')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .field('themeId', 1)
-                .field('isSuccess', true)
+                .field('isSuccess', 'true')
                 .field('playDate', '2024-01-01')
                 .field('headCount', 4);
             await request(app.getHttpServer())
                 .post('/record')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .field('themeId', 1)
-                .field('isSuccess', true)
+                .field('isSuccess', 'true')
                 .field('playDate', '2024-01-01')
                 .field('headCount', 4);
             await request(app.getHttpServer())
                 .post('/record')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .field('themeId', 1)
-                .field('isSuccess', true)
+                .field('isSuccess', 'true')
                 .field('playDate', '2024-01-01')
                 .field('headCount', 4);
             await request(app.getHttpServer())
@@ -183,7 +183,7 @@ describe('RecordController (E2E)', () => {
                 .post('/record')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .field('themeId', 1)
-                .field('isSuccess', true)
+                .field('isSuccess', 'true')
                 .field('playDate', '2024-01-01')
                 .field('headCount', 4);
 
@@ -215,7 +215,7 @@ describe('RecordController (E2E)', () => {
                 .post('/record')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .field('themeId', 1)
-                .field('isSuccess', true)
+                .field('isSuccess', 'true')
                 .field('playDate', '2024-01-01')
                 .field('headCount', 4)
                 .field('party[0]', 2);
@@ -246,7 +246,7 @@ describe('RecordController (E2E)', () => {
                 .post('/record')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .field('themeId', 1)
-                .field('isSuccess', true)
+                .field('isSuccess', 'true')
                 .field('playDate', '2024-01-01')
                 .field('headCount', 4);
 
@@ -260,7 +260,7 @@ describe('RecordController (E2E)', () => {
                 .post('/record')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .field('themeId', 2)
-                .field('isSuccess', true)
+                .field('isSuccess', 'true')
                 .field('playDate', '2024-01-01')
                 .field('headCount', 4);
 
@@ -272,7 +272,7 @@ describe('RecordController (E2E)', () => {
                 .post('/record')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .field('themeId', 1)
-                .field('isSuccess', true)
+                .field('isSuccess', 'true')
                 .field('playDate', '2024-01-01')
                 .field('headCount', 1)
                 .field('party[0]', 2);
@@ -285,7 +285,7 @@ describe('RecordController (E2E)', () => {
                 .post('/record')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .field('themeId', 1)
-                .field('isSuccess', true)
+                .field('isSuccess', 'true')
                 .field('playDate', '2024-01-01')
                 .field('headCount', 2)
                 .field('party[0]', 2);
@@ -307,7 +307,7 @@ describe('RecordController (E2E)', () => {
                 .post('/record')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .field('themeId', 1)
-                .field('isSuccess', true)
+                .field('isSuccess', 'true')
                 .field('playDate', '2024-01-01')
                 .field('headCount', 4);
         });
@@ -468,7 +468,7 @@ describe('RecordController (E2E)', () => {
                 .post('/record')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .field('themeId', 1)
-                .field('isSuccess', true)
+                .field('isSuccess', 'true')
                 .field('playDate', '2024-01-01')
                 .field('headCount', 4);
         });
@@ -544,7 +544,7 @@ describe('RecordController (E2E)', () => {
                 .post('/record')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .field('themeId', 1)
-                .field('isSuccess', true)
+                .field('isSuccess', 'true')
                 .field('playDate', '2024-01-01')
                 .field('headCount', 4);
         });

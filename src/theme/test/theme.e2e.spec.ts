@@ -235,7 +235,7 @@ describe('ThemeController (E2E)', () => {
                 .set('Authorization', `Bearer ${accessToken}`)
                 .send({
                     themeId: 1,
-                    isSuccess: true,
+                    isSuccess: 'true',
                     playDate: '2024-01-01',
                     headCount: 4,
                 });
