@@ -1,6 +1,3 @@
-import * as dotenv from 'dotenv';
-import * as path from 'path';
-dotenv.config({ path: path.resolve('.local.env') });
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from "@nestjs/common";
 import { AppModule } from "../../app.module";
@@ -80,7 +77,7 @@ describe('ReviewController (E2E)', () => {
             .post('/record')
             .set('Authorization', `Bearer ${accessToken}`)
             .field('themeId', 1)
-            .field('isSuccess', true)
+            .field('isSuccess', 'true')
             .field('playDate', '2024-01-01')
             .field('headCount', 2);
     });
@@ -124,7 +121,7 @@ describe('ReviewController (E2E)', () => {
             //     .post('/record')
             //     .set('Authorization', `Bearer ${accessToken}`)
             //     .field('themeId', 1)
-            //     .field('isSuccess', true)
+            //     .field('isSuccess', 'true')
             //     .field('playDate', '2024-01-01')
             //     .field('headCount', 2)
             //     .field('party[0]', 2);

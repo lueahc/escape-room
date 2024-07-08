@@ -1,6 +1,3 @@
-import * as dotenv from 'dotenv';
-import * as path from 'path';
-dotenv.config({ path: path.resolve('.local.env') });
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from "@nestjs/common";
 import { AppModule } from "../../app.module";
@@ -235,7 +232,7 @@ describe('ThemeController (E2E)', () => {
                 .set('Authorization', `Bearer ${accessToken}`)
                 .send({
                     themeId: 1,
-                    isSuccess: true,
+                    isSuccess: 'true',
                     playDate: '2024-01-01',
                     headCount: 4,
                 });

@@ -12,7 +12,7 @@ export class CreateRecordRequestDto {
 
     @IsNotEmpty()
     @ApiProperty({ description: '탈출 여부' })
-    isSuccess: boolean;
+    isSuccessStr: string;
 
     @IsNotEmpty()
     @ApiProperty({ description: '플레이 인원 수' })
