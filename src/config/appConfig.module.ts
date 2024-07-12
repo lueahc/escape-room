@@ -10,9 +10,11 @@ import * as Joi from 'joi';
             envFilePath:
                 process.env.NODE_ENV === 'production'
                     ? '.production.env'
-                    : process.env.NODE_ENV === 'local'
-                        ? '.local.env'
-                        : '.development.env',
+                    : process.env.NODE_ENV === 'test'
+                        ? '.test.env'
+                        : process.env.NODE_ENV === 'development'
+                            ? '.development.env'
+                            : '.local.env',
             validationSchema: Joi.object<EnvironmentVariable, true>({
                 NODE_ENV: Joi.string().required(),
                 PORT: Joi.number().required(),
