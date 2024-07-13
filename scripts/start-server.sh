@@ -19,12 +19,10 @@ else
   exit 1
 fi
 
-# rm -rf /home/ubuntu/$DIRECTORY/*
+shopt -s dotglob
 cp -r /home/ubuntu/temp-server/* /home/ubuntu/$DIRECTORY/
-# mv /home/ubuntu/temp-server/* /home/ubuntu/$DIRECTORY/
+rm -rf /home/ubuntu/temp-server/*
 cd /home/ubuntu/$DIRECTORY
-npm i
-pm2 kill
-pm2 start ecosystem.config.js --env $APP_STATUS
-
-echo "--------------- 서버 배포 끝 -----------------"
+npm install
+pm2 stop $APP_NAME || true
+pm2 start ecosystem.config.js --env $APP_STATUS --name $APP_NAME
