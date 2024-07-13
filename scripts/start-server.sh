@@ -22,6 +22,7 @@ fi
 mv /home/ubuntu/temp-server/* /home/ubuntu/$DIRECTORY/
 cd /home/ubuntu/$DIRECTORY
 npm i
-npm pm2 start ecosystem.config.js --env $APP_STATUS
+pm2 kill
+pm2 start ecosystem.config.js --env $APP_STATUS
 
 echo "--------------- 서버 배포 끝 -----------------"
