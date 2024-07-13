@@ -13,16 +13,16 @@ elif [ "$BRANCH" = "develop" ]; then
   DIRECTORY="escape-room-dev"
   PORT=5000
   APP_NAME="develop-backend-server"
-    APP_STATUS="development"
+  APP_STATUS="development"
 else
   echo "Unknown branch: $BRANCH"
   exit 1
 fi
 
-rm -rf /home/ubuntu/$DIRECTORY/*
+# rm -rf /home/ubuntu/$DIRECTORY/*
 cp -r /home/ubuntu/temp-server/* /home/ubuntu/$DIRECTORY/
 # mv /home/ubuntu/temp-server/* /home/ubuntu/$DIRECTORY/
-# cd /home/ubuntu/$DIRECTORY
+cd /home/ubuntu/$DIRECTORY
 npm i
 pm2 kill
 pm2 start ecosystem.config.js --env $APP_STATUS
