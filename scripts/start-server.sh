@@ -19,8 +19,10 @@ else
   exit 1
 fi
 
-mv /home/ubuntu/temp-server/* /home/ubuntu/$DIRECTORY/
-cd /home/ubuntu/$DIRECTORY
+rm -rf /home/ubuntu/$DIRECTORY/*
+cp -r /home/ubuntu/temp-server/* /home/ubuntu/$DIRECTORY/
+# mv /home/ubuntu/temp-server/* /home/ubuntu/$DIRECTORY/
+# cd /home/ubuntu/$DIRECTORY
 npm i
 pm2 kill
 pm2 start ecosystem.config.js --env $APP_STATUS
