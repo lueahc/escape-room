@@ -19,7 +19,10 @@ else
   exit 1
 fi
 
-shopt -s dotglob
+chown -R ubuntu:ubuntu /home/ubuntu/$DIRECTORY
+chmod -R 755 /home/ubuntu/$DIRECTORY
+# shopt -s dotglob
+
 cp -r /home/ubuntu/temp-server/* /home/ubuntu/$DIRECTORY/
 rm -rf /home/ubuntu/temp-server/*
 cd /home/ubuntu/$DIRECTORY
