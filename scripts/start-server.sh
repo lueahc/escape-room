@@ -2,7 +2,7 @@
 
 echo "--------------- 서버 배포 시작 -----------------"
 
-BRANCH=${GITHUB_REF##*/}
+BRANCH=$(cat /home/ubuntu/temp-server/branch.txt)
 
 if [ "$BRANCH" = "main" ]; then
   DIRECTORY="escape-room"
@@ -21,8 +21,8 @@ fi
 
 shopt -s dotglob
 cp -r /home/ubuntu/temp-server/* /home/ubuntu/$DIRECTORY/
-# rm -rf /home/ubuntu/temp-server/*
+rm -rf /home/ubuntu/temp-server/*
 cd /home/ubuntu/$DIRECTORY
-npm install
+npm i
 pm2 stop $APP_NAME || true
 pm2 start ecosystem.config.js --env $APP_STATUS --name $APP_NAME
