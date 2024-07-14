@@ -34,6 +34,9 @@ jobs:
       - name: 빌드
         run: npm run build
 
+      - name: 브랜치명 저장
+        run: echo "${GITHUB_REF##*/}" > branch.txt
+
       - name: 압축하기
         run: tar -czvf $GITHUB_SHA.tar.gz appspec.yml scripts dist .production.env package.json package-lock.json ecosystem.config.js
 
