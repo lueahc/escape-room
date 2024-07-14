@@ -38,7 +38,7 @@ jobs:
         run: echo "${GITHUB_REF##*/}" > branch.txt
 
       - name: 압축하기
-        run: tar -czvf $GITHUB_SHA.tar.gz appspec.yml scripts dist .development.env package.json package-lock.json ecosystem.config.js branch.txt
+        run: tar -czvf $GITHUB_SHA.tar.gz appspec.yml scripts dist .development.env package.json package-lock.json tsconfig.json tsconfig.build.json ecosystem.config.js branch.txt
 
       - name: AWS Resource에 접근할 수 있게 AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
