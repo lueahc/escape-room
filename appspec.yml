@@ -6,9 +6,21 @@ files:
     destination: /home/ubuntu/temp-server
 
 permissions:
-  - object: /
+  - object: /home/ubuntu/temp-server
+    pattern: "**"
     owner: ubuntu
     group: ubuntu
+    mode: 755
+  - object: /home/ubuntu/escape-room
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+    mode: 755
+  - object: /home/ubuntu/escape-room-dev
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+    mode: 755
 
 hooks:
   ApplicationStart:
