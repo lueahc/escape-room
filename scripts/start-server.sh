@@ -2,7 +2,7 @@
 
 echo "--------------- 서버 배포 시작 -----------------"
 
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
+BRANCH=${GITHUB_REF##*/}
 
 if [ "$BRANCH" = "main" ]; then
   DIRECTORY="escape-room"
@@ -21,7 +21,7 @@ fi
 
 shopt -s dotglob
 cp -r /home/ubuntu/temp-server/* /home/ubuntu/$DIRECTORY/
-rm -rf /home/ubuntu/temp-server/*
+# rm -rf /home/ubuntu/temp-server/*
 cd /home/ubuntu/$DIRECTORY
 npm install
 pm2 stop $APP_NAME || true
