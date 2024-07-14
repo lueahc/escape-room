@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source: /
-    destination: /home/ubuntu/temp-server
+    destination: /home/ubuntu/escape-room-dev
 
 # permissions:
 #   - object: /home/ubuntu/temp-server
