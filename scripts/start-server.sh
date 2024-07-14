@@ -17,8 +17,8 @@ else
   exit 1
 fi
 
-# chown -R ubuntu:ubuntu /home/ubuntu/$DIRECTORY
-# chmod -R 755 /home/ubuntu/$DIRECTORY
+chown -R ubuntu:ubuntu /home/ubuntu/$DIRECTORY
+chmod -R 755 /home/ubuntu/$DIRECTORY
 
 cp -r /home/ubuntu/temp-server/* /home/ubuntu/$DIRECTORY/
 rm -rf /home/ubuntu/temp-server/*
