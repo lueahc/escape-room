@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ThemeService } from '../application/theme.service';
-import { LocationEnum } from '../../store/location.enum';
+import { LocationEnum } from '../../store/domain/location.enum';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetThemesListResponseDto } from '../application/dto/getThemesList.response.dto';
 import { GetOneThemeResponseDto } from '../application/dto/getOneTheme.response.dto';

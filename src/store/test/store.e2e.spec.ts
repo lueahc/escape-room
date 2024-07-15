@@ -9,7 +9,7 @@ import { StoreRepository } from '../domain/store.repository';
 import { STORE_REPOSITORY, THEME_REPOSITORY } from '../../common/inject.constant';
 import { Store } from '../domain/store.entity';
 import { Theme } from '../../theme/domain/theme.entity';
-import { LocationEnum } from '../location.enum';
+import { LocationEnum } from '../domain/location.enum';
 
 describe('StoreController (E2E)', () => {
     let app: INestApplication;

@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { LocationEnum } from '../../store/location.enum';
+import { LocationEnum } from '../../store/domain/location.enum';
 import { GetThemesListResponseDto } from './dto/getThemesList.response.dto';
 import { ReviewService } from '../../review/review.service';
 import { GetOneThemeResponseDto } from './dto/getOneTheme.response.dto';

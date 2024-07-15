@@ -3,7 +3,7 @@ import { INestApplication } from "@nestjs/common";
 import { AppModule } from "../../app.module";
 import { DataSource } from 'typeorm';
 import { initializeTransactionalContext } from 'typeorm-transactional';
-import { LocationEnum } from '../../store/location.enum';
+import { LocationEnum } from '../../store/domain/location.enum';
 import { ThemeRepository } from '../../theme/domain/theme.repository';
 import { StoreRepository } from '../../store/domain/store.repository';
 import { RECORD_REPOSITORY, REVIEW_REPOSITORY, STORE_REPOSITORY, THEME_REPOSITORY, USER_REPOSITORY } from '../../common/inject.constant';

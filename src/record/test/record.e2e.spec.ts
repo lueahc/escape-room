@@ -4,7 +4,7 @@ import { AppModule } from "../../app.module";
 import * as request from 'supertest';
 import { DataSource } from 'typeorm';
 import { initializeTransactionalContext } from 'typeorm-transactional';
-import { LocationEnum } from '../../store/location.enum';
+import { LocationEnum } from '../../store/domain/location.enum';
 import { StoreRepository } from '../../store/domain/store.repository';
 import { ThemeRepository } from '../../theme/domain/theme.repository';
 import { RECORD_REPOSITORY, STORE_REPOSITORY, THEME_REPOSITORY } from '../../common/inject.constant';

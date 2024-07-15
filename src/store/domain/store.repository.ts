@@ -1,4 +1,4 @@
-import { LocationEnum } from "../location.enum";
+import { LocationEnum } from "./location.enum";
 import { Store } from "./store.entity";
 
 export interface StoreRepository {

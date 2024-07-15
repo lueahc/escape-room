@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import { Theme } from '../domain/theme.entity';
 import { Store } from '../../store/domain/store.entity';
-import { LocationEnum } from '../../store/location.enum';
+import { LocationEnum } from '../../store/domain/location.enum';
 import { ThemeRepository } from '../domain/theme.repository';
 import { StoreRepository } from '../../store/domain/store.repository';
 import { STORE_REPOSITORY, THEME_REPOSITORY } from '../../common/inject.constant';

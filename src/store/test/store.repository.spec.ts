@@ -4,7 +4,7 @@ import { AppModule } from "../../app.module";
 import { DataSource } from 'typeorm';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import { Store } from '../domain/store.entity';
-import { LocationEnum } from '../../store/location.enum';
+import { LocationEnum } from '../domain/location.enum';
 import { StoreRepository } from '../domain/store.repository';
 import { STORE_REPOSITORY } from '../../common/inject.constant';
 

@@ -10,7 +10,7 @@ import { ThemeRepository } from '../../theme/domain/theme.repository';
 import { StoreRepository } from '../../store/domain/store.repository';
 import { STORE_REPOSITORY, THEME_REPOSITORY } from '../../common/inject.constant';
 import { Store } from '../../store/domain/store.entity';
-import { LocationEnum } from '../../store/location.enum';
+import { LocationEnum } from '../../store/domain/location.enum';
 import { Theme } from '../../theme/domain/theme.entity';
 import { CreateReviewRequestDto } from '../dto/createReview.request.dto';
 import { UpdateReviewRequestDto } from '../dto/updateReview.request.dto';

@@ -1,6 +1,6 @@
-import { LocationEnum } from "../../store/location.enum";
-import { GetThemesListResponseDto } from "../../theme/application/dto/getThemesList.response.dto";
-import { Store } from "../domain/store.entity";
+import { LocationEnum } from "../../domain/location.enum";
+import { GetThemesListResponseDto } from "../../../theme/application/dto/getThemesList.response.dto";
+import { Store } from "../../domain/store.entity";
 
 export class GetOneStoreResponseDto {
     id: number;
