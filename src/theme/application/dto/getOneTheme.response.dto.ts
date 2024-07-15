@@ -1,4 +1,4 @@
-import { GetVisibleReviewsResponseDto } from "../../../review/dto/getVisibleReviews.response.dto";
+import { GetVisibleReviewsResponseDto } from "../../../review/application/dto/getVisibleReviews.response.dto";
 import { LocationEnum } from "../../../store/domain/location.enum";
 import { Theme } from "../../domain/theme.entity";
 

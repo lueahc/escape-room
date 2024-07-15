@@ -4,7 +4,7 @@ import { SignUpRequestDto } from '../application/dto/signUp.request.dto';
 import { SignInRequestDto } from '../application/dto/signIn.request.dto';
 import { JwtAuthGuard } from '../../jwt/jwt.auth.guard';
 import { UpdateInfoRequestDto } from '../application/dto/updateInfo.request.dto';
-import { User } from '../user.decorator';
+import { User } from './user.decorator';
 import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 @Controller('user')

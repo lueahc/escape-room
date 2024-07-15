@@ -10,11 +10,11 @@ import { STORE_REPOSITORY, THEME_REPOSITORY } from '../../common/inject.constant
 import { Store } from '../../store/domain/store.entity';
 import { LocationEnum } from '../../store/domain/location.enum';
 import { Theme } from '../../theme/domain/theme.entity';
-import { RecordController } from '../record.controller';
-import { RecordService } from '../record.service';
-import { GetLogsResponseDto } from '../dto/getLogs.response.dto';
-import { GetOneRecordResponseDto } from '../dto/getOneRecord.response.dto';
-import { CreateAndUpdateRecordResponseDto } from '../dto/createAndUpdateRecord.response.dto';
+import { RecordController } from '../presentation/record.controller';
+import { RecordService } from '../application/record.service';
+import { GetLogsResponseDto } from '../application/dto/getLogs.response.dto';
+import { GetOneRecordResponseDto } from '../application/dto/getOneRecord.response.dto';
+import { CreateAndUpdateRecordResponseDto } from '../application/dto/createAndUpdateRecord.response.dto';
 import { Readable } from 'stream';
 jest.mock('../record.service');
 

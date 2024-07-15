@@ -1,7 +1,6 @@
-import { Record } from "../domain/record.entity";
-import { GetRecordReviewsResponseDto } from "./getRecordReviews.response.dto";
+import { Record } from "../../domain/record.entity";
 
-export class GetOneRecordResponseDto {
+export class CreateAndUpdateRecordResponseDto {
     id: number;
     writer: {
         id: number;
@@ -22,13 +21,8 @@ export class GetOneRecordResponseDto {
     playTime: number;
     image: string;
     note: string;
-    reviews: GetRecordReviewsResponseDto[];
 
-    constructor(params: {
-        record: Record,
-        reviews: GetRecordReviewsResponseDto[]
-    }) {
-        const { record, reviews } = params;
+    constructor(record: Record) {
         this.id = record.getId();
         this.writer = {
             id: record.getWriter().getId(),
@@ -48,7 +42,6 @@ export class GetOneRecordResponseDto {
         this.hintCount = record.getHintCount();
         this.playTime = record.getPlayTime();
         this.image = record.getImage();
-        this.note = record.getNote();
-        this.reviews = reviews;
+        this.note = record.getNote()
     }
 }

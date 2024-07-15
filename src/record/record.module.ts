@@ -1,6 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { RecordController } from './record.controller';
-import { RecordService } from './record.service';
+import { RecordController } from './presentation/record.controller';
+import { RecordService } from './application/record.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Record } from './domain/record.entity';
 import { Tag } from './domain/tag.entity';
@@ -10,7 +10,7 @@ import { ReviewModule } from '../review/review.module';
 import { S3StorageModule } from './s3Storage.module';
 import { RECORD_REPOSITORY } from '../common/inject.constant';
 import { TypeormRecordRepository } from './infrastructure/typeormRecord.repository';
-import { TagPartyService } from './tagParty.service';
+import { TagPartyService } from './application/tagParty.service';
 
 @Module({
   imports: [

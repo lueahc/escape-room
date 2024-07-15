@@ -1,4 +1,4 @@
-import { Review } from "../domain/review.entity";
+import { Review } from "../../domain/review.entity";
 
 export class GetVisibleReviewsResponseDto {
     id: number;

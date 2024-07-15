@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, HttpCode, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
-import { ReviewService } from './review.service';
-import { JwtAuthGuard } from '../jwt/jwt.auth.guard';
-import { UpdateReviewRequestDto } from './dto/updateReview.request.dto';
-import { User } from '../user/user.decorator';
-import { CreateReviewRequestDto } from './dto/createReview.request.dto';
+import { ReviewService } from '../application/review.service';
+import { JwtAuthGuard } from '../../jwt/jwt.auth.guard';
+import { UpdateReviewRequestDto } from '../application/dto/updateReview.request.dto';
+import { User } from '../../user/presentation/user.decorator';
+import { CreateReviewRequestDto } from '../application/dto/createReview.request.dto';
 import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 @Controller('review')

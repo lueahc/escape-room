@@ -4,7 +4,7 @@ import { LocationEnum } from '../../store/domain/location.enum';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetThemesListResponseDto } from '../application/dto/getThemesList.response.dto';
 import { GetOneThemeResponseDto } from '../application/dto/getOneTheme.response.dto';
-import { GetVisibleReviewsResponseDto } from '../../review/dto/getVisibleReviews.response.dto';
+import { GetVisibleReviewsResponseDto } from '../../review/application/dto/getVisibleReviews.response.dto';
 
 @Controller('theme')
 @ApiTags('theme API')
