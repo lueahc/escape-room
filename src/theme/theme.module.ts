@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ThemeController } from './theme.controller';
-import { ThemeService } from './theme.service';
+import { ThemeController } from './presentation/theme.controller';
+import { ThemeService } from './application/theme.service';
 import { Theme } from './domain/theme.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReviewModule } from '../review/review.module';

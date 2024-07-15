@@ -2,7 +2,7 @@ import { TimestampEntity } from "../../common/timestamp.entity"
 import { User } from "../../user/domain/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Record } from "../../record/domain/record.entity";
-import { UpdateReviewRequestDto } from "../dto/updateReview.request.dto";
+import { UpdateReviewRequestDto } from "../application/dto/updateReview.request.dto";
 
 @Entity()
 export class Review extends TimestampEntity {

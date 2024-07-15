@@ -1,4 +1,4 @@
-import { Record } from "../domain/record.entity";
+import { Record } from "../../domain/record.entity";
 
 export class GetLogsResponseDto {
     id: number;

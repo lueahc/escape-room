@@ -3,7 +3,7 @@ import { Like, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Theme } from "../domain/theme.entity";
 import { ThemeRepository } from "../domain/theme.repository";
-import { LocationEnum } from "../../store/location.enum";
+import { LocationEnum } from "../../store/domain/location.enum";
 
 @Injectable()
 export class TypeormThemeRepository implements ThemeRepository {

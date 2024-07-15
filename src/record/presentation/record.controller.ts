@@ -1,14 +1,14 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { RecordService } from './record.service';
-import { JwtAuthGuard } from '../jwt/jwt.auth.guard';
-import { CreateRecordRequestDto } from './dto/createRecord.request.dto';
-import { UpdateRecordRequestDto } from './dto/updateRecord.request.dto';
-import { User } from '../user/user.decorator';
+import { RecordService } from '../application/record.service';
+import { JwtAuthGuard } from '../../jwt/jwt.auth.guard';
+import { CreateRecordRequestDto } from '../application/dto/createRecord.request.dto';
+import { UpdateRecordRequestDto } from '../application/dto/updateRecord.request.dto';
+import { User } from '../../user/presentation/user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { GetLogsResponseDto } from './dto/getLogs.response.dto';
-import { CreateAndUpdateRecordResponseDto } from './dto/createAndUpdateRecord.response.dto';
-import { GetOneRecordResponseDto } from './dto/getOneRecord.response.dto';
+import { GetLogsResponseDto } from '../application/dto/getLogs.response.dto';
+import { CreateAndUpdateRecordResponseDto } from '../application/dto/createAndUpdateRecord.response.dto';
+import { GetOneRecordResponseDto } from '../application/dto/getOneRecord.response.dto';
 
 @Controller('record')
 @ApiTags('record API')

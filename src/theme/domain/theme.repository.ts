@@ -1,4 +1,4 @@
-import { LocationEnum } from "../../store/location.enum";
+import { LocationEnum } from "../../store/domain/location.enum";
 import { Theme } from "./theme.entity";
 
 export interface ThemeRepository {

@@ -1,9 +1,9 @@
 import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
-import { StoreService } from './store.service';
-import { LocationEnum } from './location.enum';
+import { StoreService } from '../application/store.service';
+import { LocationEnum } from '../domain/location.enum';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { GetOneStoreResponseDto } from './dto/getOneStore.response.dto';
-import { GetStoresListResponseDto } from './dto/getStoresList.response.dto';
+import { GetOneStoreResponseDto } from '../application/dto/getOneStore.response.dto';
+import { GetStoresListResponseDto } from '../application/dto/getStoresList.response.dto';
 
 @Controller('store')
 @ApiTags('store API')

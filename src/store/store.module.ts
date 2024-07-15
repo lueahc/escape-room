@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { StoreController } from './store.controller';
-import { StoreService } from './store.service';
+import { StoreController } from './presentation/store.controller';
+import { StoreService } from './application/store.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Store } from './domain/store.entity';
 import { ReviewModule } from '../review/review.module';
