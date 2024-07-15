@@ -9,7 +9,7 @@ import { GetLogsResponseDto } from './dto/getLogs.response.dto';
 import { CreateAndUpdateRecordResponseDto } from './dto/createAndUpdateRecord.response.dto';
 import { RECORD_REPOSITORY } from '../common/inject.constant';
 import { RecordRepository } from './domain/record.repository';
-import { ThemeService } from '../theme/theme.service';
+import { ThemeService } from '../theme/application/theme.service';
 import { UserService } from '../user/application/user.service';
 import { GetOneRecordResponseDto } from './dto/getOneRecord.response.dto';
 import { GetRecordReviewsResponseDto } from './dto/getRecordReviews.response.dto';

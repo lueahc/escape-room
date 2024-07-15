@@ -1,12 +1,12 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { LocationEnum } from '../store/location.enum';
+import { LocationEnum } from '../../store/location.enum';
 import { GetThemesListResponseDto } from './dto/getThemesList.response.dto';
-import { ReviewService } from '../review/review.service';
+import { ReviewService } from '../../review/review.service';
 import { GetOneThemeResponseDto } from './dto/getOneTheme.response.dto';
-import { GetVisibleReviewsResponseDto } from '../review/dto/getVisibleReviews.response.dto';
-import { THEME_REPOSITORY } from '../common/inject.constant';
-import { ThemeRepository } from './domain/theme.repository';
-import { Theme } from './domain/theme.entity';
+import { GetVisibleReviewsResponseDto } from '../../review/dto/getVisibleReviews.response.dto';
+import { THEME_REPOSITORY } from '../../common/inject.constant';
+import { ThemeRepository } from '../domain/theme.repository';
+import { Theme } from '../domain/theme.entity';
 
 @Injectable()
 export class ThemeService {
