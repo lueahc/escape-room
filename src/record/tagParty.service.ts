@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, forwardRef } from "@nestjs/common";
 import { Tag } from "./domain/tag.entity";
-import { UserService } from "../user/user.service";
+import { UserService } from "../user/application/user.service";
 import { RECORD_REPOSITORY } from "../common/inject.constant";
 import { RecordRepository } from "./domain/record.repository";
 import { Record } from "./domain/record.entity";

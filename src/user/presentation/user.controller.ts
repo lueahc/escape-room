@@ -1,10 +1,10 @@
 import { Body, Controller, Get, HttpCode, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { UserService } from './user.service';
-import { SignUpRequestDto } from './dto/signUp.request.dto';
-import { SignInRequestDto } from './dto/signIn.request.dto';
-import { JwtAuthGuard } from '../jwt/jwt.auth.guard';
-import { UpdateInfoRequestDto } from './dto/updateInfo.request.dto';
-import { User } from './user.decorator';
+import { UserService } from '../application/user.service';
+import { SignUpRequestDto } from '../application/dto/signUp.request.dto';
+import { SignInRequestDto } from '../application/dto/signIn.request.dto';
+import { JwtAuthGuard } from '../../jwt/jwt.auth.guard';
+import { UpdateInfoRequestDto } from '../application/dto/updateInfo.request.dto';
+import { User } from '../user.decorator';
 import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 @Controller('user')

@@ -5,7 +5,7 @@ import { RecordService } from '../record/record.service';
 import { GetVisibleReviewsResponseDto } from './dto/getVisibleReviews.response.dto';
 import { REVIEW_REPOSITORY } from '../common/inject.constant';
 import { ReviewRepository } from './domain/review.repository';
-import { UserService } from '../user/user.service';
+import { UserService } from '../user/application/user.service';
 import { Review } from './domain/review.entity';
 
 @Injectable()

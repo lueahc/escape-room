@@ -10,7 +10,7 @@ import { CreateAndUpdateRecordResponseDto } from './dto/createAndUpdateRecord.re
 import { RECORD_REPOSITORY } from '../common/inject.constant';
 import { RecordRepository } from './domain/record.repository';
 import { ThemeService } from '../theme/theme.service';
-import { UserService } from '../user/user.service';
+import { UserService } from '../user/application/user.service';
 import { GetOneRecordResponseDto } from './dto/getOneRecord.response.dto';
 import { GetRecordReviewsResponseDto } from './dto/getRecordReviews.response.dto';
 import { TagPartyService } from './tagParty.service';
