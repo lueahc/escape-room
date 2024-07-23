@@ -1,0 +1,23 @@
+services:
+  escape-room-server:
+    image: 851725195427.dkr.ecr.ap-northeast-2.amazonaws.com/escape-room-server
+    ports:
+      - "3000:3000"
+    env_file:
+      - .development.env
+    depends_on:
+      my-db:
+        condition: service_healthy
+  my-db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: qkdxkfcnfgkwk
+      MYSQL_DATABASE: escape_room
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping" ]
+      interval: 5s
+      retries: 10
