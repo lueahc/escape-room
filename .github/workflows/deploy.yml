@@ -62,4 +62,4 @@ jobs:
             --application-name escape-room-server \
             --deployment-config-name CodeDeployDefault.AllAtOnce \
             --deployment-group-name Production \
-            --s3-location bucket=escape-room-server-bucket,bundleType=tar,key=$GITHUB_SHA.tar.gz  # 수정된 부분: bundleType을 tgz에서 tar로 변경
+            --s3-location bucket=escape-room-server-bucket,bundleType=tar,key=$GITHUB_SHA.tar.gz
