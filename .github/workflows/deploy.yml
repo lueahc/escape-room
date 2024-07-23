@@ -1,4 +1,4 @@
-name: Deploy to EC2 (develop)
+name: Deploy To EC2
 
 on:
   pull_request:
@@ -25,20 +25,10 @@ jobs:
 
       - name: .env 파일 만들기
         run: |
-          echo '${{ secrets.TEST_ENV }}' > .test.env
           echo '${{ secrets.DEV_ENV }}' > .development.env
 
       # - name: 테스트 코드 실행
       #   run: npm run test
-
-      - name: 빌드
-        run: npm run build
-
-      # - name: 브랜치명 저장
-      #   run: echo "${GITHUB_REF##*/}" > branch.txt
-
-      - name: 압축하기
-        run: tar -czvf $GITHUB_SHA.tar.gz appspec.yml scripts dist .development.env package.json package-lock.json tsconfig.json tsconfig.build.json ecosystem.config.js
 
       - name: AWS Resource에 접근할 수 있게 AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
@@ -47,12 +37,28 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      - name: ECR에 로그인하기
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Docker 이미지 생성
+        run: docker build -t escape-room-server .
+
+      - name: Docker 이미지에 Tag 붙이기
+        run: docker tag escape-room-server ${{ steps.login-ecr.outputs.registry }}/escape-room-server:latest
+
+      - name: ECR에 Docker 이미지 Push하기
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/escape-room-server:latest
+
+      - name: 압축하기
+        run: tar -czvf $GITHUB_SHA.tar.gz appspec.yml scripts .development.env package.json package-lock.json tsconfig.json tsconfig.build.json ecosystem.config.js docker-compose.yml
+
       - name: S3에 프로젝트 폴더 업로드하기
-        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.tar.gz s3://escape-room-dev-bucket/$GITHUB_SHA.tar.gz
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.tar.gz s3://escape-room-server-bucket/$GITHUB_SHA.tar.gz
 
       - name: Code Deploy를 활용해 EC2에 프로젝트 코드 배포
         run: aws deploy create-deployment
           --application-name escape-room-server
           --deployment-config-name CodeDeployDefault.AllAtOnce
           --deployment-group-name Production
-          --s3-location bucket=escape-room-dev-bucket,bundleType=tgz,key=$GITHUB_SHA.tar.gz
+          --s3-location bucket=escape-room-server-bucket,bundleType=tgz,key=$GITHUB_SHA.tar.gz

@@ -1,34 +1,14 @@
 version: 0.0
 os: linux
-
 files:
   - source: /
-    destination: /home/ubuntu/escape-room-dev
-
-# permissions:
-#   - object: /home/ubuntu/temp-server
-#     pattern: "**"
-#     owner: ubuntu
-#     group: ubuntu
-#     mode: 755
-#   - object: /home/ubuntu/escape-room
-#     pattern: "**"
-#     owner: ubuntu
-#     group: ubuntu
-#     mode: 755
-#   - object: /home/ubuntu/escape-room-dev
-#     pattern: "**"
-#     owner: ubuntu
-#     group: ubuntu
-#     mode: 755
-
+    destination: /home/ubuntu/escape-room
 permissions:
   - object: /
     owner: ubuntu
     group: ubuntu
-
 hooks:
   ApplicationStart:
     - location: scripts/start-server.sh
       timeout: 60
-      runas: root
+      runas: ubuntu
