@@ -1,6 +1,8 @@
 services:
   escape-room-server:
     image: 851725195427.dkr.ecr.ap-northeast-2.amazonaws.com/escape-room-server
+    build:
+      context: .  # 현재 디렉토리를 context로 설정
     ports:
       - "3000:3000"
     env_file:
