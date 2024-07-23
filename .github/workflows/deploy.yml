@@ -51,7 +51,7 @@ jobs:
         run: docker push ${{ steps.login-ecr.outputs.registry }}/escape-room-server:latest
 
       - name: 압축하기
-        run: tar -czvf $GITHUB_SHA.tar.gz appspec.yml scripts .development.env package.json package-lock.json tsconfig.json tsconfig.build.json ecosystem.config.js docker-compose.yml
+        run: tar -czvf $GITHUB_SHA.tar.gz appspec.yml scripts .development.env package.json package-lock.json tsconfig.json tsconfig.build.json ecosystem.config.js Dockerfile docker-compose.yml
 
       - name: S3에 프로젝트 폴더 업로드하기
         run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.tar.gz s3://escape-room-server-bucket/$GITHUB_SHA.tar.gz
