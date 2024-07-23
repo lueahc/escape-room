@@ -62,4 +62,4 @@ jobs:
             --application-name escape-room-server \
             --deployment-config-name CodeDeployDefault.AllAtOnce \
             --deployment-group-name Production \
-            --s3-location bucket=escape-room-server-bucket,bundleType=tar,key=$GITHUB_SHA.tar.gz
+            --s3-location bucket=escape-room-server-bucket,bundleType=tgz,key=$GITHUB_SHA.tar.gz
