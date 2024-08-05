@@ -18,7 +18,7 @@ async function bootstrap() {
   const logger = await WinstonLogger(configService);
   const swaggerUser = configService.get<string>('SWAGGER_USER') as string;
   const swaggerPwd = configService.get<string>('SWAGGER_PWD') as string;
-  const port = configService.get<number>('PORT') || 5000;
+  const port = configService.get<number>('PORT') || 80;
   app.useGlobalFilters(new HttpExceptionFilter(logger, slackService));
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.use(bodyParser.json());
