@@ -18,13 +18,16 @@ async function bootstrap() {
   const logger = await WinstonLogger(configService);
   const swaggerUser = configService.get<string>('SWAGGER_USER') as string;
   const swaggerPwd = configService.get<string>('SWAGGER_PWD') as string;
-  const port = configService.get<number>('PORT') || 3000;
+  const port = configService.get<number>('PORT') || 5000;
   app.useGlobalFilters(new HttpExceptionFilter(logger, slackService));
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.enableCors();
-  app.use(['/api'], expressBasicAuth({ challenge: true, users: { [swaggerUser]: swaggerPwd } }));
+  app.use(
+    ['/api'],
+    expressBasicAuth({ challenge: true, users: { [swaggerUser]: swaggerPwd } }),
+  );
   createSwagger(app);
   await app.listen(port);
 }
