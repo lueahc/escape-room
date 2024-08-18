@@ -36,4 +36,4 @@ $ npm run test:cov
 
 ## Architecture
 
-![escape_room_architecture](https://github.com/user-attachments/assets/4d25f2a2-fc60-4082-8cd9-3d06d8a4b31f)
+![escape_room_architecture](https://github.com/user-attachments/assets/a6334abd-2f89-4443-a97d-001b06050609)
