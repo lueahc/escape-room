@@ -2,13 +2,7 @@
 
 **방탈출 게임 기록 서비스**
 
-<img src="https://img.shields.io/badge/typescript-3178C6?style=flat-square&logo=TypeScript&logoColor=white"/>
-<img src="https://img.shields.io/badge/nestjs-E0234E?style=flat-square&logo=NestJS&logoColor=white"/>
-<img src="https://img.shields.io/badge/mysql-4479A1?style=flat-square&logo=MYSQL&logoColor=white"/>
-<img src="https://img.shields.io/badge/typeorm-FE0803?style=flat-square&logo=TypeORM&logoColor=white"/>
-<img src="https://img.shields.io/badge/amazonwebservices-232F3E?style=flat-square&logo=AWS&logoColor=white"/>
-<img src="https://img.shields.io/badge/docker-2496ED?style=flat-square&logo=Docker&logoColor=white"/>
-<img src="https://img.shields.io/badge/GitHub-Actions-2088FF?style=flat-square&logo=GithubActions&logoColor=white"/>
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white"/> <img src="https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white"/> <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white"/> <img src="https://img.shields.io/badge/TypeORM-FE0803?style=flat-square&logo=typeorm&logoColor=white"/> <img src="https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazonwebservices&logoColor=white"/> <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white"/> <img src="https://img.shields.io/badge/GitHubActions-2088FF?style=flat-square&logo=githubactions&logoColor=white"/>
 
 ## Description
 
