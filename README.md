@@ -50,6 +50,13 @@ $ npm run start:prod
 $ npm run test
 ```
 
+## Docker
+
+```bash
+$ docker pull escape-room-server:latest
+$ docker run -d -p 80:80 escape-room-server:latest
+```
+
 ## Tech Stack
 
 - **Language**: TypeScript
