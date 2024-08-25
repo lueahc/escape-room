@@ -16,7 +16,7 @@ import { Theme } from '../domain/theme.entity';
 import { GetThemesListResponseDto } from '../application/dto/getThemesList.response.dto';
 import { GetOneThemeResponseDto } from '../application/dto/getOneTheme.response.dto';
 
-describe('UserService', () => {
+describe('ThemeService', () => {
   let app: INestApplication;
   let themeService: ThemeService;
   let themeRepository: TestThemeRepository;
