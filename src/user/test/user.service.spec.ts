@@ -182,7 +182,7 @@ describe('UserService', () => {
     });
   });
 
-  describe.only('updateInfo()', () => {
+  describe('updateInfo()', () => {
     it('사용자가 존재하지 않을 경우 NotFoundException 에러가 발생한다.', async () => {
       const updateInfoRequestDto: UpdateInfoRequestDto = {
         password: 'newpassword123',
