@@ -7,7 +7,8 @@ export class TestThemeRepository implements ThemeRepository {
   private themes: Theme[] = [];
 
   async save(theme: Theme): Promise<Theme> {
-    theme.setId(this.nextId++);
+    theme._id = this.nextId++;
+    // theme.setId(this.nextId++);
     this.themes.push(theme);
     return theme;
   }

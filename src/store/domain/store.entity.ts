@@ -75,8 +75,4 @@ export class Store extends TimestampEntity {
   public getCreatedAt(): Date {
     return this.createdAt;
   }
-
-  public setId(id: number): void {
-    this._id = id;
-  }
 }

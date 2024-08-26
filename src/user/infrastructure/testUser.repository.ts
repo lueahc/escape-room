@@ -6,7 +6,7 @@ export class TestUserRepository implements UserRepository {
   private users: User[] = [];
 
   async save(user: User) {
-    user.setId(this.nextId++);
+    user._id = this.nextId++;
     this.users.push(user);
     return user;
   }

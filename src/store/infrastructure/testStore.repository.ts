@@ -7,7 +7,7 @@ export class TestStoreRepository implements StoreRepository {
   private stores: Store[] = [];
 
   async save(store: Store): Promise<Store> {
-    store.setId(this.nextId++);
+    store._id = this.nextId++;
     this.stores.push(store);
     return store;
   }

@@ -79,8 +79,4 @@ export class User extends TimestampEntity {
   public updateNickname(newNickname: string): void {
     this._nickname = newNickname;
   }
-
-  public setId(id: number): void {
-    this._id = id;
-  }
 }

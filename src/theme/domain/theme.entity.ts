@@ -117,10 +117,6 @@ export class Theme extends TimestampEntity {
     return this._records;
   }
 
-  public setId(id: number): void {
-    this._id = id;
-  }
-
   public setName(newName: string): void {
     this._name = newName;
   }
