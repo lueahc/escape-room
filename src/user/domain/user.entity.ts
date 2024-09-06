@@ -28,12 +28,16 @@ export class User extends TimestampEntity {
   _tags: Tag[];
 
   static async create(params: {
+    id?: number;
     email: string;
     password: string;
     nickname: string;
   }): Promise<User> {
-    const { email, password, nickname } = params;
+    const { email, password, nickname, id } = params;
     const user = new User();
+    if (id) {
+      user._id = id;
+    }
     user._email = email;
     user.password = password;
     user._nickname = nickname;

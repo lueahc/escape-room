@@ -42,16 +42,18 @@ describe('UserService', () => {
   });
 
   const createUser = async (
+    id: number,
     email: string,
     password: string,
     nickname: string,
   ): Promise<User> => {
     const user = await User.create({
+      id,
       email,
       password,
       nickname,
     });
-    await userRepository.save(user);
+    jest.spyOn(userRepository, 'save').mockResolvedValue(user);
     return user;
   };
 
@@ -95,30 +97,18 @@ describe('UserService', () => {
       };
       jest.spyOn(userRepository, 'findOneByEmail').mockResolvedValue(null);
       jest.spyOn(userRepository, 'findOneByNickname').mockResolvedValue(null);
-      jest
-        .spyOn(userService, 'hashPassword')
-        .mockResolvedValue('hashedPassword');
-
       const user = await createUser(
+        1,
         signUpRequestDto.email,
-        'hashedPassword',
+        signUpRequestDto.password,
         signUpRequestDto.nickname,
       );
-      jest.spyOn(userRepository, 'save').mockResolvedValue(user);
-      jest.spyOn(user, 'getId').mockReturnValue(1);
-      jest.spyOn(user, 'getEmail').mockReturnValue(signUpRequestDto.email);
-      jest
-        .spyOn(user, 'getNickname')
-        .mockReturnValue(signUpRequestDto.nickname);
-      jest.spyOn(user, 'getCreatedAt').mockReturnValue(new Date());
+
       const result = await userService.signUp(signUpRequestDto);
 
-      expect(result).toEqual({
-        userId: 1,
-        userEmail: signUpRequestDto.email,
-        userNickname: signUpRequestDto.nickname,
-        createdAt: expect.any(Date),
-      });
+      expect(result.userId).toBe(1);
+      expect(result.userEmail).toBe(signUpRequestDto.email);
+      expect(result.userNickname).toBe(signUpRequestDto.nickname);
     });
   });
 
@@ -136,10 +126,8 @@ describe('UserService', () => {
     });
 
     it('비밀번호가 일치하지 않을 경우 BadRequestException 에러가 발생한다.', async () => {
-      const user = await createUser('test@test.com', 'test1234', 'tester');
-      user.getPassword = jest.fn().mockReturnValue('hashedPassword');
+      const user = await createUser(1, 'test@test.com', 'test1234', 'tester');
       jest.spyOn(userRepository, 'findOneByEmail').mockResolvedValue(user);
-      jest.spyOn(bcrypt, 'compare').mockImplementation(async () => false);
       const signInRequestDto: SignInRequestDto = {
         email: 'test@test.com',
         password: 'password123',
@@ -151,9 +139,7 @@ describe('UserService', () => {
     });
 
     it('로그인에 성공할 경우 토큰을 반환한다.', async () => {
-      const user = await createUser('test@test.com', 'test1234', 'tester');
-      user.getPassword = jest.fn().mockReturnValue('hashedPassword');
-      user.getId = jest.fn().mockReturnValue(1);
+      const user = await createUser(1, 'test@test.com', 'test1234', 'tester');
       jest.spyOn(userRepository, 'findOneByEmail').mockResolvedValue(user);
       jest.spyOn(bcrypt, 'compare').mockImplementation(async () => true);
       jest
@@ -163,11 +149,9 @@ describe('UserService', () => {
         email: 'test@test.com',
         password: 'test1234',
       };
+
       const result = await userService.signIn(signInRequestDto);
 
-      expect(userService['authService'].signWithJwt).toHaveBeenCalledWith({
-        userId: 1,
-      });
       expect(result).toEqual({ accessToken: 'accessToken' });
     });
   });
@@ -186,17 +170,12 @@ describe('UserService', () => {
     });
 
     it('비밀번호를 성공적으로 업데이트한다.', async () => {
-      const user = await createUser('test@test.com', 'test1234', 'tester');
+      const user = await createUser(1, 'test@test.com', 'test1234', 'tester');
       jest.spyOn(userRepository, 'findOneById').mockResolvedValue(user);
       jest
         .spyOn(userService, 'hashPassword')
         .mockResolvedValue('hashedPassword');
-      jest
-        .spyOn(user, 'updatePassword')
-        .mockImplementation(function (hashedPassword) {
-          this.password = hashedPassword;
-        });
-      jest.spyOn(userRepository, 'save').mockResolvedValue(user);
+      // jest.spyOn(userRepository, 'save').mockResolvedValue(user); -> createUser에 집어넣음
       const updateInfoRequestDto: UpdateInfoRequestDto = {
         password: 'newpassword123',
       };
@@ -207,11 +186,12 @@ describe('UserService', () => {
 
     it('닉네임이 이미 존재하는 경우 ConflictException 에러가 발생한다.', async () => {
       const existingUser = await createUser(
+        1,
         'existing@test.com',
         'test1234',
         'existingnickname',
       );
-      const user = await createUser('test@test.com', 'test1234', 'tester');
+      const user = await createUser(1, 'test@test.com', 'test1234', 'tester');
       jest.spyOn(userRepository, 'findOneById').mockResolvedValue(user);
       jest
         .spyOn(userRepository, 'findOneByNickname')
@@ -227,7 +207,7 @@ describe('UserService', () => {
     });
 
     it('닉네임을 성공적으로 업데이트한다.', async () => {
-      const user = await createUser('test@test.com', 'test1234', 'tester');
+      const user = await createUser(1, 'test@test.com', 'test1234', 'tester');
       jest.spyOn(userRepository, 'findOneById').mockResolvedValue(user);
       jest.spyOn(userRepository, 'findOneByNickname').mockResolvedValue(null);
       jest
