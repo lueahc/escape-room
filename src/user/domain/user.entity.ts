@@ -3,6 +3,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Record } from '../../record/domain/record.entity';
 import { Review } from '../../review/domain/review.entity';
 import { Tag } from '../../record/domain/tag.entity';
+import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class User extends TimestampEntity {
@@ -39,7 +40,8 @@ export class User extends TimestampEntity {
       user._id = id;
     }
     user._email = email;
-    user.password = password;
+    const hashedPassword = await user.hashPassword(password);
+    user.password = hashedPassword;
     user._nickname = nickname;
     return user;
   }
@@ -76,8 +78,14 @@ export class User extends TimestampEntity {
     return this.createdAt;
   }
 
-  public updatePassword(newPassword: string): void {
-    this.password = newPassword;
+  private async hashPassword(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt();
+    return await bcrypt.hash(password, salt);
+  }
+
+  public async updatePassword(newPassword: string): Promise<void> {
+    const hashedPassword = await this.hashPassword(newPassword);
+    this.password = hashedPassword;
   }
 
   public updateNickname(newNickname: string): void {
