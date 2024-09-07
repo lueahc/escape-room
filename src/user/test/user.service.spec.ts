@@ -97,7 +97,7 @@ describe('UserService', () => {
       };
       jest.spyOn(userRepository, 'findOneByEmail').mockResolvedValue(null);
       jest.spyOn(userRepository, 'findOneByNickname').mockResolvedValue(null);
-      const user = await createUser(
+      await createUser(
         1,
         signUpRequestDto.email,
         signUpRequestDto.password,
@@ -206,7 +206,7 @@ describe('UserService', () => {
       ).rejects.toThrow(ConflictException);
     });
 
-    it.only('닉네임을 성공적으로 업데이트한다.', async () => {
+    it('닉네임을 성공적으로 업데이트한다.', async () => {
       const user = await createUser(1, 'test@test.com', 'test1234', 'tester');
       jest.spyOn(userRepository, 'findOneById').mockResolvedValue(user);
       jest.spyOn(userRepository, 'findOneByNickname').mockResolvedValue(null);
@@ -218,6 +218,50 @@ describe('UserService', () => {
 
       expect(user.getNickname()).toBe('newnickname');
     });
+  });
+
+  describe('searchUser()', () => {
+    it('사용자가 존재하지 않을 경우 NotFoundException 에러가 발생한다.', async () => {
+      const userId = 999;
+      const nickname = 'nonexistinguser';
+      jest.spyOn(userRepository, 'findOneByNickname').mockResolvedValue(null);
+
+      await expect(userService.searchUser(userId, nickname)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    // it('본인이 요청할 경우 BadRequestException 에러가 발생한다.', async () => {
+    //   const userId = 1;
+    //   const nickname = 'tester';
+    //   const mockUser = {
+    //     getId: () => userId,
+    //     getNickname: () => nickname,
+    //   };
+    //   //const user = await createUser(1, 'test@test.com', 'test1234', 'tester');
+    //   jest.spyOn(userRepository, 'findOneByNickname').mockResolvedValue(mockUser);
+
+    //   await expect(userService.searchUser(userId, nickname)).rejects.toThrow(
+    //     BadRequestException,
+    //   );
+    // });
+
+    // it('사용자가 정상적으로 검색되고 결과가 반환된다.', async () => {
+    //   const user1 = await createUser(1, 'test1@test.com', 'test1234', 'tester1');
+    //   const user2 = await createUser(2, 'test2@test.com', 'test1234', 'tester2');
+    //   const mockUser = {
+    //     getId: () => user2.getId(),
+    //     getNickname: () => user2.getNickname(),
+    //   };
+    //   jest.spyOn(userRepository, 'findOneByNickname').mockResolvedValue(mockUser);
+
+    //   const result = await userService.searchUser(userId, nickname);
+
+    //   expect(result).toEqual({
+    //     userId: mockUser.getId(),
+    //     userNickname: mockUser.getNickname(),
+    //   });
+    // });
   });
 
   afterAll(async () => {
