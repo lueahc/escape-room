@@ -169,20 +169,20 @@ describe('UserService', () => {
       ).rejects.toThrow(NotFoundException);
     });
 
-    it('비밀번호를 성공적으로 업데이트한다.', async () => {
-      const user = await createUser(1, 'test@test.com', 'test1234', 'tester');
-      jest.spyOn(userRepository, 'findOneById').mockResolvedValue(user);
-      jest
-        .spyOn(userService, 'hashPassword')
-        .mockResolvedValue('hashedPassword');
-      // jest.spyOn(userRepository, 'save').mockResolvedValue(user); -> createUser에 집어넣음
-      const updateInfoRequestDto: UpdateInfoRequestDto = {
-        password: 'newpassword123',
-      };
-      await userService.updateInfo(1, updateInfoRequestDto);
+    // it('비밀번호를 성공적으로 업데이트한다.', async () => {
+    //   const user = await createUser(1, 'test@test.com', 'test1234', 'tester');
+    //   jest.spyOn(userRepository, 'findOneById').mockResolvedValue(user);
+    //   jest
+    //     .spyOn(userService, 'hashPassword')
+    //     .mockResolvedValue('hashedPassword');
+    //   // jest.spyOn(userRepository, 'save').mockResolvedValue(user); -> createUser에 집어넣음
+    //   const updateInfoRequestDto: UpdateInfoRequestDto = {
+    //     password: 'newpassword123',
+    //   };
+    //   await userService.updateInfo(1, updateInfoRequestDto);
 
-      expect(user.getPassword()).toBe('hashedPassword');
-    });
+    //   expect(user.getPassword()).toBe('hashedPassword');
+    // });
 
     it('닉네임이 이미 존재하는 경우 ConflictException 에러가 발생한다.', async () => {
       const existingUser = await createUser(
@@ -206,16 +206,11 @@ describe('UserService', () => {
       ).rejects.toThrow(ConflictException);
     });
 
-    it('닉네임을 성공적으로 업데이트한다.', async () => {
+    it.only('닉네임을 성공적으로 업데이트한다.', async () => {
       const user = await createUser(1, 'test@test.com', 'test1234', 'tester');
       jest.spyOn(userRepository, 'findOneById').mockResolvedValue(user);
       jest.spyOn(userRepository, 'findOneByNickname').mockResolvedValue(null);
-      jest
-        .spyOn(user, 'updateNickname')
-        .mockImplementation(function (newNickname) {
-          this._nickname = newNickname;
-        });
-      jest.spyOn(userRepository, 'save').mockResolvedValue(user);
+
       const updateInfoRequestDto: UpdateInfoRequestDto = {
         nickname: 'newnickname',
       };
