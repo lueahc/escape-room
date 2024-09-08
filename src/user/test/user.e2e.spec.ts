@@ -6,6 +6,12 @@ import { DataSource } from 'typeorm';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import { UserRepository } from '../domain/user.repository';
 import { USER_REPOSITORY } from '../../common/inject.constant';
+import {
+  setAppInstance,
+  signUpUser,
+  signInUser,
+  getAccessToken,
+} from '../../common/test-setup';
 
 describe('UserController (E2E)', () => {
   let app: INestApplication;
@@ -19,6 +25,7 @@ describe('UserController (E2E)', () => {
     }).compile();
     app = moduleRef.createNestApplication();
     await app.init();
+    setAppInstance(app);
 
     dataSource = moduleRef.get<DataSource>(DataSource);
     userRepository = moduleRef.get<UserRepository>(USER_REPOSITORY);
@@ -29,32 +36,32 @@ describe('UserController (E2E)', () => {
     await dataSource.synchronize();
   });
 
-  const signUpUser = async (
-    email: string,
-    password: string,
-    nickname: string,
-  ) => {
-    return await request(app.getHttpServer()).post('/user/signUp').send({
-      email,
-      password,
-      nickname,
-    });
-  };
+  // const signUpUser = async (
+  //   email: string,
+  //   password: string,
+  //   nickname: string,
+  // ) => {
+  //   return await request(app.getHttpServer()).post('/user/signUp').send({
+  //     email,
+  //     password,
+  //     nickname,
+  //   });
+  // };
 
-  const signInUser = async (email: string, password: string) => {
-    return await request(app.getHttpServer()).post('/user/signIn').send({
-      email,
-      password,
-    });
-  };
+  // const signInUser = async (email: string, password: string) => {
+  //   return await request(app.getHttpServer()).post('/user/signIn').send({
+  //     email,
+  //     password,
+  //   });
+  // };
 
-  const getAccessToken = async (
-    email: string,
-    password: string,
-  ): Promise<string> => {
-    const response = await signInUser(email, password);
-    return response.body.accessToken;
-  };
+  // const getAccessToken = async (
+  //   email: string,
+  //   password: string,
+  // ): Promise<string> => {
+  //   const response = await signInUser(email, password);
+  //   return response.body.accessToken;
+  // };
 
   describe('POST /user/signUp', () => {
     it('사용자를 생성한다.', async () => {
