@@ -38,6 +38,17 @@ export const getAccessToken = async (email: string, password: string) => {
   return response.body.accessToken;
 };
 
+// record 생성
+export const createRecord = async (accessToken: string) => {
+  return await request(app.getHttpServer())
+    .post('/record')
+    .set('Authorization', `Bearer ${accessToken}`)
+    .field('themeId', 1)
+    .field('isSuccess', 'true')
+    .field('playDate', '2024-01-01')
+    .field('headCount', 4);
+};
+
 // 매장 2개 & 테마 2개 생성
 export const createTestStoresAndThemes = async (
   storeRepository: StoreRepository,
