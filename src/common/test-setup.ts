@@ -49,6 +49,16 @@ export const createRecord = async (accessToken: string) => {
     .field('headCount', 4);
 };
 
+// review 생성
+export const createReview = async (accessToken: string) => {
+  return await request(app.getHttpServer())
+    .post('/review')
+    .set('Authorization', `Bearer ${accessToken}`)
+    .send({
+      recordId: 1,
+    });
+};
+
 // 매장 2개 & 테마 2개 생성
 export const createTestStoresAndThemes = async (
   storeRepository: StoreRepository,
