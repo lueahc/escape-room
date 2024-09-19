@@ -181,12 +181,17 @@ describe('ThemeService', () => {
       expect(result).toEqual(expected);
     });
 
-    // it('키워드로 검색된 테마가 없을 경우 빈 배열을 반환한다.', async () => {
-    //   const result =
-    //     await themeService.getThemesByKeyword('NonExistingKeyword');
+    it('키워드로 검색된 테마가 없을 경우 빈 배열을 반환한다.', async () => {
+      jest.spyOn(themeRepository, 'findByKeyword').mockResolvedValue([]);
+      jest
+        .spyOn(reviewService, 'countVisibleReviewsInTheme')
+        .mockResolvedValue(0);
 
-    //   expect(result).toEqual([]);
-    // });
+      const result =
+        await themeService.getThemesByKeyword('NonExistingKeyword');
+
+      expect(result).toEqual([]);
+    });
   });
 
   describe('getThemesByStoreId()', () => {

@@ -130,6 +130,11 @@ describe('StoreService', () => {
     });
 
     it('키워드로 검색된 매장이 없을 경우 빈 배열을 반환한다.', async () => {
+      jest.spyOn(storeRepository, 'findByKeyword').mockResolvedValue([]);
+      jest
+        .spyOn(reviewService, 'countVisibleReviewsInTheme')
+        .mockResolvedValue(0);
+
       const result =
         await storeService.getStoresByKeyword('NonExistingKeyword');
 
