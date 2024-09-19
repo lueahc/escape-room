@@ -129,10 +129,12 @@ describe('ThemeRepository', () => {
       expect(result).toBeNull();
     });
 
-    // it('존재하지 않는 지역으로 테마를 찾을 때 null을 반환한다.', async () => {
-    //   const result = await themeRepository.findByLocation('');
-    //   expect(result).toBeNull();
-    // });
+    it('존재하지 않는 지역으로 테마를 찾을 때 빈 배열을 반환한다.', async () => {
+      const result = await themeRepository.findByLocation(
+        '' as unknown as LocationEnum,
+      );
+      expect(result).toEqual([]);
+    });
 
     it('존재하지 않는 키워드로 테마를 찾을 때 빈 배열을 반환한다.', async () => {
       const result = await themeRepository.findByKeyword('nonexistingkeyword');

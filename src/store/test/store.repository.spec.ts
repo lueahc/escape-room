@@ -95,10 +95,12 @@ describe('StoreRepository', () => {
       expect(result).toBeNull();
     });
 
-    // it('존재하지 않는 지역으로 매장을 찾을 때 null을 반환한다.', async () => {
-    //   const result = await storeRepository.findByLocation('');
-    //   expect(result).toBeNull();
-    // });
+    it('존재하지 않는 지역으로 매장을 찾을 때 빈 배열을 반환한다.', async () => {
+      const result = await storeRepository.findByLocation(
+        '' as unknown as LocationEnum,
+      );
+      expect(result).toEqual([]);
+    });
 
     it('존재하지 않는 키워드로 매장을 찾을 때 빈 배열을 반환한다.', async () => {
       const result = await storeRepository.findByKeyword('nonexistingkeyword');
