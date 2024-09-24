@@ -23,18 +23,16 @@ describe('TagPartyService', () => {
 
   beforeAll(async () => {
     initializeTransactionalContext();
-
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
+    app = moduleRef.createNestApplication();
+    await app.init();
 
     dataSource = moduleRef.get<DataSource>(DataSource);
     tagPartyService = moduleRef.get<TagPartyService>(TagPartyService);
     reviewService = moduleRef.get<ReviewService>(ReviewService);
     recordRepository = moduleRef.get<RecordRepository>(RECORD_REPOSITORY);
-
-    app = moduleRef.createNestApplication();
-    await app.init();
   });
 
   describe('setPartyUnique()', () => {

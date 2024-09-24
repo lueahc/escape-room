@@ -30,11 +30,9 @@ describe('ReviewController', () => {
 
   beforeAll(async () => {
     initializeTransactionalContext();
-
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-
     app = moduleRef.createNestApplication();
     await app.init();
 
