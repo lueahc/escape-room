@@ -5,7 +5,7 @@ import { Response } from 'express';
 export class AppController {
   @Get('/')
   home(@Res() res: Response) {
-    return res.status(HttpStatus.OK).send('lets-escape-room!!');
+    return res.status(HttpStatus.OK).send('lets-escape-room!');
   }
   @Get('/health')
   healthCheck(@Res() res: Response) {
