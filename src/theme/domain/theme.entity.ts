@@ -21,7 +21,7 @@ export class Theme extends TimestampEntity {
   @Column()
   private image: string;
 
-  @Column()
+  @Column({ length: 1000 })
   private plot: string;
 
   @Column()
